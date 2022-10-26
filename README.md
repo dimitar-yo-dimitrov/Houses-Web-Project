@@ -4,20 +4,13 @@
 </a>Houses.bg</h1>
 
 <p dir="auto"><strong>ASP .NET Core 6.0 Web Application Project</strong></p>
-<hr>
-::before
-::after
-</hr>
+
+<hr></hr>
+
 <p dir="auto"><strong>ABOUT my web project:</strong></p>
 
-<hr>
-::before
-::after
-</hr>
+<hr></hr>
 
 <p dir="auto"><em>Houses.bg is an online platform for selling properties in Bulgaria.Owners can advertise their properties for sale and thus find buyers.</em></p>
 
-<hr>
-::before
-::after
-</hr>
+<hr></hr>
