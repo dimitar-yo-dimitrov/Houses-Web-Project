@@ -8,6 +8,8 @@ namespace Houses.Infrastructure.Data.Configure
     {
         public void Configure(EntityTypeBuilder<City> builder)
         {
+            //TODO: Seed
+
             throw new NotImplementedException();
         }
     }

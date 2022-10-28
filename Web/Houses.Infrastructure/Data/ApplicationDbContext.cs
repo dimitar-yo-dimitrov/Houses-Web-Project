@@ -11,6 +11,7 @@ namespace Houses.Infrastructure.Data
         {
         }
 
+        //TODO: DbSet Properties
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -20,7 +21,7 @@ namespace Houses.Infrastructure.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-
+            //TODO: Seed
             base.OnModelCreating(modelBuilder);
         }
     }
