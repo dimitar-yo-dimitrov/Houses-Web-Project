@@ -1,3 +1,4 @@
+using Houses.Core.Services.Contracts;
 using Houses.Infrastructure.Data;
 using Houses.Infrastructure.Data.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -13,9 +14,12 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
+builder.Services.AddScoped<IPropertyService, IPropertyService>();
+
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/User/Login";
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
 });
 
 builder.Services.AddControllersWithViews();

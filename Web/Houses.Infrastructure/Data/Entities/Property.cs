@@ -11,15 +11,14 @@ namespace Houses.Infrastructure.Data.Entities
         public Property()
         {
             Id = Guid.NewGuid().ToString();
-            Images = new HashSet<Image>();
         }
 
         [Key]
         public string Id { get; set; }
 
         [Required]
-        [MaxLength(PropertyMaxName)]
-        public string Name { get; set; } = null!;
+        [MaxLength(PropertyMaxTitle)]
+        public string Title { get; set; } = null!;
 
         [Required]
         [Precision(18, 2)]
@@ -42,7 +41,7 @@ namespace Houses.Infrastructure.Data.Entities
         public bool Elevator { get; set; }
 
         [ForeignKey(nameof(PropertyType))]
-        public string PropertyTypeId { get; set; } = null!;
+        public int PropertyTypeId { get; set; }
         public virtual PropertyType PropertyType { get; set; } = null!;
 
         [Required]
@@ -58,6 +57,8 @@ namespace Houses.Infrastructure.Data.Entities
         public string NeighborhoodId { get; set; } = null!;
         public virtual Neighborhood Neighborhood { get; set; } = null!;
 
-        public virtual ICollection<Image> Images { get; set; }
+        [ForeignKey(nameof(Images))]
+        public int ImageId { get; set; }
+        public virtual Image Images { get; set; } = null!;
     }
 }

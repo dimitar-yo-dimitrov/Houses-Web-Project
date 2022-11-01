@@ -14,8 +14,8 @@ namespace Houses.Infrastructure.Data.Entities
         [Key]
         public string Id { get; set; }
 
-        [MaxLength(PropertyMaxName)]
-        public string Name { get; set; } = null!;
+        [MaxLength(PropertyMaxTitle)]
+        public string Title { get; set; } = null!;
 
         public virtual ICollection<Property> Properties { get; set; }
     }

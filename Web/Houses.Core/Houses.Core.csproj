@@ -10,9 +10,4 @@
     <ProjectReference Include="..\Houses.Infrastructure\Houses.Infrastructure.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Services\" />
-    <Folder Include="ViewModels\" />
-  </ItemGroup>
-
 </Project>

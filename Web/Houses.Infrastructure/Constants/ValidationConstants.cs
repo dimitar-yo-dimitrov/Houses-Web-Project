@@ -7,7 +7,10 @@
             public const int UserNameMinLength = 5;
             public const int UserNameMaxLength = 50;
 
+            public const int UserFirstNameMinLength = 5;
             public const int UserFirstNameMaxLength = 50;
+
+            public const int UserLastNameMinLength = 5;
             public const int UserLastNameMaxLength = 50;
 
             public const int EmailMinLength = 10;
@@ -19,14 +22,20 @@
 
         public static class Property
         {
-            public const int PropertyMinName = 5;
-            public const int PropertyMaxName = 50;
+            public const int PropertyMinTitle = 5;
+            public const int PropertyMaxTitle = 50;
+
+            public const int OwnerMinLength = 5;
+            public const int OwnerMaxLength = 50;
 
             public const int PropertyMinDescription = 20;
             public const int PropertyMaxDescription = 5000;
 
             public const int HomeMinAddress = 10;
             public const int HomeMaxAddress = 100;
+
+            public const string PriceMinLength = "0.1";
+            public const string PriceMaxLength = "1000000000";
 
             public const string RegexAddress = @"^[A-Za-z-. ]+,\s[A-Za-z-. ]+,\s[\d-]{1,4},\s[\d]{4,4}";
             public const string RegexAddressError = "Enter address in the format: City name, street name, number, post code";
