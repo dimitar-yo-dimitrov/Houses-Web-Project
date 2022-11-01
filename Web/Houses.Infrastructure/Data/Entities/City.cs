@@ -7,11 +7,12 @@ namespace Houses.Infrastructure.Data.Entities
     {
         public City()
         {
-            this.Properties = new HashSet<Property>();
+            Id = new Guid().ToString();
+            Properties = new HashSet<Property>();
         }
 
         [Key]
-        public int Id { get; set; }
+        public string Id { get; set; }
 
         [MaxLength(CityMaxName)]
         public string Name { get; set; } = null!;

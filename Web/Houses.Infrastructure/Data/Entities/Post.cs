@@ -5,31 +5,33 @@ using static Houses.Infrastructure.Constants.ValidationConstants.Comment;
 
 namespace Houses.Infrastructure.Data.Entities
 {
-    public class Comment
+    public class Post
     {
-        public Comment()
+        public Post()
         {
-            this.Id = Guid.NewGuid().ToString();
+            Id = new Guid().ToString();
         }
 
+        [Key]
         public string Id { get; set; }
 
+        [Required]
         public DateTime Date { get; set; } = DateTime.UtcNow;
 
         [Required]
         [MaxLength(MassageMax)]
-        public string Message { get; set; } = null!;
+        public string Content { get; set; } = null!;
 
         [Required]
-        [ForeignKey(nameof(User))]
-        public string UserId { get; set; } = null!;
+        [ForeignKey(nameof(Author))]
+        public string AuthorId { get; set; } = null!;
 
-        public virtual ApplicationUser User { get; set; } = null!;
+        public virtual ApplicationUser Author { get; set; } = null!;
 
         [Required]
-        [ForeignKey(nameof(Properties))]
+        [ForeignKey(nameof(Property))]
         public string PropertyId { get; set; } = null!;
 
-        public virtual Property Properties { get; set; } = null!;
+        public virtual Property Property { get; set; } = null!;
     }
 }

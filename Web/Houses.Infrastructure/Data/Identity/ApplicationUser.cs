@@ -18,9 +18,12 @@ namespace Houses.Infrastructure.Data.Identity
         [StringLength(UserLastNameMaxLength)]
         public string? LastName { get; set; }
 
-        [Url]
-        public Image? ProfilePic { get; set; }
+        public virtual Image? ProfilePic { get; set; }
 
         public virtual ICollection<Property> Properties { get; set; }
+
+        public virtual ICollection<Post> Posts { get; set; } = new HashSet<Post>();
+
+        public virtual Post? PostId { get; set; }
     }
 }

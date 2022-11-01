@@ -4,10 +4,14 @@ namespace Houses.Infrastructure.Data.Entities
 {
     public class Image
     {
-        [Key]
-        public int Id { get; set; }
+        public Image()
+        {
+            Id = new Guid().ToString();
+        }
 
-        [Url]
+        [Key]
+        public string Id { get; set; }
+
         public string? PictureUrl { get; set; }
     }
 }

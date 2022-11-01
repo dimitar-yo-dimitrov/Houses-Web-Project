@@ -25,7 +25,6 @@ namespace Houses.Infrastructure.Data.Entities
         [Precision(18, 2)]
         public decimal Price { get; set; }
 
-        [Required]
         [MaxLength(PropertyMaxDescription)]
         public string Description { get; set; } = null!;
 
@@ -34,29 +33,29 @@ namespace Houses.Infrastructure.Data.Entities
         //TODO: In DTO [RegularExpression(RegexAddress, ErrorMessage = RegexAddressError)]
         public string Address { get; set; } = null!;
 
-        [Range(typeof(int), FloorMin, FloorMax)]
+        //TODO: In DTO [Range(typeof(int), FloorMin, FloorMax)]
         public int? Floor { get; set; }
 
-        [Range(typeof(int), SquareMetersMin, SquareMetersMax)]
+        //TODO: In DTO [Range(typeof(int), SquareMetersMin, SquareMetersMax)]
         public int? SquareMeters { get; set; }
 
         public bool Elevator { get; set; }
 
         [ForeignKey(nameof(PropertyType))]
-        public int PropertyTypeId { get; set; }
+        public string PropertyTypeId { get; set; } = null!;
         public virtual PropertyType PropertyType { get; set; } = null!;
 
+        [Required]
         [ForeignKey(nameof(Owner))]
         public string OwnerId { get; set; } = null!;
-
         public virtual ApplicationUser Owner { get; set; } = null!;
 
         [ForeignKey(nameof(City))]
-        public int CityId { get; set; }
+        public string CityId { get; set; } = null!;
         public virtual City City { get; set; } = null!;
 
         [ForeignKey(nameof(Neighborhood))]
-        public int NeighborhoodId { get; set; }
+        public string NeighborhoodId { get; set; } = null!;
         public virtual Neighborhood Neighborhood { get; set; } = null!;
 
         public virtual ICollection<Image> Images { get; set; }
