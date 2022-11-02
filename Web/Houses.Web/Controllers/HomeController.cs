@@ -10,6 +10,11 @@ namespace Houses.Web.Controllers
         [AllowAnonymous]
         public IActionResult Index()
         {
+            if (User.Identity?.IsAuthenticated ?? false)
+            {
+                return RedirectToAction("All", "Property");
+            }
+
             return View();
         }
 

@@ -10,6 +10,7 @@ namespace Houses.Infrastructure.Data.Entities
     {
         public Property()
         {
+            ApplicationUserProperties = new HashSet<ApplicationUserProperty>();
             Id = Guid.NewGuid().ToString();
         }
 
@@ -41,7 +42,7 @@ namespace Houses.Infrastructure.Data.Entities
         public bool Elevator { get; set; }
 
         [ForeignKey(nameof(PropertyType))]
-        public int PropertyTypeId { get; set; }
+        public string PropertyTypeId { get; set; }
         public virtual PropertyType PropertyType { get; set; } = null!;
 
         [Required]
@@ -53,12 +54,10 @@ namespace Houses.Infrastructure.Data.Entities
         public string CityId { get; set; } = null!;
         public virtual City City { get; set; } = null!;
 
-        [ForeignKey(nameof(Neighborhood))]
-        public string NeighborhoodId { get; set; } = null!;
-        public virtual Neighborhood Neighborhood { get; set; } = null!;
-
         [ForeignKey(nameof(Images))]
-        public int ImageId { get; set; }
+        public string ImageId { get; set; }
         public virtual Image Images { get; set; } = null!;
+
+        public virtual ICollection<ApplicationUserProperty> ApplicationUserProperties { get; set; }
     }
 }

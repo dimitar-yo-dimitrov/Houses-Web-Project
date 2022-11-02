@@ -11,7 +11,5 @@ namespace Houses.Core.ViewModels
         [Required]
         [DataType(DataType.Password)]
         public string Password { get; set; } = null!;
-
-        public bool KeepLoggedIn { get; set; }
     }
 }

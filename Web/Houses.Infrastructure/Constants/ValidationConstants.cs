@@ -16,7 +16,7 @@
             public const int EmailMinLength = 10;
             public const int EmailMaxLength = 60;
 
-            public const int PasswordMaxLength = 5;
+            public const int PasswordMaxLength = 6;
             public const int PasswordMinLength = 20;
         }
 
@@ -63,6 +63,11 @@
         {
             public const int MassageMin = 2;
             public const int MassageMax = 2000;
+        }
+
+        public class FormattingConstant
+        {
+            public const string NormalDateFormat = "dd.MM.yyyy";
         }
     }
 }

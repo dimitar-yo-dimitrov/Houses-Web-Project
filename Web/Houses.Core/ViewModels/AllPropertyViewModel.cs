@@ -6,6 +6,14 @@ namespace Houses.Core.ViewModels
 {
     public class AllPropertyViewModel
     {
+        public AllPropertyViewModel()
+        {
+            Id = new Guid().ToString();
+        }
+
+        [Required]
+        public string Id { get; set; }
+
         [Required]
         [StringLength(PropertyMaxTitle, MinimumLength = PropertyMinTitle)]
         public string Title { get; set; } = null!;

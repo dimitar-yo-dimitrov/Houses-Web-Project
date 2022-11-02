@@ -11,10 +11,10 @@ namespace Houses.Core.Services.Contracts
 
         Task AddPropertyAsync(AddPropertyViewModel model);
 
-        Task AddPropertyToCollectionAsync(int propertyId, string applicationUserId);
+        Task AddPropertyToCollectionAsync(string propertyId, string applicationUserId);
 
         Task<List<AllPropertyViewModel>> GetMyPropertyAsync(string userId);
 
-        Task RemovePropertyFromCollectionAsync(int propertyId, string applicationUserId);
+        Task RemovePropertyFromCollectionAsync(string propertyId, string applicationUserId);
     }
 }

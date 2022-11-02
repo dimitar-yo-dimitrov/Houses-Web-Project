@@ -1,18 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Houses.Infrastructure.Data.Entities;
 using static Houses.Infrastructure.Constants.ValidationConstants.City;
-using static Houses.Infrastructure.Constants.ValidationConstants.Neighborhood;
 using static Houses.Infrastructure.Constants.ValidationConstants.Property;
 
 namespace Houses.Core.ViewModels
 {
     public class AddPropertyViewModel
     {
-        public AddPropertyViewModel()
-        {
-            PropertyTypes = new HashSet<PropertyType>();
-        }
-
         [Required(ErrorMessage = "The field {0} is required!")]
         [StringLength(PropertyMaxTitle,
             MinimumLength = PropertyMaxTitle,
@@ -22,12 +16,6 @@ namespace Houses.Core.ViewModels
         [Required]
         [Range(typeof(decimal), PriceMinLength, PriceMaxLength, ConvertValueInInvariantCulture = true)]
         public decimal Price { get; set; }
-
-        [Required(ErrorMessage = "The field {0} is required!")]
-        [StringLength(OwnerMaxLength,
-            MinimumLength = OwnerMinLength,
-            ErrorMessage = "The field {0} must have a minimum length of {2} and a maximum length of {1}!")]
-        public string Owner { get; set; } = null!;
 
         [Required(ErrorMessage = "The field {0} is required!")]
         [StringLength(PropertyMaxDescription,
@@ -53,15 +41,11 @@ namespace Houses.Core.ViewModels
         public City City { get; set; } = null!;
 
         [Required]
-        [StringLength(NeighborhoodMaxName, MinimumLength = NeighborhoodMinName)]
-        public Neighborhood Neighborhood { get; set; } = null!;
-
-        [Required]
         [Url]
         public Image ImageUrl { get; set; } = null!;
 
-        public int PropertyTypeId { get; set; }
+        public string PropertyTypeId { get; set; } = null!;
 
-        public IEnumerable<PropertyType> PropertyTypes { get; set; }
+        public IEnumerable<PropertyType> PropertyTypes { get; set; } = null!;
     }
 }

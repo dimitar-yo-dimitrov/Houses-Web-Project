@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Houses.Infrastructure.Data.Migrations
+namespace Houses.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     partial class ApplicationDbContextModelSnapshot : ModelSnapshot
@@ -21,6 +21,21 @@ namespace Houses.Infrastructure.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+
+            modelBuilder.Entity("Houses.Infrastructure.Data.Entities.ApplicationUserProperty", b =>
+                {
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("PropertyId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("ApplicationUserId", "PropertyId");
+
+                    b.HasIndex("PropertyId");
+
+                    b.ToTable("ApplicationUserProperties");
+                });
 
             modelBuilder.Entity("Houses.Infrastructure.Data.Entities.City", b =>
                 {
@@ -42,32 +57,17 @@ namespace Houses.Infrastructure.Data.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("PictureUrl")
+                    b.Property<string>("PicturePublicId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("PropertyId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<string>("PictureUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("PropertyId");
 
                     b.ToTable("Images");
-                });
-
-            modelBuilder.Entity("Houses.Infrastructure.Data.Entities.Neighborhood", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Neighborhoods");
                 });
 
             modelBuilder.Entity("Houses.Infrastructure.Data.Entities.Post", b =>
@@ -131,12 +131,7 @@ namespace Houses.Infrastructure.Data.Migrations
                     b.Property<int?>("Floor")
                         .HasColumnType("int");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("NeighborhoodId")
+                    b.Property<string>("ImageId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
@@ -155,11 +150,16 @@ namespace Houses.Infrastructure.Data.Migrations
                     b.Property<int?>("SquareMeters")
                         .HasColumnType("int");
 
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CityId");
 
-                    b.HasIndex("NeighborhoodId");
+                    b.HasIndex("ImageId");
 
                     b.HasIndex("OwnerId");
 
@@ -173,7 +173,7 @@ namespace Houses.Infrastructure.Data.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
@@ -196,6 +196,7 @@ namespace Houses.Infrastructure.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
+                        .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
@@ -247,6 +248,9 @@ namespace Houses.Infrastructure.Data.Migrations
                         .HasColumnType("nvarchar(256)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -398,11 +402,23 @@ namespace Houses.Infrastructure.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Houses.Infrastructure.Data.Entities.Image", b =>
+            modelBuilder.Entity("Houses.Infrastructure.Data.Entities.ApplicationUserProperty", b =>
                 {
-                    b.HasOne("Houses.Infrastructure.Data.Entities.Property", null)
-                        .WithMany("Images")
-                        .HasForeignKey("PropertyId");
+                    b.HasOne("Houses.Infrastructure.Data.Identity.ApplicationUser", "ApplicationUser")
+                        .WithMany("ApplicationUserProperties")
+                        .HasForeignKey("ApplicationUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Houses.Infrastructure.Data.Entities.Property", "Property")
+                        .WithMany("ApplicationUserProperties")
+                        .HasForeignKey("PropertyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUser");
+
+                    b.Navigation("Property");
                 });
 
             modelBuilder.Entity("Houses.Infrastructure.Data.Entities.Post", b =>
@@ -431,21 +447,21 @@ namespace Houses.Infrastructure.Data.Migrations
             modelBuilder.Entity("Houses.Infrastructure.Data.Entities.Property", b =>
                 {
                     b.HasOne("Houses.Infrastructure.Data.Entities.City", "City")
-                        .WithMany("Properties")
+                        .WithMany()
                         .HasForeignKey("CityId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Houses.Infrastructure.Data.Entities.Neighborhood", "Neighborhood")
-                        .WithMany("Properties")
-                        .HasForeignKey("NeighborhoodId")
+                    b.HasOne("Houses.Infrastructure.Data.Entities.Image", "Images")
+                        .WithMany()
+                        .HasForeignKey("ImageId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Houses.Infrastructure.Data.Identity.ApplicationUser", "Owner")
-                        .WithMany("Properties")
+                        .WithMany()
                         .HasForeignKey("OwnerId")
-                        .OnDelete(DeleteBehavior.ClientNoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Houses.Infrastructure.Data.Entities.PropertyType", "PropertyType")
@@ -456,7 +472,7 @@ namespace Houses.Infrastructure.Data.Migrations
 
                     b.Navigation("City");
 
-                    b.Navigation("Neighborhood");
+                    b.Navigation("Images");
 
                     b.Navigation("Owner");
 
@@ -523,19 +539,9 @@ namespace Houses.Infrastructure.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Houses.Infrastructure.Data.Entities.City", b =>
-                {
-                    b.Navigation("Properties");
-                });
-
-            modelBuilder.Entity("Houses.Infrastructure.Data.Entities.Neighborhood", b =>
-                {
-                    b.Navigation("Properties");
-                });
-
             modelBuilder.Entity("Houses.Infrastructure.Data.Entities.Property", b =>
                 {
-                    b.Navigation("Images");
+                    b.Navigation("ApplicationUserProperties");
                 });
 
             modelBuilder.Entity("Houses.Infrastructure.Data.Entities.PropertyType", b =>
@@ -545,11 +551,11 @@ namespace Houses.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("Houses.Infrastructure.Data.Identity.ApplicationUser", b =>
                 {
+                    b.Navigation("ApplicationUserProperties");
+
                     b.Navigation("PostId");
 
                     b.Navigation("Posts");
-
-                    b.Navigation("Properties");
                 });
 #pragma warning restore 612, 618
         }

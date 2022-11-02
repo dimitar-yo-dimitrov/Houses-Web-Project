@@ -9,11 +9,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Houses.Infrastructure.Data.Migrations
+namespace Houses.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20221027143749_test")]
-    partial class test
+    [Migration("20221102173457_InitialMigration")]
+    partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -23,6 +23,167 @@ namespace Houses.Infrastructure.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+
+            modelBuilder.Entity("Houses.Infrastructure.Data.Entities.ApplicationUserProperty", b =>
+                {
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("PropertyId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("ApplicationUserId", "PropertyId");
+
+                    b.HasIndex("PropertyId");
+
+                    b.ToTable("ApplicationUserProperties");
+                });
+
+            modelBuilder.Entity("Houses.Infrastructure.Data.Entities.City", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Cities");
+                });
+
+            modelBuilder.Entity("Houses.Infrastructure.Data.Entities.Image", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("PicturePublicId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PictureUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Images");
+                });
+
+            modelBuilder.Entity("Houses.Infrastructure.Data.Entities.Post", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("AuthorId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PropertyId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId");
+
+                    b.HasIndex("AuthorId")
+                        .IsUnique();
+
+                    b.HasIndex("PropertyId");
+
+                    b.ToTable("Posts");
+                });
+
+            modelBuilder.Entity("Houses.Infrastructure.Data.Entities.Property", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("CityId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(5000)
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("Elevator")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("Floor")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ImageId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("OwnerId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<decimal>("Price")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("PropertyTypeId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int?>("SquareMeters")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CityId");
+
+                    b.HasIndex("ImageId");
+
+                    b.HasIndex("OwnerId");
+
+                    b.HasIndex("PropertyTypeId");
+
+                    b.ToTable("Properties");
+                });
+
+            modelBuilder.Entity("Houses.Infrastructure.Data.Entities.PropertyType", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PropertyTypes");
+                });
 
             modelBuilder.Entity("Houses.Infrastructure.Data.Identity.ApplicationUser", b =>
                 {
@@ -37,6 +198,7 @@ namespace Houses.Infrastructure.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
+                        .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
@@ -74,6 +236,9 @@ namespace Houses.Infrastructure.Data.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<string>("ProfilePicId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
@@ -86,6 +251,9 @@ namespace Houses.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Email")
+                        .IsUnique();
+
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
 
@@ -93,6 +261,8 @@ namespace Houses.Infrastructure.Data.Migrations
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
+
+                    b.HasIndex("ProfilePicId");
 
                     b.ToTable("AspNetUsers", (string)null);
                 });
@@ -234,6 +404,92 @@ namespace Houses.Infrastructure.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Houses.Infrastructure.Data.Entities.ApplicationUserProperty", b =>
+                {
+                    b.HasOne("Houses.Infrastructure.Data.Identity.ApplicationUser", "ApplicationUser")
+                        .WithMany("ApplicationUserProperties")
+                        .HasForeignKey("ApplicationUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Houses.Infrastructure.Data.Entities.Property", "Property")
+                        .WithMany("ApplicationUserProperties")
+                        .HasForeignKey("PropertyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUser");
+
+                    b.Navigation("Property");
+                });
+
+            modelBuilder.Entity("Houses.Infrastructure.Data.Entities.Post", b =>
+                {
+                    b.HasOne("Houses.Infrastructure.Data.Identity.ApplicationUser", null)
+                        .WithMany("Posts")
+                        .HasForeignKey("ApplicationUserId");
+
+                    b.HasOne("Houses.Infrastructure.Data.Identity.ApplicationUser", "Author")
+                        .WithOne("PostId")
+                        .HasForeignKey("Houses.Infrastructure.Data.Entities.Post", "AuthorId")
+                        .OnDelete(DeleteBehavior.ClientNoAction)
+                        .IsRequired();
+
+                    b.HasOne("Houses.Infrastructure.Data.Entities.Property", "Property")
+                        .WithMany()
+                        .HasForeignKey("PropertyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Author");
+
+                    b.Navigation("Property");
+                });
+
+            modelBuilder.Entity("Houses.Infrastructure.Data.Entities.Property", b =>
+                {
+                    b.HasOne("Houses.Infrastructure.Data.Entities.City", "City")
+                        .WithMany()
+                        .HasForeignKey("CityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Houses.Infrastructure.Data.Entities.Image", "Images")
+                        .WithMany()
+                        .HasForeignKey("ImageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Houses.Infrastructure.Data.Identity.ApplicationUser", "Owner")
+                        .WithMany()
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Houses.Infrastructure.Data.Entities.PropertyType", "PropertyType")
+                        .WithMany("Properties")
+                        .HasForeignKey("PropertyTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("City");
+
+                    b.Navigation("Images");
+
+                    b.Navigation("Owner");
+
+                    b.Navigation("PropertyType");
+                });
+
+            modelBuilder.Entity("Houses.Infrastructure.Data.Identity.ApplicationUser", b =>
+                {
+                    b.HasOne("Houses.Infrastructure.Data.Entities.Image", "ProfilePic")
+                        .WithMany()
+                        .HasForeignKey("ProfilePicId");
+
+                    b.Navigation("ProfilePic");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -283,6 +539,25 @@ namespace Houses.Infrastructure.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Houses.Infrastructure.Data.Entities.Property", b =>
+                {
+                    b.Navigation("ApplicationUserProperties");
+                });
+
+            modelBuilder.Entity("Houses.Infrastructure.Data.Entities.PropertyType", b =>
+                {
+                    b.Navigation("Properties");
+                });
+
+            modelBuilder.Entity("Houses.Infrastructure.Data.Identity.ApplicationUser", b =>
+                {
+                    b.Navigation("ApplicationUserProperties");
+
+                    b.Navigation("PostId");
+
+                    b.Navigation("Posts");
                 });
 #pragma warning restore 612, 618
         }

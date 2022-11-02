@@ -9,7 +9,7 @@ namespace Houses.Infrastructure.Data.Identity
     {
         public ApplicationUser()
         {
-            Properties = new HashSet<Property>();
+            ApplicationUserProperties = new HashSet<ApplicationUserProperty>();
         }
 
         [StringLength(UserFirstNameMaxLength)]
@@ -20,7 +20,7 @@ namespace Houses.Infrastructure.Data.Identity
 
         public virtual Image? ProfilePic { get; set; }
 
-        public virtual ICollection<Property> Properties { get; set; }
+        public virtual ICollection<ApplicationUserProperty> ApplicationUserProperties { get; set; }
 
         public virtual ICollection<Post> Posts { get; set; } = new HashSet<Post>();
 
