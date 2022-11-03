@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Houses.Infrastructure.Data.Identity;
 using Microsoft.EntityFrameworkCore;
 using static Houses.Infrastructure.Constants.ValidationConstants.Property;
 
@@ -45,14 +44,14 @@ namespace Houses.Infrastructure.Data.Entities
         public string PropertyTypeId { get; set; }
         public virtual PropertyType PropertyType { get; set; } = null!;
 
-        [Required]
-        [ForeignKey(nameof(Owner))]
-        public string OwnerId { get; set; } = null!;
-        public virtual ApplicationUser Owner { get; set; } = null!;
-
         [ForeignKey(nameof(City))]
         public string CityId { get; set; } = null!;
         public virtual City City { get; set; } = null!;
+
+        public string? NeighborhoodId { get; set; }
+
+        [ForeignKey(nameof(NeighborhoodId))]
+        public virtual Neighborhood Neighborhood { get; set; } = null!;
 
         [ForeignKey(nameof(Images))]
         public string ImageId { get; set; }

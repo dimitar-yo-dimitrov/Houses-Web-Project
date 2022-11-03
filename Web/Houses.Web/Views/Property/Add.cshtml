@@ -1,5 +1,4 @@
-﻿@*@using Microsoft.AspNetCore.Mvc.TagHelpers
-@model Houses.Core.ViewModels.AddPropertyViewModel
+﻿@model AddPropertyViewModel
 
 @{
     ViewBag.Title = "Add Property";
@@ -52,11 +51,11 @@
                 <input asp-for="@Model.City" class="form-control" value="" />
                 <span asp-validation-for="City" class="text-danger"></span>
             </div>
-            <div class="mb-3">
+            @*<div class="mb-3">
                 <label asp-for="@Model.Neighborhood" class="form-label">Neighborhood</label>
                 <input asp-for="@Model.Neighborhood" class="form-control" value="" />
                 <span asp-validation-for="Neighborhood" class="text-danger"></span>
-            </div>
+            </div>*@
             <div class="mb-3">
                 <label asp-for="@Model.PropertyTypeId" class="form-label">Category</label>
                 <select asp-for="@Model.PropertyTypeId" class="form-control">
@@ -77,4 +76,4 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-}*@
+}

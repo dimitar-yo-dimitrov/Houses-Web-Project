@@ -16,10 +16,10 @@ namespace Houses.Core.Services
             _repository = repository;
         }
 
-        public async Task<IEnumerable<AllPropertyViewModel>> GetAllAsync()
+        public async Task<IEnumerable<PropertyViewModel>> GetAllAsync()
         {
             return await _repository.AllReadonly<Property>()
-                .Select(p => new AllPropertyViewModel
+                .Select(p => new PropertyViewModel
                 {
                     Id = p.Id,
                     Title = p.Title,
@@ -91,11 +91,11 @@ namespace Houses.Core.Services
             }
         }
 
-        public async Task<List<AllPropertyViewModel>> GetMyPropertyAsync(string userId)
+        public async Task<List<PropertyViewModel>> GetMyPropertyAsync(string userId)
         {
             return await _repository.All<Property>()
                 .Where(p => p.ApplicationUserProperties.Any(up => up.ApplicationUserId == userId))
-                .Select(p => new AllPropertyViewModel()
+                .Select(p => new PropertyViewModel()
                 {
                     Id = p.Id,
                     Title = p.Title,

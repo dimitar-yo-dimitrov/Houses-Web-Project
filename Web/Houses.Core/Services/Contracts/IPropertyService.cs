@@ -5,7 +5,7 @@ namespace Houses.Core.Services.Contracts
 {
     public interface IPropertyService
     {
-        Task<IEnumerable<AllPropertyViewModel>> GetAllAsync();
+        Task<IEnumerable<PropertyViewModel>> GetAllAsync();
 
         Task<IEnumerable<PropertyType>> GetPropertyTypesAsync();
 
@@ -13,7 +13,7 @@ namespace Houses.Core.Services.Contracts
 
         Task AddPropertyToMyCollectionAsync(string propertyId, string applicationUserId);
 
-        Task<List<AllPropertyViewModel>> GetMyPropertyAsync(string userId);
+        Task<List<PropertyViewModel>> GetMyPropertyAsync(string userId);
 
         Task RemovePropertyFromCollectionAsync(string propertyId, string applicationUserId);
     }

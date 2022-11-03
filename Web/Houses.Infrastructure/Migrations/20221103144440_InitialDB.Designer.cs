@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Houses.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20221102191751_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20221103144440_InitialDB")]
+    partial class InitialDB
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -30,7 +30,7 @@ namespace Houses.Infrastructure.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("PropertyId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(60)");
 
                     b.HasKey("ApplicationUserId", "PropertyId");
 
@@ -52,6 +52,98 @@ namespace Houses.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Cities");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "1",
+                            Name = "Sofia"
+                        },
+                        new
+                        {
+                            Id = "2",
+                            Name = "Plovdiv"
+                        },
+                        new
+                        {
+                            Id = "3",
+                            Name = "Varna"
+                        },
+                        new
+                        {
+                            Id = "4",
+                            Name = "Burgas"
+                        },
+                        new
+                        {
+                            Id = "5",
+                            Name = "Stara Zagora"
+                        },
+                        new
+                        {
+                            Id = "6",
+                            Name = "Nesebar"
+                        },
+                        new
+                        {
+                            Id = "7",
+                            Name = "Bansko"
+                        },
+                        new
+                        {
+                            Id = "8",
+                            Name = "Veliko Tarnovo"
+                        },
+                        new
+                        {
+                            Id = "9",
+                            Name = "Smolyan"
+                        },
+                        new
+                        {
+                            Id = "10",
+                            Name = "Blagoevgrad"
+                        },
+                        new
+                        {
+                            Id = "11",
+                            Name = "Ruse"
+                        },
+                        new
+                        {
+                            Id = "12",
+                            Name = "Vratza"
+                        },
+                        new
+                        {
+                            Id = "13",
+                            Name = "Kuklen"
+                        },
+                        new
+                        {
+                            Id = "14",
+                            Name = "Asenovgrad"
+                        },
+                        new
+                        {
+                            Id = "15",
+                            Name = "Velingrad"
+                        },
+                        new
+                        {
+                            Id = "16",
+                            Name = "Koprivshtitza"
+                        },
+                        new
+                        {
+                            Id = "17",
+                            Name = "Gabrovo"
+                        },
+                        new
+                        {
+                            Id = "18",
+                            Name = "Sozopol"
+                        });
                 });
 
             modelBuilder.Entity("Houses.Infrastructure.Data.Entities.Image", b =>
@@ -72,17 +164,35 @@ namespace Houses.Infrastructure.Migrations
                     b.ToTable("Images");
                 });
 
+            modelBuilder.Entity("Houses.Infrastructure.Data.Entities.Neighborhood", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("CityId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CityId");
+
+                    b.ToTable("Neighborhoods");
+                });
+
             modelBuilder.Entity("Houses.Infrastructure.Data.Entities.Post", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("ApplicationUserId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("AuthorId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(60)");
 
                     b.Property<string>("Content")
                         .IsRequired()
@@ -98,10 +208,7 @@ namespace Houses.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ApplicationUserId");
-
-                    b.HasIndex("AuthorId")
-                        .IsUnique();
+                    b.HasIndex("AuthorId");
 
                     b.HasIndex("PropertyId");
 
@@ -137,7 +244,7 @@ namespace Houses.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("OwnerId")
+                    b.Property<string>("NeighborhoodId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
@@ -163,7 +270,7 @@ namespace Houses.Infrastructure.Migrations
 
                     b.HasIndex("ImageId");
 
-                    b.HasIndex("OwnerId");
+                    b.HasIndex("NeighborhoodId");
 
                     b.HasIndex("PropertyTypeId");
 
@@ -183,12 +290,45 @@ namespace Houses.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("PropertyTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "1",
+                            Title = "Houses"
+                        },
+                        new
+                        {
+                            Id = "2",
+                            Title = "Apartments"
+                        },
+                        new
+                        {
+                            Id = "3",
+                            Title = "Villas"
+                        },
+                        new
+                        {
+                            Id = "4",
+                            Title = "Offices"
+                        },
+                        new
+                        {
+                            Id = "5",
+                            Title = "Shops"
+                        },
+                        new
+                        {
+                            Id = "6",
+                            Title = "Hotels"
+                        });
                 });
 
             modelBuilder.Entity("Houses.Infrastructure.Data.Identity.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(60)
+                        .HasColumnType("nvarchar(60)");
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
@@ -198,7 +338,6 @@ namespace Houses.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
-                        .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
@@ -252,7 +391,8 @@ namespace Houses.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("Email")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[Email] IS NOT NULL");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -335,7 +475,7 @@ namespace Houses.Infrastructure.Migrations
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(60)");
 
                     b.HasKey("Id");
 
@@ -359,7 +499,7 @@ namespace Houses.Infrastructure.Migrations
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(60)");
 
                     b.HasKey("LoginProvider", "ProviderKey");
 
@@ -371,7 +511,7 @@ namespace Houses.Infrastructure.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
                 {
                     b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(60)");
 
                     b.Property<string>("RoleId")
                         .HasColumnType("nvarchar(450)");
@@ -386,7 +526,7 @@ namespace Houses.Infrastructure.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
                     b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(60)");
 
                     b.Property<string>("LoginProvider")
                         .HasMaxLength(128)
@@ -423,15 +563,22 @@ namespace Houses.Infrastructure.Migrations
                     b.Navigation("Property");
                 });
 
+            modelBuilder.Entity("Houses.Infrastructure.Data.Entities.Neighborhood", b =>
+                {
+                    b.HasOne("Houses.Infrastructure.Data.Entities.City", "City")
+                        .WithMany("Neighborhoods")
+                        .HasForeignKey("CityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("City");
+                });
+
             modelBuilder.Entity("Houses.Infrastructure.Data.Entities.Post", b =>
                 {
-                    b.HasOne("Houses.Infrastructure.Data.Identity.ApplicationUser", null)
-                        .WithMany("Posts")
-                        .HasForeignKey("ApplicationUserId");
-
                     b.HasOne("Houses.Infrastructure.Data.Identity.ApplicationUser", "Author")
-                        .WithOne("PostId")
-                        .HasForeignKey("Houses.Infrastructure.Data.Entities.Post", "AuthorId")
+                        .WithMany("Posts")
+                        .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.ClientNoAction)
                         .IsRequired();
 
@@ -460,9 +607,9 @@ namespace Houses.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Houses.Infrastructure.Data.Identity.ApplicationUser", "Owner")
+                    b.HasOne("Houses.Infrastructure.Data.Entities.Neighborhood", "Neighborhood")
                         .WithMany()
-                        .HasForeignKey("OwnerId")
+                        .HasForeignKey("NeighborhoodId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -476,7 +623,7 @@ namespace Houses.Infrastructure.Migrations
 
                     b.Navigation("Images");
 
-                    b.Navigation("Owner");
+                    b.Navigation("Neighborhood");
 
                     b.Navigation("PropertyType");
                 });
@@ -541,6 +688,11 @@ namespace Houses.Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Houses.Infrastructure.Data.Entities.City", b =>
+                {
+                    b.Navigation("Neighborhoods");
+                });
+
             modelBuilder.Entity("Houses.Infrastructure.Data.Entities.Property", b =>
                 {
                     b.Navigation("ApplicationUserProperties");
@@ -554,8 +706,6 @@ namespace Houses.Infrastructure.Migrations
             modelBuilder.Entity("Houses.Infrastructure.Data.Identity.ApplicationUser", b =>
                 {
                     b.Navigation("ApplicationUserProperties");
-
-                    b.Navigation("PostId");
 
                     b.Navigation("Posts");
                 });

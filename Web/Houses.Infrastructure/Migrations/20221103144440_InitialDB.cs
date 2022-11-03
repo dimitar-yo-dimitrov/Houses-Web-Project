@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Houses.Infrastructure.Migrations
 {
-    public partial class InitialMigration : Migration
+    public partial class InitialDB : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -82,16 +82,35 @@ namespace Houses.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "AspNetUsers",
+                name: "Neighborhoods",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    CityId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Neighborhoods", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Neighborhoods_Cities_CityId",
+                        column: x => x.CityId,
+                        principalTable: "Cities",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUsers",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(60)", maxLength: 60, nullable: false),
                     FirstName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     LastName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     ProfilePicId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedEmail = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     EmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
                     PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -115,12 +134,58 @@ namespace Houses.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Properties",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", maxLength: 5000, nullable: false),
+                    Address = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Floor = table.Column<int>(type: "int", nullable: true),
+                    SquareMeters = table.Column<int>(type: "int", nullable: true),
+                    Elevator = table.Column<bool>(type: "bit", nullable: false),
+                    PropertyTypeId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    CityId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    NeighborhoodId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ImageId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Properties", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Properties_Cities_CityId",
+                        column: x => x.CityId,
+                        principalTable: "Cities",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Properties_Images_ImageId",
+                        column: x => x.ImageId,
+                        principalTable: "Images",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Properties_Neighborhoods_NeighborhoodId",
+                        column: x => x.NeighborhoodId,
+                        principalTable: "Neighborhoods",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Properties_PropertyTypes_PropertyTypeId",
+                        column: x => x.PropertyTypeId,
+                        principalTable: "PropertyTypes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AspNetUserClaims",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(60)", nullable: false),
                     ClaimType = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
@@ -142,7 +207,7 @@ namespace Houses.Infrastructure.Migrations
                     LoginProvider = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
                     ProviderKey = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
                     ProviderDisplayName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    UserId = table.Column<string>(type: "nvarchar(60)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -159,7 +224,7 @@ namespace Houses.Infrastructure.Migrations
                 name: "AspNetUserRoles",
                 columns: table => new
                 {
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(60)", nullable: false),
                     RoleId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
@@ -183,7 +248,7 @@ namespace Houses.Infrastructure.Migrations
                 name: "AspNetUserTokens",
                 columns: table => new
                 {
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(60)", nullable: false),
                     LoginProvider = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
                     Name = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
                     Value = table.Column<string>(type: "nvarchar(max)", nullable: true)
@@ -200,57 +265,11 @@ namespace Houses.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Properties",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Title = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Price = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", maxLength: 5000, nullable: false),
-                    Address = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Floor = table.Column<int>(type: "int", nullable: true),
-                    SquareMeters = table.Column<int>(type: "int", nullable: true),
-                    Elevator = table.Column<bool>(type: "bit", nullable: false),
-                    PropertyTypeId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    OwnerId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    CityId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ImageId = table.Column<string>(type: "nvarchar(450)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Properties", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Properties_AspNetUsers_OwnerId",
-                        column: x => x.OwnerId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Properties_Cities_CityId",
-                        column: x => x.CityId,
-                        principalTable: "Cities",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Properties_Images_ImageId",
-                        column: x => x.ImageId,
-                        principalTable: "Images",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Properties_PropertyTypes_PropertyTypeId",
-                        column: x => x.PropertyTypeId,
-                        principalTable: "PropertyTypes",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "ApplicationUserProperties",
                 columns: table => new
                 {
                     ApplicationUserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    PropertyId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    PropertyId = table.Column<string>(type: "nvarchar(60)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -275,18 +294,12 @@ namespace Houses.Infrastructure.Migrations
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Content = table.Column<string>(type: "nvarchar(2000)", maxLength: 2000, nullable: false),
-                    AuthorId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    PropertyId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ApplicationUserId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                    AuthorId = table.Column<string>(type: "nvarchar(60)", nullable: false),
+                    PropertyId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Posts", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Posts_AspNetUsers_ApplicationUserId",
-                        column: x => x.ApplicationUserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Posts_AspNetUsers_AuthorId",
                         column: x => x.AuthorId,
@@ -298,6 +311,44 @@ namespace Houses.Infrastructure.Migrations
                         principalTable: "Properties",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.InsertData(
+                table: "Cities",
+                columns: new[] { "Id", "Name" },
+                values: new object[,]
+                {
+                    { "1", "Sofia" },
+                    { "10", "Blagoevgrad" },
+                    { "11", "Ruse" },
+                    { "12", "Vratza" },
+                    { "13", "Kuklen" },
+                    { "14", "Asenovgrad" },
+                    { "15", "Velingrad" },
+                    { "16", "Koprivshtitza" },
+                    { "17", "Gabrovo" },
+                    { "18", "Sozopol" },
+                    { "2", "Plovdiv" },
+                    { "3", "Varna" },
+                    { "4", "Burgas" },
+                    { "5", "Stara Zagora" },
+                    { "6", "Nesebar" },
+                    { "7", "Bansko" },
+                    { "8", "Veliko Tarnovo" },
+                    { "9", "Smolyan" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "PropertyTypes",
+                columns: new[] { "Id", "Title" },
+                values: new object[,]
+                {
+                    { "1", "Houses" },
+                    { "2", "Apartments" },
+                    { "3", "Villas" },
+                    { "4", "Offices" },
+                    { "5", "Shops" },
+                    { "6", "Hotels" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -341,7 +392,8 @@ namespace Houses.Infrastructure.Migrations
                 name: "IX_AspNetUsers_Email",
                 table: "AspNetUsers",
                 column: "Email",
-                unique: true);
+                unique: true,
+                filter: "[Email] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetUsers_ProfilePicId",
@@ -356,15 +408,14 @@ namespace Houses.Infrastructure.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Posts_ApplicationUserId",
-                table: "Posts",
-                column: "ApplicationUserId");
+                name: "IX_Neighborhoods_CityId",
+                table: "Neighborhoods",
+                column: "CityId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Posts_AuthorId",
                 table: "Posts",
-                column: "AuthorId",
-                unique: true);
+                column: "AuthorId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Posts_PropertyId",
@@ -382,9 +433,9 @@ namespace Houses.Infrastructure.Migrations
                 column: "ImageId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Properties_OwnerId",
+                name: "IX_Properties_NeighborhoodId",
                 table: "Properties",
-                column: "OwnerId");
+                column: "NeighborhoodId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Properties_PropertyTypeId",
@@ -419,19 +470,22 @@ namespace Houses.Infrastructure.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "Properties");
-
-            migrationBuilder.DropTable(
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
-                name: "Cities");
+                name: "Properties");
+
+            migrationBuilder.DropTable(
+                name: "Images");
+
+            migrationBuilder.DropTable(
+                name: "Neighborhoods");
 
             migrationBuilder.DropTable(
                 name: "PropertyTypes");
 
             migrationBuilder.DropTable(
-                name: "Images");
+                name: "Cities");
         }
     }
 }

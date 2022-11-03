@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using Houses.Infrastructure.Data.Identity;
-
 namespace Houses.Infrastructure.Data.Entities
 {
     public class ApplicationUserProperty

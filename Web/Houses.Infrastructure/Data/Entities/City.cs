@@ -8,6 +8,7 @@ namespace Houses.Infrastructure.Data.Entities
         public City()
         {
             Id = new Guid().ToString();
+            Neighborhoods = new HashSet<Neighborhood>();
         }
 
         [Key]
@@ -16,5 +17,6 @@ namespace Houses.Infrastructure.Data.Entities
         [MaxLength(CityMaxName)]
         public string Name { get; set; } = null!;
 
+        public virtual ICollection<Neighborhood> Neighborhoods { get; set; }
     }
 }

@@ -23,8 +23,8 @@ namespace Houses.Infrastructure.Data
         {
             modelBuilder.ApplyConfiguration(new ApplicationUserConfiguration());
             modelBuilder.ApplyConfiguration(new ApplicationUserPropertyConfiguration());
-            // modelBuilder.ApplyConfiguration(new CityConfiguration());
-            // modelBuilder.ApplyConfiguration(new PropertyTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new CityConfiguration());
+            modelBuilder.ApplyConfiguration(new PropertyTypeConfiguration());
 
             modelBuilder.Entity<ApplicationUserProperty>()
                 .HasOne(aup => aup.ApplicationUser)
@@ -34,11 +34,13 @@ namespace Houses.Infrastructure.Data
 
             modelBuilder.Entity<Post>()
                 .HasOne(p => p.Author)
-                .WithOne(au => au.PostId)
+                .WithMany(au => au.Posts)
                 .OnDelete(DeleteBehavior.ClientNoAction);
 
             base.OnModelCreating(modelBuilder);
         }
+
+        public virtual DbSet<ApplicationUserProperty> ApplicationUserProperties { get; set; } = null!;
 
         public virtual DbSet<City> Cities { get; set; } = null!;
 
@@ -46,11 +48,10 @@ namespace Houses.Infrastructure.Data
 
         public virtual DbSet<Image> Images { get; set; } = null!;
 
+        public virtual DbSet<Neighborhood> Neighborhoods { get; set; } = null!;
 
         public virtual DbSet<Property> Properties { get; set; } = null!;
 
         public virtual DbSet<PropertyType> PropertyTypes { get; set; } = null!;
-
-        public virtual DbSet<ApplicationUserProperty> ApplicationUserProperties { get; set; } = null!;
     }
 }
