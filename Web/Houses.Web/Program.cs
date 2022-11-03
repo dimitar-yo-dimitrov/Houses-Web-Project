@@ -1,39 +1,35 @@
 using System.Globalization;
-using Houses.Core.Services;
-using Houses.Core.Services.Contracts;
 using Houses.Infrastructure.Data;
 using Houses.Infrastructure.Data.Identity;
+using Houses.Web.Extensions;
 using Houses.Web.ModelBinders;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc.Razor;
-using Microsoft.EntityFrameworkCore;
 using static Houses.Infrastructure.Constants.ValidationConstants.FormattingConstant;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString));
-builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+builder.Services.AddApplicationDbContexts(builder.Configuration);
 
 builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
     {
-        options.SignIn.RequireConfirmedAccount = false;
+        options.SignIn.RequireConfirmedAccount = true;
         options.Password.RequiredLength = 6;
     })
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
-builder.Services.AddScoped<IPropertyService, PropertyService>();
-
-builder.Services.ConfigureApplicationCookie(options =>
+builder.Services.Configure<CookiePolicyOptions>(options =>
 {
-    options.LoginPath = "/User/Login";
+    options.CheckConsentNeeded = context => true;
+    options.MinimumSameSitePolicy = SameSiteMode.None;
 });
 
-builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+builder.Services.AddApplicationServices();
+
+//builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 builder.Services.Configure<RequestLocalizationOptions>(options =>
 {
-    var supportedLanguages = new CultureInfo[]
+    var supportedLanguages = new[]
     {
         new CultureInfo("bg"),
         new CultureInfo("en")
@@ -66,6 +62,7 @@ else
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+app.UseCookiePolicy();
 
 app.UseRouting();
 app.UseRequestLocalization();

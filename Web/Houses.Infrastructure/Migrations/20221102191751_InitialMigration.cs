@@ -256,11 +256,10 @@ namespace Houses.Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_ApplicationUserProperties", x => new { x.ApplicationUserId, x.PropertyId });
                     table.ForeignKey(
-                        name: "FK_ApplicationUserProperties_AspNetUsers_ApplicationUserId",
-                        column: x => x.ApplicationUserId,
+                        name: "FK_ApplicationUserProperties_AspNetUsers_PropertyId",
+                        column: x => x.PropertyId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_ApplicationUserProperties_Properties_PropertyId",
                         column: x => x.PropertyId,

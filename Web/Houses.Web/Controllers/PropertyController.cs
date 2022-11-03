@@ -49,7 +49,7 @@ namespace Houses.Web.Controllers
             {
                 await _propertyService.AddPropertyAsync(model);
 
-                return RedirectToAction(nameof(All));
+                return RedirectToAction(nameof(Mine));
             }
             catch (Exception)
             {
@@ -65,9 +65,9 @@ namespace Houses.Web.Controllers
                 .FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
 
             await _propertyService
-                .AddPropertyToCollectionAsync(propertyId, userId!);
+                .AddPropertyToMyCollectionAsync(propertyId, userId!);
 
-            return RedirectToAction(nameof(All));
+            return RedirectToAction(nameof(Mine));
         }
 
 

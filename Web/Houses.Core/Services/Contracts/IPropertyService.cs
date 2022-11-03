@@ -11,7 +11,7 @@ namespace Houses.Core.Services.Contracts
 
         Task AddPropertyAsync(AddPropertyViewModel model);
 
-        Task AddPropertyToCollectionAsync(string propertyId, string applicationUserId);
+        Task AddPropertyToMyCollectionAsync(string propertyId, string applicationUserId);
 
         Task<List<AllPropertyViewModel>> GetMyPropertyAsync(string userId);
 

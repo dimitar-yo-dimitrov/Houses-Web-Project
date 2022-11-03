@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Houses.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20221102173457_InitialMigration")]
+    [Migration("20221102191751_InitialMigration")]
     partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -406,16 +406,16 @@ namespace Houses.Infrastructure.Migrations
 
             modelBuilder.Entity("Houses.Infrastructure.Data.Entities.ApplicationUserProperty", b =>
                 {
-                    b.HasOne("Houses.Infrastructure.Data.Identity.ApplicationUser", "ApplicationUser")
-                        .WithMany("ApplicationUserProperties")
-                        .HasForeignKey("ApplicationUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Houses.Infrastructure.Data.Entities.Property", "Property")
                         .WithMany("ApplicationUserProperties")
                         .HasForeignKey("PropertyId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Houses.Infrastructure.Data.Identity.ApplicationUser", "ApplicationUser")
+                        .WithMany("ApplicationUserProperties")
+                        .HasForeignKey("PropertyId")
+                        .OnDelete(DeleteBehavior.ClientNoAction)
                         .IsRequired();
 
                     b.Navigation("ApplicationUser");

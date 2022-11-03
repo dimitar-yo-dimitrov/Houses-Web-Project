@@ -404,16 +404,16 @@ namespace Houses.Infrastructure.Migrations
 
             modelBuilder.Entity("Houses.Infrastructure.Data.Entities.ApplicationUserProperty", b =>
                 {
-                    b.HasOne("Houses.Infrastructure.Data.Identity.ApplicationUser", "ApplicationUser")
-                        .WithMany("ApplicationUserProperties")
-                        .HasForeignKey("ApplicationUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Houses.Infrastructure.Data.Entities.Property", "Property")
                         .WithMany("ApplicationUserProperties")
                         .HasForeignKey("PropertyId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Houses.Infrastructure.Data.Identity.ApplicationUser", "ApplicationUser")
+                        .WithMany("ApplicationUserProperties")
+                        .HasForeignKey("PropertyId")
+                        .OnDelete(DeleteBehavior.ClientNoAction)
                         .IsRequired();
 
                     b.Navigation("ApplicationUser");

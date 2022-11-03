@@ -1,23 +1,24 @@
 ﻿using Houses.Core.Services.Contracts;
 using Houses.Core.ViewModels;
-using Houses.Infrastructure.Data;
 using Houses.Infrastructure.Data.Entities;
+using Houses.Infrastructure.Data.Identity;
+using Houses.Infrastructure.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace Houses.Core.Services
 {
     public class PropertyService : IPropertyService
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IApplicationDbRepository _repository;
 
-        public PropertyService(ApplicationDbContext context)
+        public PropertyService(IApplicationDbRepository repository)
         {
-            _context = context;
+            _repository = repository;
         }
 
         public async Task<IEnumerable<AllPropertyViewModel>> GetAllAsync()
         {
-            return await _context.Properties
+            return await _repository.AllReadonly<Property>()
                 .Select(p => new AllPropertyViewModel
                 {
                     Id = p.Id,
@@ -36,11 +37,11 @@ namespace Houses.Core.Services
         }
 
         public async Task<IEnumerable<PropertyType>> GetPropertyTypesAsync()
-            => await _context.PropertyTypes.ToListAsync();
+            => await _repository.AllReadonly<PropertyType>().ToListAsync();
 
         public async Task AddPropertyAsync(AddPropertyViewModel model)
         {
-            var entity = new Property
+            var property = new Property
             {
                 Title = model.Title,
                 Price = model.Price,
@@ -54,22 +55,21 @@ namespace Houses.Core.Services
                 City = model.City,
             };
 
-            await _context.Properties.AddAsync(entity);
-            await _context.SaveChangesAsync();
+            await _repository.AddAsync(property);
+            await _repository.SaveChangesAsync();
         }
 
-        public async Task AddPropertyToCollectionAsync(string propertyId, string applicationUserId)
+        public async Task AddPropertyToMyCollectionAsync(string propertyId, string applicationUserId)
         {
-            var user = await _context.Users
-                .Where(u => u.Id == applicationUserId)
-                .FirstOrDefaultAsync();
+            var user = await _repository.All<ApplicationUser>()
+                .FirstOrDefaultAsync(u => u.Id == applicationUserId);
 
             if (user == null)
             {
                 throw new ArgumentException("Invalid user ID");
             }
 
-            var property = await _context.Properties
+            var property = await _repository.All<Property>()
                 .FirstOrDefaultAsync(u => u.Id == propertyId);
 
             if (property == null)
@@ -87,13 +87,13 @@ namespace Houses.Core.Services
                     ApplicationUser = user
                 });
 
-                await _context.SaveChangesAsync();
+                await _repository.SaveChangesAsync();
             }
         }
 
         public async Task<List<AllPropertyViewModel>> GetMyPropertyAsync(string userId)
         {
-            return await _context.Properties
+            return await _repository.All<Property>()
                 .Where(p => p.ApplicationUserProperties.Any(up => up.ApplicationUserId == userId))
                 .Select(p => new AllPropertyViewModel()
                 {
@@ -114,9 +114,8 @@ namespace Houses.Core.Services
 
         public async Task RemovePropertyFromCollectionAsync(string propertyId, string applicationUserId)
         {
-            var user = await _context.Users
-                .Where(u => u.Id == applicationUserId)
-                .FirstOrDefaultAsync();
+            var user = await _repository.All<ApplicationUser>()
+                .FirstOrDefaultAsync(u => u.Id == applicationUserId);
 
             if (user == null)
             {
@@ -130,7 +129,7 @@ namespace Houses.Core.Services
             {
                 user.ApplicationUserProperties.Remove(property);
 
-                await _context.SaveChangesAsync();
+                await _repository.SaveChangesAsync();
             }
         }
     }

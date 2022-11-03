@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Houses.Infrastructure.Data.Configuration
 {
-    public class ApplicationUserPropertyConfiguration : IEntityTypeConfiguration<ApplicationUserProperty>
+    internal class ApplicationUserPropertyConfiguration : IEntityTypeConfiguration<ApplicationUserProperty>
     {
         public void Configure(EntityTypeBuilder<ApplicationUserProperty> builder)
         {

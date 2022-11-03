@@ -5,7 +5,7 @@ using static Houses.Infrastructure.Constants.ValidationConstants.User;
 
 namespace Houses.Infrastructure.Data.Configuration
 {
-    public class ApplicationUserConfiguration : IEntityTypeConfiguration<ApplicationUser>
+    internal class ApplicationUserConfiguration : IEntityTypeConfiguration<ApplicationUser>
     {
         public void Configure(EntityTypeBuilder<ApplicationUser> builder)
         {

@@ -4,13 +4,12 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Houses.Infrastructure.Data.Configuration
 {
-    public class CityConfiguration : IEntityTypeConfiguration<City>
+    internal class CityConfiguration : IEntityTypeConfiguration<City>
     {
         public void Configure(EntityTypeBuilder<City> builder)
         {
             //TODO: Seed
 
-            throw new NotImplementedException();
         }
     }
 }

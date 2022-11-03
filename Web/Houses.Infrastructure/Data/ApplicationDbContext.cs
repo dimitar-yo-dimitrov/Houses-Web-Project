@@ -13,6 +13,33 @@ namespace Houses.Infrastructure.Data
         {
         }
 
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder
+                .UseLazyLoadingProxies();
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.ApplyConfiguration(new ApplicationUserConfiguration());
+            modelBuilder.ApplyConfiguration(new ApplicationUserPropertyConfiguration());
+            // modelBuilder.ApplyConfiguration(new CityConfiguration());
+            // modelBuilder.ApplyConfiguration(new PropertyTypeConfiguration());
+
+            modelBuilder.Entity<ApplicationUserProperty>()
+                .HasOne(aup => aup.ApplicationUser)
+                .WithMany(p => p.ApplicationUserProperties)
+                .HasForeignKey(aup => aup.PropertyId)
+                .OnDelete(DeleteBehavior.ClientNoAction);
+
+            modelBuilder.Entity<Post>()
+                .HasOne(p => p.Author)
+                .WithOne(au => au.PostId)
+                .OnDelete(DeleteBehavior.ClientNoAction);
+
+            base.OnModelCreating(modelBuilder);
+        }
+
         public virtual DbSet<City> Cities { get; set; } = null!;
 
         public virtual DbSet<Post> Posts { get; set; } = null!;
@@ -25,32 +52,5 @@ namespace Houses.Infrastructure.Data
         public virtual DbSet<PropertyType> PropertyTypes { get; set; } = null!;
 
         public virtual DbSet<ApplicationUserProperty> ApplicationUserProperties { get; set; } = null!;
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder
-                .UseLazyLoadingProxies();
-        }
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            //TODO: Seed
-
-            modelBuilder.ApplyConfiguration(new ApplicationUserConfiguration());
-            modelBuilder.ApplyConfiguration(new ApplicationUserPropertyConfiguration());
-
-            //modelBuilder.Entity<Neighborhood>()
-            //    .HasOne(n => n.City)
-            //    .WithMany()
-            //    .HasForeignKey(n => n.CityId)
-            //    .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Post>()
-                .HasOne(p => p.Author)
-                .WithOne(au => au.PostId)
-                .OnDelete(DeleteBehavior.ClientNoAction);
-
-            base.OnModelCreating(modelBuilder);
-        }
     }
 }
