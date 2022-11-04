@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Houses.Infrastructure.Data.Identity;
 using Microsoft.EntityFrameworkCore;
 using static Houses.Infrastructure.Constants.ValidationConstants.Property;
 
@@ -9,8 +10,9 @@ namespace Houses.Infrastructure.Data.Entities
     {
         public Property()
         {
-            ApplicationUserProperties = new HashSet<ApplicationUserProperty>();
             Id = Guid.NewGuid().ToString();
+            ApplicationUserProperties = new HashSet<ApplicationUserProperty>();
+            Images = new HashSet<Image>();
         }
 
         [Key]
@@ -40,22 +42,26 @@ namespace Houses.Infrastructure.Data.Entities
 
         public bool Elevator { get; set; }
 
+        public bool IsActive { set; get; } = true;
+
+        public string? ImageUrlId { get; set; }
+
+        [ForeignKey(nameof(ImageUrlId))]
+        public virtual Image? ImageUrl { get; set; }
+
         [ForeignKey(nameof(PropertyType))]
-        public string PropertyTypeId { get; set; }
+        public string PropertyTypeId { get; set; } = null!;
         public virtual PropertyType PropertyType { get; set; } = null!;
+
+        [ForeignKey(nameof(Owner))]
+        public string OwnerId { get; set; } = null!;
+        public virtual ApplicationUser Owner { get; set; } = null!;
 
         [ForeignKey(nameof(City))]
         public string CityId { get; set; } = null!;
         public virtual City City { get; set; } = null!;
 
-        public string? NeighborhoodId { get; set; }
-
-        [ForeignKey(nameof(NeighborhoodId))]
-        public virtual Neighborhood Neighborhood { get; set; } = null!;
-
-        [ForeignKey(nameof(Images))]
-        public string ImageId { get; set; }
-        public virtual Image Images { get; set; } = null!;
+        public virtual ICollection<Image> Images { get; set; }
 
         public virtual ICollection<ApplicationUserProperty> ApplicationUserProperties { get; set; }
     }

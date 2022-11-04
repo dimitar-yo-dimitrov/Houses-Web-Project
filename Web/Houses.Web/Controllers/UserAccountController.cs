@@ -3,6 +3,7 @@ using Houses.Infrastructure.Data.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using static Houses.Infrastructure.Constants.ValidationConstants.ClaimsConstants;
 
 namespace Houses.Web.Controllers
 {
@@ -44,16 +45,22 @@ namespace Houses.Web.Controllers
 
             var user = new ApplicationUser
             {
-                FirstName = model.FirstName,
-                LastName = model.LastName,
                 Email = model.Email,
+                FirstName = model.FirstName,
+                EmailConfirmed = true,
+                LastName = model.LastName,
+                UserName = model.Email
             };
 
             var result = await _userManager.CreateAsync(user, model.Password);
 
+            await _userManager.AddClaimAsync(user, new System.Security.Claims.Claim(FirstName, user.FirstName ?? user.Email));
+
             if (result.Succeeded)
             {
-                return RedirectToAction(nameof(Login));
+                await _signInManager.SignInAsync(user, isPersistent: false);
+
+                return RedirectToAction("All", "Property");
             }
 
             foreach (var error in result.Errors)
@@ -70,7 +77,7 @@ namespace Houses.Web.Controllers
         {
             if (User.Identity?.IsAuthenticated ?? false)
             {
-                return RedirectToAction("All", "Property");
+                return RedirectToAction("Mine", "Property");
             }
 
             var model = new LoginViewModel();
@@ -95,7 +102,7 @@ namespace Houses.Web.Controllers
 
                 if (result.Succeeded)
                 {
-                    return RedirectToAction("All", "Property");
+                    return RedirectToAction("Mine", "Property");
                 }
             }
 

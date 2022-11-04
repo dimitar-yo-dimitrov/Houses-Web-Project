@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Houses.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20221103144440_InitialDB")]
-    partial class InitialDB
+    [Migration("20221104135820_ChangedImageUrlIdToBeANull")]
+    partial class ChangedImageUrlIdToBeANull
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -152,14 +152,17 @@ namespace Houses.Infrastructure.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("PicturePublicId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PictureUrl")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("PropertyId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("PropertyId");
 
                     b.ToTable("Images");
                 });
@@ -240,13 +243,15 @@ namespace Houses.Infrastructure.Migrations
                     b.Property<int?>("Floor")
                         .HasColumnType("int");
 
-                    b.Property<string>("ImageId")
-                        .IsRequired()
+                    b.Property<string>("ImageUrlId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("NeighborhoodId")
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("OwnerId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(60)");
 
                     b.Property<decimal>("Price")
                         .HasPrecision(18, 2)
@@ -268,9 +273,9 @@ namespace Houses.Infrastructure.Migrations
 
                     b.HasIndex("CityId");
 
-                    b.HasIndex("ImageId");
+                    b.HasIndex("ImageUrlId");
 
-                    b.HasIndex("NeighborhoodId");
+                    b.HasIndex("OwnerId");
 
                     b.HasIndex("PropertyTypeId");
 
@@ -563,6 +568,13 @@ namespace Houses.Infrastructure.Migrations
                     b.Navigation("Property");
                 });
 
+            modelBuilder.Entity("Houses.Infrastructure.Data.Entities.Image", b =>
+                {
+                    b.HasOne("Houses.Infrastructure.Data.Entities.Property", null)
+                        .WithMany("Images")
+                        .HasForeignKey("PropertyId");
+                });
+
             modelBuilder.Entity("Houses.Infrastructure.Data.Entities.Neighborhood", b =>
                 {
                     b.HasOne("Houses.Infrastructure.Data.Entities.City", "City")
@@ -601,15 +613,13 @@ namespace Houses.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Houses.Infrastructure.Data.Entities.Image", "Images")
+                    b.HasOne("Houses.Infrastructure.Data.Entities.Image", "ImageUrl")
                         .WithMany()
-                        .HasForeignKey("ImageId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ImageUrlId");
 
-                    b.HasOne("Houses.Infrastructure.Data.Entities.Neighborhood", "Neighborhood")
+                    b.HasOne("Houses.Infrastructure.Data.Identity.ApplicationUser", "Owner")
                         .WithMany()
-                        .HasForeignKey("NeighborhoodId")
+                        .HasForeignKey("OwnerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -621,9 +631,9 @@ namespace Houses.Infrastructure.Migrations
 
                     b.Navigation("City");
 
-                    b.Navigation("Images");
+                    b.Navigation("ImageUrl");
 
-                    b.Navigation("Neighborhood");
+                    b.Navigation("Owner");
 
                     b.Navigation("PropertyType");
                 });
@@ -696,6 +706,8 @@ namespace Houses.Infrastructure.Migrations
             modelBuilder.Entity("Houses.Infrastructure.Data.Entities.Property", b =>
                 {
                     b.Navigation("ApplicationUserProperties");
+
+                    b.Navigation("Images");
                 });
 
             modelBuilder.Entity("Houses.Infrastructure.Data.Entities.PropertyType", b =>

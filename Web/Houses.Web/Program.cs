@@ -13,7 +13,7 @@ builder.Services.AddApplicationDbContexts(builder.Configuration);
 
 builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
     {
-        options.SignIn.RequireConfirmedAccount = true;
+        options.SignIn.RequireConfirmedAccount = false;
         options.Password.RequiredLength = 6;
     })
     .AddEntityFrameworkStores<ApplicationDbContext>();
@@ -26,7 +26,6 @@ builder.Services.Configure<CookiePolicyOptions>(options =>
 
 builder.Services.AddApplicationServices();
 
-//builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 builder.Services.Configure<RequestLocalizationOptions>(options =>
 {
     var supportedLanguages = new[]
@@ -35,7 +34,7 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
         new CultureInfo("en")
     };
 
-    options.DefaultRequestCulture = new RequestCulture("en");
+    options.DefaultRequestCulture = new RequestCulture("bg");
     options.SupportedCultures = supportedLanguages;
     options.SupportedUICultures = supportedLanguages;
 });

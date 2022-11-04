@@ -22,11 +22,12 @@ namespace Houses.Core.ViewModels
         public string Email { get; set; } = null!;
 
         [Required]
-        [DataType(DataType.Password)]
         [Compare(nameof(ConfirmPassword))]
+        [DataType(DataType.Password)]
         public string Password { get; set; } = null!;
 
         [Required]
+        [DataType(DataType.Password)]
         public string ConfirmPassword { get; set; } = null!;
 
         [Url]

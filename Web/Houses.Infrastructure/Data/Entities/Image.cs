@@ -12,8 +12,8 @@ namespace Houses.Infrastructure.Data.Entities
         [Key]
         public string Id { get; set; }
 
-        public string PicturePublicId { get; set; } = null!;
+        public string? PicturePublicId { get; set; }
 
-        public string PictureUrl { get; set; } = null!;
+        public string? PictureUrl { get; set; }
     }
 }

@@ -42,16 +42,16 @@ namespace Houses.Infrastructure.Data
 
         public virtual DbSet<ApplicationUserProperty> ApplicationUserProperties { get; set; } = null!;
 
-        public virtual DbSet<City> Cities { get; set; } = null!;
+        public virtual DbSet<City> Cities { get; init; } = null!;
 
-        public virtual DbSet<Post> Posts { get; set; } = null!;
+        public virtual DbSet<Post> Posts { get; init; } = null!;
 
-        public virtual DbSet<Image> Images { get; set; } = null!;
+        public virtual DbSet<Image> Images { get; init; } = null!;
 
-        public virtual DbSet<Neighborhood> Neighborhoods { get; set; } = null!;
+        public virtual DbSet<Neighborhood> Neighborhoods { get; init; } = null!;
 
-        public virtual DbSet<Property> Properties { get; set; } = null!;
+        public virtual DbSet<Property> Properties { get; init; } = null!;
 
-        public virtual DbSet<PropertyType> PropertyTypes { get; set; } = null!;
+        public virtual DbSet<PropertyType> PropertyTypes { get; init; } = null!;
     }
 }

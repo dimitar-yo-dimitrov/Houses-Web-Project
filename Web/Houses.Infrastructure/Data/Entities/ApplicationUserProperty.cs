@@ -4,14 +4,12 @@ namespace Houses.Infrastructure.Data.Entities
 {
     public class ApplicationUserProperty
     {
+        [ForeignKey(nameof(ApplicationUser))]
         public string ApplicationUserId { get; set; } = null!;
-
-        [ForeignKey(nameof(ApplicationUserId))]
         public virtual ApplicationUser ApplicationUser { get; set; } = null!;
 
+        [ForeignKey(nameof(Property))]
         public string PropertyId { get; set; } = null!;
-
-        [ForeignKey(nameof(PropertyId))]
         public virtual Property Property { get; set; } = null!;
     }
 }

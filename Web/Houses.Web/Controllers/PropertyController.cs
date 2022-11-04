@@ -21,7 +21,7 @@ namespace Houses.Web.Controllers
         {
             var properties = await _propertyService.GetAllAsync();
 
-            //ViewData["Title"] = "All Properties";
+            ViewData["Title"] = "All Properties";
 
             return View(properties);
         }

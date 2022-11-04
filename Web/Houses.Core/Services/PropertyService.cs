@@ -18,7 +18,7 @@ namespace Houses.Core.Services
 
         public async Task<IEnumerable<PropertyViewModel>> GetAllAsync()
         {
-            return await _repository.AllReadonly<Property>()
+            return await _repository.AllReadonly<Property>(p => p.IsActive)
                 .Select(p => new PropertyViewModel
                 {
                     Id = p.Id,
@@ -29,9 +29,9 @@ namespace Houses.Core.Services
                     Floor = p.Floor,
                     SquareMeters = p.SquareMeters,
                     Elevator = p.Elevator,
-                    ImageUrl = p.Images,
                     PropertyType = p.PropertyType.Title,
-                    City = p.City.Name
+                    City = p.City.Name,
+                    ImageUrl = p.ImageUrl
                 })
                 .ToListAsync();
         }
@@ -50,9 +50,9 @@ namespace Houses.Core.Services
                 Floor = model.Floor,
                 SquareMeters = model.SquareMeters,
                 Elevator = model.Elevator,
-                Images = model.ImageUrl,
                 PropertyTypeId = model.PropertyTypeId,
-                City = model.City,
+                CityId = model.City,
+                OwnerId = model.OwnerId
             };
 
             await _repository.AddAsync(property);
@@ -105,9 +105,9 @@ namespace Houses.Core.Services
                     Floor = p.Floor,
                     SquareMeters = p.SquareMeters,
                     Elevator = p.Elevator,
-                    ImageUrl = p.Images,
                     PropertyType = p.PropertyType.Title,
-                    City = p.City.Name
+                    City = p.City.Name,
+                    ImageUrl = p.ImageUrl,
                 })
                 .ToListAsync();
         }
@@ -122,12 +122,12 @@ namespace Houses.Core.Services
                 throw new ArgumentException("Invalid user ID");
             }
 
-            var property = user.ApplicationUserProperties
-                .FirstOrDefault(p => p.PropertyId == propertyId);
+            var property = await _repository.All<Property>()
+                .FirstOrDefaultAsync(p => p.Id == propertyId);
 
             if (property != null)
             {
-                user.ApplicationUserProperties.Remove(property);
+                property.IsActive = false;
 
                 await _repository.SaveChangesAsync();
             }

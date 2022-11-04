@@ -69,5 +69,10 @@
         {
             public const string NormalDateFormat = "dd.MM.yyyy";
         }
+
+        public static class ClaimsConstants
+        {
+            public const string FirstName = "urn:softuni:webshop:firstName";
+        }
     }
 }
