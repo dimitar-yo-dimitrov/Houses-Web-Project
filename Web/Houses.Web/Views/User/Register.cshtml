@@ -1,4 +1,4 @@
-﻿@model Houses.Core.ViewModels.RegisterViewModel
+﻿@model RegisterViewModel
 
 @{
     ViewData["Title"] = "Register";
@@ -24,7 +24,7 @@
             </div>
             <div class="text-center mb-3">
                 <label asp-for="@Model.Email">Email</label>
-                <input class="form-control " autocomplete="email" aria-required="true" asp-for="@Model.Email" />
+                <input class="form-control " autocomplete="username" aria-required="true" asp-for="@Model.Email" />
                 <span asp-validation-for="@Model.Email" class="text-danger"></span>
             </div>
             <div class="text-center mb-3">
@@ -38,9 +38,9 @@
                 <span asp-validation-for="@Model.ConfirmPassword" class="text-danger"></span>
             </div>
             <div class="text-center mb-3">
-                <label asp-for="@Model.ProfilePic">Profile Picture</label>
-                <input class="form-control" aria-required="true" asp-for="@Model.ProfilePic" />
-                <span asp-validation-for="@Model.ProfilePic" class="text-danger"></span>
+                <label asp-for="@Model.ProfilePicture">Profile Picture</label>
+                <input class="form-control" aria-required="true" asp-for="@Model.ProfilePicture" />
+                <span asp-validation-for="@Model.ProfilePicture" class="text-danger"></span>
             </div>
             <div class="text-center">
                 <button id="registerSubmit" type="submit" class="btn btn-primary">Register</button>

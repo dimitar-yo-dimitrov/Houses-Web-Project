@@ -9,11 +9,13 @@ namespace Houses.Infrastructure.Data.Configuration
     {
         public void Configure(EntityTypeBuilder<ApplicationUser> builder)
         {
-            builder.Property(au => au.Id)
+            builder
+                .Property(au => au.Id)
                 .HasMaxLength(EmailMaxLength)
                 .IsRequired();
 
-            builder.HasIndex(au => au.Email)
+            builder
+                .HasIndex(au => au.Email)
                 .IsUnique();
         }
     }

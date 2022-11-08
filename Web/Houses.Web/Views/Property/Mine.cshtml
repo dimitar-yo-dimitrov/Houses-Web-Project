@@ -1,4 +1,4 @@
-﻿@model IEnumerable<PropertyViewModel>
+﻿@model IEnumerable<MyPropertyViewModel>
 
 @{
     ViewBag.Title = "My Properties";
@@ -6,7 +6,6 @@
 
 <h2 class="text-center">@ViewBag.Title</h2>
 <hr />
-
 
 <div class="text-center row">
     @foreach (var property in Model)
@@ -19,10 +18,13 @@
                 <p class="mb-0">Description: @property.Description</p>
                 <p class="mb-0">City: @property.City</p>
                 <p class="mb-0">Price: @property.Price</p>
-                <p class="mb-0">Rating: @property.SquareMeters</p>
-                <p>Category: @property.PropertyType</p>
+                <p class="mb-0">Square Meters: @property.SquareMeters</p>
+                <p>Property Type: @property.PropertyType</p>
             </div>
 
+            <form class="input-group-sm" asp-controller="Property" asp-action="Edit" asp-route-PropertyId="@property.Id">
+                <input class="fs-6 btn btn-success mb-3 p-2" type="button" value="Edit" />
+            </form>
             <form class="input-group-sm" asp-controller="Property" asp-action="RemoveFromCollection" asp-route-PropertyId="@property.Id">
                 <input class="fs-6 btn btn-success mb-3 p-2" type="button" value="Remove from Collection" />
             </form>

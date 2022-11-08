@@ -34,17 +34,16 @@
             public const int HomeMinAddress = 10;
             public const int HomeMaxAddress = 100;
 
-            public const string PriceMinLength = "0.1";
-            public const string PriceMaxLength = "1000000000";
+            public const int MaxUrl = 500;
+
+            public const string PriceMinLength = "0.00";
+            public const string PriceMaxLength = "1000000000.00";
 
             public const string RegexAddress = @"^[A-Za-z-. ]+,\s[A-Za-z-. ]+,\s[\d-]{1,4},\s[\d]{4,4}";
             public const string RegexAddressError = "Enter address in the format: City name, street name, number, post code";
 
-            public const string FloorMin = "0";
-            public const string FloorMax = "100";
-
-            public const string SquareMetersMin = "1";
-            public const string SquareMetersMax = "100000";
+            public const string SquareMetersMin = "1.00";
+            public const string SquareMetersMax = "100000.00";
         }
 
         public static class City

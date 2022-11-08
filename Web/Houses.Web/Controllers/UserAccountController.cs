@@ -1,4 +1,4 @@
-﻿using Houses.Core.ViewModels;
+﻿using Houses.Core.ViewModels.User;
 using Houses.Infrastructure.Data.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;

@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 using Houses.Core.Services.Contracts;
-using Houses.Core.ViewModels;
+using Houses.Core.ViewModels.Property;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,10 +9,17 @@ namespace Houses.Web.Controllers
     public class PropertyController : BaseController
     {
         private readonly IPropertyService _propertyService;
+        private readonly IPropertiesTypesService _propertyTypeService;
+        private readonly ICityService _cityService;
 
-        public PropertyController(IPropertyService propertyService)
+        public PropertyController(
+            IPropertyService propertyService,
+            IPropertiesTypesService propertyTypeService,
+            ICityService cityService)
         {
             _propertyService = propertyService;
+            _propertyTypeService = propertyTypeService;
+            _cityService = cityService;
         }
 
         [HttpGet]
@@ -26,12 +33,24 @@ namespace Houses.Web.Controllers
             return View(properties);
         }
 
+        public async Task<IActionResult> Mine()
+        {
+            var userId = User
+                .FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";
+
+            var myProperty = await _propertyService
+                .GetMyPropertyAsync(userId);
+
+            return View("Mine", myProperty);
+        }
+
         [HttpGet]
         public async Task<IActionResult> Add()
         {
             var model = new AddPropertyViewModel
             {
-                PropertyTypes = await _propertyService.GetPropertyTypesAsync()
+                PropertyTypes = await _propertyTypeService.GetAllTypesAsync(),
+                Cities = await _cityService.GetAllCitiesAsync()
             };
 
             return View(model);
@@ -48,44 +67,67 @@ namespace Houses.Web.Controllers
             try
             {
                 await _propertyService.AddPropertyAsync(model);
-
-                return RedirectToAction(nameof(Mine));
             }
             catch (Exception)
             {
                 ModelState.AddModelError("", "Invalid Operation!");
+                model.PropertyTypes = await _propertyTypeService.GetAllTypesAsync();
+                model.Cities = await _cityService.GetAllCitiesAsync();
 
                 return View(model);
             }
+
+            return RedirectToAction(nameof(All));
         }
 
-        public async Task<IActionResult> AddToCollection(string propertyId)
+        [HttpGet]
+        public async Task<IActionResult> Edit(string propertyId)
         {
-            var userId = User.Claims
-                .FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            var targetProperty = await _propertyService.GetMyPropertyAsync(propertyId);
 
-            await _propertyService
-                .AddPropertyToMyCollectionAsync(propertyId, userId!);
+            return View(targetProperty);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(AddPropertyViewModel model)
+        {
+
+            try
+            {
+                await _propertyService.AddPropertyAsync(model);
+            }
+            catch (Exception)
+            {
+                ModelState.AddModelError("", "Invalid Operation!");
+                model.PropertyTypes = await _propertyTypeService.GetAllTypesAsync();
+                model.Cities = await _cityService.GetAllCitiesAsync();
+            }
 
             return RedirectToAction(nameof(Mine));
         }
 
-
-        public async Task<IActionResult> Mine()
+        public async Task<IActionResult> AddToCollection(string propertyId)
         {
-            var userId = User.Claims
-                .FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            var userId = User
+                .FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";
 
-            var model = await _propertyService
-                .GetMyPropertyAsync(userId!);
+            try
+            {
+                await _propertyService
+                    .AddPropertyToMyCollectionAsync(propertyId, userId);
+            }
+            catch (Exception)
+            {
+                throw new InvalidOperationException("Invalid Operation!");
+            }
 
-            return View("Mine", model);
+            return RedirectToAction(nameof(Mine));
         }
 
         public async Task<IActionResult> RemoveFromCollection(string propertyId)
         {
-            var userId = User.Claims
-                .FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            var userId = User
+                .FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";
 
             await _propertyService
                 .RemovePropertyFromCollectionAsync(propertyId, userId!);

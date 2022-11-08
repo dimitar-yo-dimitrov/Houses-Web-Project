@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Houses.Infrastructure.Data.Entities;
 using Microsoft.AspNetCore.Identity;
+using static Houses.Infrastructure.Constants.ValidationConstants.Property;
 using static Houses.Infrastructure.Constants.ValidationConstants.User;
 
 namespace Houses.Infrastructure.Data.Identity
@@ -19,7 +20,8 @@ namespace Houses.Infrastructure.Data.Identity
         [StringLength(UserLastNameMaxLength)]
         public string? LastName { get; set; }
 
-        public virtual Image? ProfilePic { get; set; }
+        [MaxLength(MaxUrl)]
+        public virtual string? ProfilePicture { get; set; }
 
         public virtual ICollection<ApplicationUserProperty> ApplicationUserProperties { get; set; }
 

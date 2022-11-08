@@ -144,48 +144,6 @@ namespace Houses.Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Houses.Infrastructure.Data.Entities.Image", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("PicturePublicId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PictureUrl")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PropertyId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PropertyId");
-
-                    b.ToTable("Images");
-                });
-
-            modelBuilder.Entity("Houses.Infrastructure.Data.Entities.Neighborhood", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("CityId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CityId");
-
-                    b.ToTable("Neighborhoods");
-                });
-
             modelBuilder.Entity("Houses.Infrastructure.Data.Entities.Post", b =>
                 {
                     b.Property<string>("Id")
@@ -235,20 +193,13 @@ namespace Houses.Infrastructure.Migrations
                         .HasMaxLength(5000)
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("Elevator")
-                        .HasColumnType("bit");
-
-                    b.Property<int?>("Floor")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ImageUrlId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
-
-                    b.Property<string>("OwnerId")
-                        .HasColumnType("nvarchar(60)");
 
                     b.Property<decimal>("Price")
                         .HasPrecision(18, 2)
@@ -258,8 +209,8 @@ namespace Houses.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int?>("SquareMeters")
-                        .HasColumnType("int");
+                    b.Property<double?>("SquareMeters")
+                        .HasColumnType("float");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -269,10 +220,6 @@ namespace Houses.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CityId");
-
-                    b.HasIndex("ImageUrlId");
-
-                    b.HasIndex("OwnerId");
 
                     b.HasIndex("PropertyTypeId");
 
@@ -297,32 +244,32 @@ namespace Houses.Infrastructure.Migrations
                         new
                         {
                             Id = "1",
-                            Title = "Houses"
+                            Title = "House"
                         },
                         new
                         {
                             Id = "2",
-                            Title = "Apartments"
+                            Title = "Apartment"
                         },
                         new
                         {
                             Id = "3",
-                            Title = "Villas"
+                            Title = "Villa"
                         },
                         new
                         {
                             Id = "4",
-                            Title = "Offices"
+                            Title = "Office"
                         },
                         new
                         {
                             Id = "5",
-                            Title = "Shops"
+                            Title = "Shop"
                         },
                         new
                         {
                             Id = "6",
-                            Title = "Hotels"
+                            Title = "Hotel"
                         });
                 });
 
@@ -377,8 +324,9 @@ namespace Houses.Infrastructure.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<string>("ProfilePicId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<string>("ProfilePicture")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
@@ -403,8 +351,6 @@ namespace Houses.Infrastructure.Migrations
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
-
-                    b.HasIndex("ProfilePicId");
 
                     b.ToTable("AspNetUsers", (string)null);
                 });
@@ -565,24 +511,6 @@ namespace Houses.Infrastructure.Migrations
                     b.Navigation("Property");
                 });
 
-            modelBuilder.Entity("Houses.Infrastructure.Data.Entities.Image", b =>
-                {
-                    b.HasOne("Houses.Infrastructure.Data.Entities.Property", null)
-                        .WithMany("Images")
-                        .HasForeignKey("PropertyId");
-                });
-
-            modelBuilder.Entity("Houses.Infrastructure.Data.Entities.Neighborhood", b =>
-                {
-                    b.HasOne("Houses.Infrastructure.Data.Entities.City", "City")
-                        .WithMany("Neighborhoods")
-                        .HasForeignKey("CityId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("City");
-                });
-
             modelBuilder.Entity("Houses.Infrastructure.Data.Entities.Post", b =>
                 {
                     b.HasOne("Houses.Infrastructure.Data.Identity.ApplicationUser", "Author")
@@ -610,14 +538,6 @@ namespace Houses.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Houses.Infrastructure.Data.Entities.Image", "ImageUrl")
-                        .WithMany()
-                        .HasForeignKey("ImageUrlId");
-
-                    b.HasOne("Houses.Infrastructure.Data.Identity.ApplicationUser", "Owner")
-                        .WithMany()
-                        .HasForeignKey("OwnerId");
-
                     b.HasOne("Houses.Infrastructure.Data.Entities.PropertyType", "PropertyType")
                         .WithMany("Properties")
                         .HasForeignKey("PropertyTypeId")
@@ -626,20 +546,7 @@ namespace Houses.Infrastructure.Migrations
 
                     b.Navigation("City");
 
-                    b.Navigation("ImageUrl");
-
-                    b.Navigation("Owner");
-
                     b.Navigation("PropertyType");
-                });
-
-            modelBuilder.Entity("Houses.Infrastructure.Data.Identity.ApplicationUser", b =>
-                {
-                    b.HasOne("Houses.Infrastructure.Data.Entities.Image", "ProfilePic")
-                        .WithMany()
-                        .HasForeignKey("ProfilePicId");
-
-                    b.Navigation("ProfilePic");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -693,16 +600,9 @@ namespace Houses.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Houses.Infrastructure.Data.Entities.City", b =>
-                {
-                    b.Navigation("Neighborhoods");
-                });
-
             modelBuilder.Entity("Houses.Infrastructure.Data.Entities.Property", b =>
                 {
                     b.Navigation("ApplicationUserProperties");
-
-                    b.Navigation("Images");
                 });
 
             modelBuilder.Entity("Houses.Infrastructure.Data.Entities.PropertyType", b =>

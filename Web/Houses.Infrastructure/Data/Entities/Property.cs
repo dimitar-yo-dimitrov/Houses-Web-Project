@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Houses.Infrastructure.Data.Identity;
 using Microsoft.EntityFrameworkCore;
 using static Houses.Infrastructure.Constants.ValidationConstants.Property;
 
@@ -12,7 +11,6 @@ namespace Houses.Infrastructure.Data.Entities
         {
             Id = Guid.NewGuid().ToString();
             ApplicationUserProperties = new HashSet<ApplicationUserProperty>();
-            Images = new HashSet<Image>();
         }
 
         [Key]
@@ -31,37 +29,26 @@ namespace Houses.Infrastructure.Data.Entities
 
         [Required]
         [MaxLength(HomeMaxAddress)]
-        //TODO: In DTO [RegularExpression(RegexAddress, ErrorMessage = RegexAddressError)]
         public string Address { get; set; } = null!;
 
-        //TODO: In DTO [Range(typeof(int), FloorMin, FloorMax)]
-        public int? Floor { get; set; }
+        public double? SquareMeters { get; set; }
 
-        //TODO: In DTO [Range(typeof(int), SquareMetersMin, SquareMetersMax)]
-        public int? SquareMeters { get; set; }
-
-        public bool Elevator { get; set; }
+        [Required(AllowEmptyStrings = false)]
+        [MaxLength(MaxUrl)]
+        public string ImageUrl { get; set; } = null!;
 
         public bool IsActive { set; get; } = true;
 
-        public string? ImageUrlId { get; set; }
-
-        [ForeignKey(nameof(ImageUrlId))]
-        public virtual Image? ImageUrl { get; set; }
+        // Navigational properties
 
         [ForeignKey(nameof(PropertyType))]
         public string PropertyTypeId { get; set; } = null!;
         public virtual PropertyType PropertyType { get; set; } = null!;
 
-        [ForeignKey(nameof(Owner))]
-        public string OwnerId { get; set; } = null!;
-        public virtual ApplicationUser Owner { get; set; } = null!;
-
+        // Navigational properties
         [ForeignKey(nameof(City))]
         public string CityId { get; set; } = null!;
         public virtual City City { get; set; } = null!;
-
-        public virtual ICollection<Image> Images { get; set; }
 
         public virtual ICollection<ApplicationUserProperty> ApplicationUserProperties { get; set; }
     }
