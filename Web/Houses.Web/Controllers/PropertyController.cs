@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using Houses.Core.Services.Contracts;
 using Houses.Core.ViewModels.Property;
+using Houses.Infrastructure.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -39,9 +40,9 @@ namespace Houses.Web.Controllers
                 .FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";
 
             var myProperty = await _propertyService
-                .GetMyPropertyAsync(userId);
+                .UserPropertiesAsync(userId);
 
-            return View("Mine", myProperty);
+            return View(myProperty);
         }
 
         [HttpGet]
@@ -53,12 +54,16 @@ namespace Houses.Web.Controllers
                 Cities = await _cityService.GetAllCitiesAsync()
             };
 
+            ViewData["Title"] = "Add new property";
+
             return View(model);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Add(AddPropertyViewModel model)
+        public async Task<IActionResult> Add(AddPropertyViewModel model, string userId)
         {
+            ViewData["Title"] = "Add new property";
+
             if (!ModelState.IsValid)
             {
                 return View(model);
@@ -66,11 +71,11 @@ namespace Houses.Web.Controllers
 
             try
             {
-                await _propertyService.AddPropertyAsync(model);
+                await _propertyService.AddPropertyAsync(model, userId);
             }
             catch (Exception)
             {
-                ModelState.AddModelError("", "Invalid Operation!");
+                ModelState.AddModelError(string.Empty, ExceptionMessages.InvalidOperation);
                 model.PropertyTypes = await _propertyTypeService.GetAllTypesAsync();
                 model.Cities = await _cityService.GetAllCitiesAsync();
 
@@ -80,45 +85,39 @@ namespace Houses.Web.Controllers
             return RedirectToAction(nameof(All));
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Edit(string propertyId)
-        {
-            var targetProperty = await _propertyService.GetMyPropertyAsync(propertyId);
-
-            return View(targetProperty);
-        }
-
         [HttpPost]
-        public async Task<IActionResult> Edit(AddPropertyViewModel model)
+        public async Task<IActionResult> AddToMyCollection(MyPropertyViewModel model, string propertyId)
         {
-
             try
             {
-                await _propertyService.AddPropertyAsync(model);
+                await _propertyService.AddPropertyToCollectionAsync(propertyId, model.Id);
             }
             catch (Exception)
             {
-                ModelState.AddModelError("", "Invalid Operation!");
-                model.PropertyTypes = await _propertyTypeService.GetAllTypesAsync();
-                model.Cities = await _cityService.GetAllCitiesAsync();
+                ModelState.AddModelError(string.Empty, ExceptionMessages.InvalidOperation);
             }
 
             return RedirectToAction(nameof(Mine));
         }
 
-        public async Task<IActionResult> AddToCollection(string propertyId)
+        [HttpGet]
+        public async Task<IActionResult> Edit(string propertyId)
         {
-            var userId = User
-                .FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";
+            var property = await _propertyService.GetPropertyByIdAsync<MyPropertyViewModel>(propertyId);
 
+            return (property as IActionResult)!;
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(EditPropertyViewModel model, string userId)
+        {
             try
             {
-                await _propertyService
-                    .AddPropertyToMyCollectionAsync(propertyId, userId);
+                await _propertyService.EditAsync(model, userId);
             }
             catch (Exception)
             {
-                throw new InvalidOperationException("Invalid Operation!");
+                ModelState.AddModelError(string.Empty, ExceptionMessages.InvalidOperation);
             }
 
             return RedirectToAction(nameof(Mine));
@@ -130,7 +129,7 @@ namespace Houses.Web.Controllers
                 .FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";
 
             await _propertyService
-                .RemovePropertyFromCollectionAsync(propertyId, userId!);
+                .RemovePropertyFromCollectionAsync(propertyId, userId);
 
             return RedirectToAction(nameof(Mine));
         }

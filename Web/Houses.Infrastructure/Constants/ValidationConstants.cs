@@ -71,7 +71,7 @@
 
         public static class ClaimsConstants
         {
-            public const string FirstName = "urn:softuni:webshop:firstName";
+            public const string FirstName = "urn:houses:firstName";
         }
     }
 }

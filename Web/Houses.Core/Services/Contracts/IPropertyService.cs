@@ -1,4 +1,5 @@
 ﻿using Houses.Core.ViewModels.Property;
+using Houses.Infrastructure.Data.Entities;
 
 namespace Houses.Core.Services.Contracts
 {
@@ -6,12 +7,16 @@ namespace Houses.Core.Services.Contracts
     {
         Task<IEnumerable<PropertyViewModel>> GetAllAsync();
 
-        Task AddPropertyAsync(AddPropertyViewModel model);
+        Task AddPropertyAsync(AddPropertyViewModel model, string userId);
 
-        Task AddPropertyToMyCollectionAsync(string propertyId, string applicationUserId);
+        Task<IEnumerable<MyPropertyViewModel>> UserPropertiesAsync(string userId);
 
-        Task<IEnumerable<MyPropertyViewModel>> GetMyPropertyAsync(string propertyId);
+        Task RemovePropertyFromCollectionAsync(string propertyId, string userId);
 
-        Task RemovePropertyFromCollectionAsync(string propertyId, string applicationUserId);
+        Task AddPropertyToCollectionAsync(string propertyId, string userId);
+
+        Task<Property> GetPropertyByIdAsync<T>(string propertyId);
+
+        Task EditAsync(EditPropertyViewModel editProperty, string userId);
     }
 }

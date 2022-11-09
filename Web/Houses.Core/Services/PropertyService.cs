@@ -1,7 +1,7 @@
 ﻿using System.Globalization;
-using System.Text;
 using Houses.Core.Services.Contracts;
 using Houses.Core.ViewModels.Property;
+using Houses.Infrastructure.Constants;
 using Houses.Infrastructure.Data.Entities;
 using Houses.Infrastructure.Data.Identity;
 using Houses.Infrastructure.Data.Repositories;
@@ -33,18 +33,12 @@ namespace Houses.Core.Services
                     City = p.City.Name,
                     ImageUrl = p.ImageUrl
                 })
+                .OrderBy(p => p.Title)
                 .ToListAsync();
         }
 
-        public async Task AddPropertyAsync(AddPropertyViewModel model)
+        public async Task AddPropertyAsync(AddPropertyViewModel model, string userId)
         {
-            var errors = ValidateProperty(model);
-
-            if (errors.Length > 0)
-            {
-                throw new ArgumentException(errors);
-            }
-
             var property = new Property
             {
                 Title = model.Title,
@@ -58,72 +52,44 @@ namespace Houses.Core.Services
             };
 
             await _repository.AddAsync(property);
+            await _repository.AddAsync(new ApplicationUserProperty { ApplicationUserId = userId, PropertyId = property.Id });
+
             await _repository.SaveChangesAsync();
         }
 
-        public async Task AddPropertyToMyCollectionAsync(string propertyId, string applicationUserId)
+        public async Task EditAsync(EditPropertyViewModel editProperty, string userId)
         {
-            var user = await _repository.All<ApplicationUser>()
-                .FirstOrDefaultAsync(u => u.Id == applicationUserId);
-
-            if (user == null)
-            {
-                throw new ArgumentException("Invalid user ID");
-            }
-
-            var property = await _repository.All<Property>()
-                .FirstOrDefaultAsync(u => u.Id == propertyId);
+            var property = await _repository
+                .All<PropertyViewModel>()
+                .Where(p => p.Id == editProperty.Id)
+                .FirstOrDefaultAsync();
 
             if (property == null)
             {
-                throw new ArgumentException("Invalid Property ID");
+                throw new NullReferenceException(
+                    string.Format(ExceptionMessages.PropertyNotFound, editProperty.Id));
             }
 
-            var applicationUserProperty = new ApplicationUserProperty
-            {
-                PropertyId = property.Id,
-                ApplicationUserId = user.Id,
-                Property = property,
-                ApplicationUser = user
-            };
+            property.Title = editProperty.Title;
+            property.Description = editProperty.Description;
+            property.Address = editProperty.Address;
+            property.SquareMeters = editProperty.SquareMeters;
+            property.ImageUrl = editProperty.ImageUrl;
+            property.Price = editProperty.Price;
+            property.PropertyType = editProperty.PropertyTypeId;
+            property.City = editProperty.CityId;
 
-            if (user.ApplicationUserProperties.All(p => p.PropertyId != propertyId))
-            {
-                await _repository.AddAsync(applicationUserProperty);
-                await _repository.SaveChangesAsync();
-            }
+            _repository.Update(property);
+            await _repository.AddAsync(new ApplicationUserProperty { ApplicationUserId = userId, PropertyId = property.Id });
+
+            await _repository.SaveChangesAsync();
         }
 
-        public Property GetProperty(string propertyId)
+        public async Task<IEnumerable<MyPropertyViewModel>> UserPropertiesAsync(string userId)
         {
-            return _repository.All<Property>().FirstOrDefault(x => x.Id == propertyId)!;
-        }
-
-        //public void SaveChanges(AddCardInputModel input, string cardId)
-        //{
-        //    var errors = this.ValidateCard(input);
-
-        //    if (errors.Length > 0)
-        //    {
-        //        throw new ArgumentException(errors);
-        //    }
-
-        //    var targetCard = this.GetCard(cardId);
-
-        //    targetCard.Name = input.Name;
-        //    targetCard.ImageUrl = input.ImageUrl;
-        //    targetCard.Keyword = input.Keyword;
-        //    targetCard.Attack = int.Parse(input.Attack);
-        //    targetCard.Health = int.Parse(input.Health);
-        //    targetCard.Description = input.Description;
-
-        //    db.SaveChanges();
-        //}
-
-        public async Task<IEnumerable<MyPropertyViewModel>> GetMyPropertyAsync(string propertyId)
-        {
-            return await _repository.All<Property>()
-                .Where(p => p.ApplicationUserProperties.Any(aup => aup.ApplicationUserId == propertyId))
+            return await _repository
+                .All<Property>()
+                .Where(p => p.ApplicationUserProperties.Any(aup => aup.ApplicationUserId == userId))
                 .Select(p => new MyPropertyViewModel
                 {
                     Id = p.Id,
@@ -136,7 +102,40 @@ namespace Houses.Core.Services
                     City = p.City.Name,
                     ImageUrl = p.ImageUrl,
                 })
+                .OrderBy(p => p.Title)
                 .ToListAsync();
+        }
+
+        public async Task AddPropertyToCollectionAsync(string propertyId, string userId)
+        {
+            var property = _repository
+                .All<Property>()
+                .FirstOrDefaultAsync(p => p.ApplicationUserProperties
+                    .Any(aup => aup.PropertyId == propertyId && aup.ApplicationUserId == userId));
+
+            if (property == null)
+            {
+                throw new ArgumentException(ExceptionMessages.AddPropertyToCollectionNotFound);
+            }
+
+            await _repository.AddAsync(new ApplicationUserProperty { ApplicationUserId = userId, PropertyId = propertyId });
+
+            await _repository.SaveChangesAsync();
+        }
+
+        public async Task<Property> GetPropertyByIdAsync<T>(string propertyId)
+        {
+            var property = await _repository
+                .All<Property>()
+                .Where(p => p.Id == propertyId)
+                .FirstOrDefaultAsync();
+
+            if (property == null)
+            {
+                throw new NullReferenceException(string.Format(ExceptionMessages.PropertyNotFound, propertyId));
+            }
+
+            return property;
         }
 
         public async Task RemovePropertyFromCollectionAsync(string propertyId, string applicationUserId)
@@ -158,23 +157,6 @@ namespace Houses.Core.Services
 
                 await _repository.SaveChangesAsync();
             }
-        }
-
-        private static string ValidateProperty(AddPropertyViewModel input)
-        {
-            var errorBuilder = new StringBuilder();
-
-            if (!decimal.TryParse(input.Price, out _) || decimal.Parse(input.Price) < 1.00M && decimal.Parse(input.Price) < 1000000000.00M)
-            {
-                errorBuilder.AppendLine("The field Price must be between 1.00 and 1000000000.00<br>");
-            }
-
-            if (!double.TryParse(input.SquareMeters, out _) || double.Parse(input.SquareMeters) < 1.00 && double.Parse(input.SquareMeters) < 100000.00)
-            {
-                errorBuilder.AppendLine("The field Price must be between 1.00 and 100000.00<br>");
-            }
-
-            return errorBuilder.ToString().TrimEnd();
         }
     }
 }

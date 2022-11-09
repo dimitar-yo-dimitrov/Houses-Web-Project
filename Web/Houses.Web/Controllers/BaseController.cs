@@ -17,7 +17,7 @@ namespace Houses.Web.Controllers
                 if (User.Identity?.IsAuthenticated ?? false)
                 {
                     firstName = User.Claims
-                        .FirstOrDefault(c => c.Type == FirstName)
+                        .FirstOrDefault(c => c.Value == FirstName)
                         ?.Value ?? firstName;
                 }
 
