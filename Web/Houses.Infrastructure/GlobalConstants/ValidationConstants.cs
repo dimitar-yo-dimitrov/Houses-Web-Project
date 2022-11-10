@@ -1,4 +1,4 @@
-﻿namespace Houses.Infrastructure.Constants
+﻿namespace Houses.Infrastructure.GlobalConstants
 {
     public static class ValidationConstants
     {
@@ -71,7 +71,7 @@
 
         public static class ClaimsConstants
         {
-            public const string FirstName = "urn:houses:firstName";
+            public const string FirstName = "urn:softuni:houses.bg:firstName";
         }
     }
 }

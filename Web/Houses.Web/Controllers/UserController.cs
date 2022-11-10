@@ -1,9 +1,10 @@
 ﻿using Houses.Core.ViewModels.User;
 using Houses.Infrastructure.Data.Identity;
+using Houses.Infrastructure.GlobalConstants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using static Houses.Infrastructure.Constants.ValidationConstants.ClaimsConstants;
+using static Houses.Infrastructure.GlobalConstants.ValidationConstants.ClaimsConstants;
 
 namespace Houses.Web.Controllers
 {
@@ -60,7 +61,7 @@ namespace Houses.Web.Controllers
             {
                 await _signInManager.SignInAsync(user, isPersistent: false);
 
-                return RedirectToAction("All", "Property");
+                return RedirectToAction("Index", "Home");
             }
 
             foreach (var error in result.Errors)
@@ -73,14 +74,12 @@ namespace Houses.Web.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult Login()
+        public IActionResult Login(string? returnUrl = null)
         {
-            if (User.Identity?.IsAuthenticated ?? false)
+            var model = new LoginViewModel
             {
-                return RedirectToAction("Mine", "Property");
-            }
-
-            var model = new LoginViewModel();
+                ReturnUrl = returnUrl
+            };
 
             return View(model);
         }
@@ -94,7 +93,7 @@ namespace Houses.Web.Controllers
                 return View(model);
             }
 
-            var user = await _userManager.FindByNameAsync(model.Email);
+            var user = await _userManager.FindByEmailAsync(model.Email);
 
             if (user != null)
             {
@@ -102,11 +101,16 @@ namespace Houses.Web.Controllers
 
                 if (result.Succeeded)
                 {
-                    return RedirectToAction("Mine", "Property");
+                    if (model.ReturnUrl != null)
+                    {
+                        return Redirect(model.ReturnUrl);
+                    }
+
+                    return RedirectToAction("Index", "Home");
                 }
             }
 
-            ModelState.AddModelError("", "Invalid login attempt!");
+            ModelState.AddModelError(string.Empty, ExceptionMessages.InvalidLogin);
 
             return View(model);
         }

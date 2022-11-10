@@ -14,7 +14,6 @@
             <img class="card-img-top" style="width: 18rem;"
                  src="@property.ImageUrl" alt="Property Image">
             <div class="card-body">
-
                 <h5 class="card-title mt-1">@property.Title</h5>
                 <p class="mb-0">Description: @property.Description</p>
                 <p class="mb-0">City: @property.City</p>
@@ -22,6 +21,12 @@
                 <p class="mb-0">Square Meters: @property.SquareMeters</p>
                 <p>Property Type: @property.PropertyType</p>
             </div>
+            <form class="input-group-sm" asp-controller="Property" asp-action="Edit" asp-route-PropertyId="@property.Id">
+                <input class="btn btn-warning" type="submit" value="Edit" />
+            </form>
+            <form class="input-group-sm" asp-controller="Property" asp-action="Delete" asp-route-PropertyId="@property.Id">
+                <input class="btn btn-danger" type="button" value="Remove" />
+            </form>
         </div>
     }
 </div>

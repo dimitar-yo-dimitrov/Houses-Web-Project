@@ -1,14 +1,19 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Houses.Core.ViewModels.City;
 using Houses.Core.ViewModels.PropertyType;
-using static Houses.Infrastructure.Constants.ValidationConstants.Property;
+using static Houses.Infrastructure.GlobalConstants.ValidationConstants.Property;
 
 namespace Houses.Core.ViewModels.Property
 {
     public class AddPropertyViewModel
     {
+        public AddPropertyViewModel()
+        {
+            Id = new Guid().ToString();
+        }
+
         [Key]
-        public string Id { get; set; } = null!;
+        public string Id { get; set; }
 
         [Required(AllowEmptyStrings = false)]
         [StringLength(PropertyMaxTitle, MinimumLength = PropertyMinTitle)]

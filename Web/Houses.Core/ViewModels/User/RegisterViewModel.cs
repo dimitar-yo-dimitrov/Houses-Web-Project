@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using static Houses.Infrastructure.Constants.ValidationConstants.User;
+using static Houses.Infrastructure.GlobalConstants.ValidationConstants.User;
 
 namespace Houses.Core.ViewModels.User
 {

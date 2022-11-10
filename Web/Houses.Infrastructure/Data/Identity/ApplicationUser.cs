@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Houses.Infrastructure.Data.Entities;
 using Microsoft.AspNetCore.Identity;
-using static Houses.Infrastructure.Constants.ValidationConstants.Property;
-using static Houses.Infrastructure.Constants.ValidationConstants.User;
+using static Houses.Infrastructure.GlobalConstants.ValidationConstants.Property;
+using static Houses.Infrastructure.GlobalConstants.ValidationConstants.User;
 
 namespace Houses.Infrastructure.Data.Identity
 {
@@ -12,6 +12,8 @@ namespace Houses.Infrastructure.Data.Identity
         {
             ApplicationUserProperties = new HashSet<ApplicationUserProperty>();
             Posts = new HashSet<Post>();
+
+            Id = Guid.NewGuid().ToString();
         }
 
         [StringLength(UserFirstNameMaxLength)]

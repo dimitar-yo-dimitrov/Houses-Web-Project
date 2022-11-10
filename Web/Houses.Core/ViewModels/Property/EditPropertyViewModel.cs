@@ -1,12 +1,17 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Houses.Core.ViewModels.City;
 using Houses.Core.ViewModels.PropertyType;
-using static Houses.Infrastructure.Constants.ValidationConstants.Property;
+using static Houses.Infrastructure.GlobalConstants.ValidationConstants.Property;
 
 namespace Houses.Core.ViewModels.Property
 {
     public class EditPropertyViewModel
     {
+        public EditPropertyViewModel()
+        {
+            Id = new Guid().ToString();
+        }
+
         [Key]
         public string Id { get; set; } = null!;
 
@@ -15,7 +20,6 @@ namespace Houses.Core.ViewModels.Property
         public string Title { get; set; } = null!;
 
         [Required]
-        //[Range(typeof(string), PriceMinLength, PriceMaxLength, ConvertValueInInvariantCulture = true, ParseLimitsInInvariantCulture = true)]
         public string Price { get; set; } = null!;
 
         [Required(AllowEmptyStrings = false)]
@@ -27,7 +31,6 @@ namespace Houses.Core.ViewModels.Property
         [RegularExpression(RegexAddress, ErrorMessage = RegexAddressError)]
         public string Address { get; set; } = null!;
 
-        //[Range(typeof(string), SquareMetersMin, SquareMetersMax, ConvertValueInInvariantCulture = true, ParseLimitsInInvariantCulture = true)]
         public string? SquareMeters { get; set; }
 
         [Required]

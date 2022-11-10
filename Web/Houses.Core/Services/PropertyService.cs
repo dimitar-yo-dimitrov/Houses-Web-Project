@@ -1,10 +1,10 @@
 ﻿using System.Globalization;
 using Houses.Core.Services.Contracts;
 using Houses.Core.ViewModels.Property;
-using Houses.Infrastructure.Constants;
 using Houses.Infrastructure.Data.Entities;
 using Houses.Infrastructure.Data.Identity;
 using Houses.Infrastructure.Data.Repositories;
+using Houses.Infrastructure.GlobalConstants;
 using Microsoft.EntityFrameworkCore;
 
 namespace Houses.Core.Services
@@ -20,7 +20,8 @@ namespace Houses.Core.Services
 
         public async Task<IEnumerable<PropertyViewModel>> GetAllAsync()
         {
-            return await _repository.AllReadonly<Property>(p => p.IsActive)
+            return await _repository
+                .AllReadonly<Property>(p => p.IsActive)
                 .Select(p => new PropertyViewModel
                 {
                     Id = p.Id,
@@ -37,7 +38,7 @@ namespace Houses.Core.Services
                 .ToListAsync();
         }
 
-        public async Task AddPropertyAsync(AddPropertyViewModel model, string userId)
+        public async Task AddAsync(AddPropertyViewModel model, string userId)
         {
             var property = new Property
             {
@@ -51,41 +52,54 @@ namespace Houses.Core.Services
                 PropertyTypeId = model.PropertyTypeId
             };
 
-            await _repository.AddAsync(property);
-            await _repository.AddAsync(new ApplicationUserProperty { ApplicationUserId = userId, PropertyId = property.Id });
-
-            await _repository.SaveChangesAsync();
-        }
-
-        public async Task EditAsync(EditPropertyViewModel editProperty, string userId)
-        {
-            var property = await _repository
-                .All<PropertyViewModel>()
-                .Where(p => p.Id == editProperty.Id)
-                .FirstOrDefaultAsync();
 
             if (property == null)
             {
                 throw new NullReferenceException(
-                    string.Format(ExceptionMessages.PropertyNotFound, editProperty.Id));
+                    string.Format(ExceptionMessages.PropertyNotFound, string.Empty));
             }
 
-            property.Title = editProperty.Title;
-            property.Description = editProperty.Description;
-            property.Address = editProperty.Address;
-            property.SquareMeters = editProperty.SquareMeters;
-            property.ImageUrl = editProperty.ImageUrl;
-            property.Price = editProperty.Price;
-            property.PropertyType = editProperty.PropertyTypeId;
-            property.City = editProperty.CityId;
-
-            _repository.Update(property);
-            await _repository.AddAsync(new ApplicationUserProperty { ApplicationUserId = userId, PropertyId = property.Id });
+            await _repository.AddAsync(property);
+            //await _repository.AddAsync(new ApplicationUserProperty { ApplicationUserId = userId, PropertyId = property.Id });
 
             await _repository.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<MyPropertyViewModel>> UserPropertiesAsync(string userId)
+        public async Task EditAsync(EditPropertyViewModel propertyToUpdate, string id)
+        {
+            if (id == null)
+            {
+                throw new NullReferenceException(
+                    string.Format(ExceptionMessages.IdIsNull));
+            }
+
+            var property = await _repository
+                .All<Property>()
+                .Where(p => p.Id == id)
+                .FirstAsync();
+
+            if (property == null)
+            {
+                throw new NullReferenceException(
+                    string.Format(ExceptionMessages.PropertyNotFound, propertyToUpdate.Id));
+            }
+
+            property.Title = propertyToUpdate.Title;
+            property.Description = propertyToUpdate.Description;
+            property.Address = propertyToUpdate.Address;
+            property.SquareMeters = double.Parse(propertyToUpdate.SquareMeters!);
+            property.ImageUrl = propertyToUpdate.ImageUrl;
+            property.Price = Convert.ToDecimal(propertyToUpdate.Price);
+            property.PropertyTypeId = propertyToUpdate.PropertyTypeId;
+            property.CityId = propertyToUpdate.CityId;
+
+            _repository.Update(property);
+            //await _repository.AddAsync(new ApplicationUserProperty { ApplicationUserId = userId, PropertyId = property.Id });
+
+            await _repository.SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<MyPropertyViewModel>> GetUserPropertiesAsync(string userId)
         {
             return await _repository
                 .All<Property>()
@@ -123,12 +137,11 @@ namespace Houses.Core.Services
             await _repository.SaveChangesAsync();
         }
 
-        public async Task<Property> GetPropertyByIdAsync<T>(string propertyId)
+        public async Task<Property> GetPropertyAsync(string propertyId)
         {
             var property = await _repository
                 .All<Property>()
-                .Where(p => p.Id == propertyId)
-                .FirstOrDefaultAsync();
+                .FirstOrDefaultAsync(p => p.Id == propertyId);
 
             if (property == null)
             {
@@ -140,7 +153,8 @@ namespace Houses.Core.Services
 
         public async Task RemovePropertyFromCollectionAsync(string propertyId, string applicationUserId)
         {
-            var user = await _repository.All<ApplicationUser>()
+            var user = await _repository
+                .All<ApplicationUser>()
                 .FirstOrDefaultAsync(u => u.Id == applicationUserId);
 
             if (user == null)

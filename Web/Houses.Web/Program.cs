@@ -3,7 +3,7 @@ using Houses.Infrastructure.Data.Identity;
 using Houses.Web.Extensions;
 using Houses.Web.ModelBinders;
 using Microsoft.AspNetCore.Mvc.Razor;
-using static Houses.Infrastructure.Constants.ValidationConstants.FormattingConstant;
+using static Houses.Infrastructure.GlobalConstants.ValidationConstants.FormattingConstant;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,31 +11,17 @@ builder.Services.AddApplicationDbContexts(builder.Configuration);
 
 builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
     {
-        options.SignIn.RequireConfirmedAccount = false;
+        options.SignIn.RequireConfirmedAccount = true;
         options.Password.RequiredLength = 6;
     })
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
-builder.Services.Configure<CookiePolicyOptions>(options =>
+builder.Services.ConfigureApplicationCookie(options =>
 {
-    options.CheckConsentNeeded = context => true;
-    options.MinimumSameSitePolicy = SameSiteMode.None;
+    options.LoginPath = "/User/Login";
 });
 
 builder.Services.AddApplicationServices();
-
-//builder.Services.Configure<RequestLocalizationOptions>(options =>
-//{
-//    var supportedLanguages = new[]
-//    {
-//        new CultureInfo("bg"),
-//        new CultureInfo("en")
-//    };
-
-//    options.DefaultRequestCulture = new RequestCulture("bg");
-//    options.SupportedCultures = supportedLanguages;
-//    options.SupportedUICultures = supportedLanguages;
-//});
 
 builder.Services.AddControllersWithViews()
     .AddMvcOptions(options =>

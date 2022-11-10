@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Houses.Core.ViewModels.User
 {
@@ -11,5 +12,8 @@ namespace Houses.Core.ViewModels.User
         [Required]
         [DataType(DataType.Password)]
         public string Password { get; set; } = null!;
+
+        [HiddenInput(DisplayValue = false)]
+        public string? ReturnUrl { get; set; }
     }
 }
