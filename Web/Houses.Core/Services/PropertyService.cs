@@ -76,7 +76,7 @@ namespace Houses.Core.Services
             var property = await _repository
                 .All<Property>()
                 .Where(p => p.Id == id)
-                .FirstAsync();
+                .FirstOrDefaultAsync();
 
             if (property == null)
             {
@@ -94,7 +94,6 @@ namespace Houses.Core.Services
             property.CityId = propertyToUpdate.CityId;
 
             _repository.Update(property);
-            //await _repository.AddAsync(new ApplicationUserProperty { ApplicationUserId = userId, PropertyId = property.Id });
 
             await _repository.SaveChangesAsync();
         }
