@@ -37,6 +37,7 @@ namespace Houses.Core.ViewModels.Property
 
         [Required]
         [Url]
+        [Display(Name = "Image URL")]
         public string ImageUrl { get; set; } = null!;
 
         public string CityId { get; set; } = null!;
