@@ -7,7 +7,7 @@ namespace Houses.Core.Services.Contracts
     {
         Task<IEnumerable<PropertyViewModel>> GetAllAsync();
 
-        Task AddAsync(AddPropertyViewModel property, string userId);
+        Task<string> AddAsync(AddPropertyViewModel property, string userId);
 
         Task<IEnumerable<MyPropertyViewModel>> GetUserPropertiesAsync(string userId);
 

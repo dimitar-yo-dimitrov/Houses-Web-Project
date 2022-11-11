@@ -40,8 +40,10 @@ namespace Houses.Core.ViewModels.Property
         [Display(Name = "Image URL")]
         public string ImageUrl { get; set; } = null!;
 
+        [Display(Name = "City")]
         public string CityId { get; set; } = null!;
 
+        [Display(Name = "Property Type")]
         public string PropertyTypeId { get; set; } = null!;
 
         public IEnumerable<CityViewModel> Cities { get; set; } = new List<CityViewModel>();

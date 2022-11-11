@@ -38,7 +38,7 @@ namespace Houses.Core.Services
                 .ToListAsync();
         }
 
-        public async Task AddAsync(AddPropertyViewModel model, string userId)
+        public async Task<string> AddAsync(AddPropertyViewModel model, string userId)
         {
             var property = new Property
             {
@@ -60,9 +60,9 @@ namespace Houses.Core.Services
             }
 
             await _repository.AddAsync(property);
-            //await _repository.AddAsync(new ApplicationUserProperty { ApplicationUserId = userId, PropertyId = property.Id });
-
             await _repository.SaveChangesAsync();
+
+            return model.Id;
         }
 
         public async Task EditAsync(EditPropertyViewModel propertyToUpdate, string id)

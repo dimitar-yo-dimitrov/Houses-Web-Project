@@ -18,6 +18,7 @@ namespace Houses.Core.Services
         public async Task<IEnumerable<PropertyTypeViewModel>> GetAllTypesAsync()
         {
             var propertiesTypes = await _repository.AllReadonly<PropertyType>()
+                .OrderBy(pt => pt.Title)
                 .Select(pt => new PropertyTypeViewModel
                 {
                     Id = pt.Id,
