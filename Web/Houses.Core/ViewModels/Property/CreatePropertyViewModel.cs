@@ -5,9 +5,9 @@ using static Houses.Infrastructure.GlobalConstants.ValidationConstants.Property;
 
 namespace Houses.Core.ViewModels.Property
 {
-    public class AddPropertyViewModel
+    public class CreatePropertyViewModel
     {
-        public AddPropertyViewModel()
+        public CreatePropertyViewModel()
         {
             Id = new Guid().ToString();
         }
@@ -39,6 +39,8 @@ namespace Houses.Core.ViewModels.Property
         [Url]
         [Display(Name = "Image URL")]
         public string ImageUrl { get; set; } = null!;
+
+        public string OwnerId { get; set; } = null!;
 
         [Display(Name = "City")]
         public string CityId { get; set; } = null!;

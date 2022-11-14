@@ -21,6 +21,9 @@
                 <p class="mb-0">Square Meters: @property.SquareMeters</p>
                 <p>Property Type: @property.PropertyType</p>
             </div>
+            <form class="input-group-sm" asp-controller="Property" asp-action="Details" asp-route-PropertyId="@property.Id">
+                <input class="btn btn-info" type="submit" value="Details" />
+            </form>
             <form class="input-group-sm" asp-controller="Property" asp-action="Edit" asp-route-PropertyId="@property.Id">
                 <input class="btn btn-warning" type="submit" value="Edit" />
             </form>

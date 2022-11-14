@@ -7,16 +7,16 @@ namespace Houses.Core.Services.Contracts
     {
         Task<IEnumerable<PropertyViewModel>> GetAllAsync();
 
-        Task<string> AddAsync(AddPropertyViewModel property, string userId);
+        Task<string> CreateAsync(CreatePropertyViewModel property, string userId);
 
-        Task<IEnumerable<MyPropertyViewModel>> GetUserPropertiesAsync(string userId);
-
-        Task RemovePropertyFromCollectionAsync(string propertyId, string userId);
+        Task RemovePropertyFromCollectionAsync(string propertyId);
 
         Task AddPropertyToCollectionAsync(string propertyId, string userId);
 
         Task<Property> GetPropertyAsync(string propertyId);
 
         Task EditAsync(EditPropertyViewModel propertyToUpdate, string id);
+
+        Task<IEnumerable<PropertyViewModel>> AllPropertiesByUserIdAsync(string userId);
     }
 }

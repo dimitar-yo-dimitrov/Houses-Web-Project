@@ -1,11 +1,9 @@
 ﻿using System.Data;
-using System.Security.Claims;
 using Houses.Core.Services.Contracts;
 using Houses.Core.ViewModels.Property;
-using Houses.Infrastructure.Data.Identity;
 using Houses.Infrastructure.GlobalConstants;
+using Houses.Web.Extensions;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Houses.Web.Controllers
@@ -15,18 +13,18 @@ namespace Houses.Web.Controllers
         private readonly IPropertyService _propertyService;
         private readonly IPropertiesTypesService _propertyTypeService;
         private readonly ICityService _cityService;
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IUserService _userService;
 
         public PropertyController(
             IPropertyService propertyService,
             IPropertiesTypesService propertyTypeService,
             ICityService cityService,
-            UserManager<ApplicationUser> userManager)
+            IUserService userService)
         {
             _propertyService = propertyService;
             _propertyTypeService = propertyTypeService;
             _cityService = cityService;
-            _userManager = userManager;
+            _userService = userService;
         }
 
         [HttpGet]
@@ -42,19 +40,38 @@ namespace Houses.Web.Controllers
 
         public async Task<IActionResult> Mine()
         {
-            var userId = User.Claims
-                .FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            var userId = User.Id();
 
-            var myProperty = await _propertyService
-                .GetUserPropertiesAsync(userId!);
+            if (userId == null)
+            {
+                throw new NullReferenceException(
+                    string.Format(ExceptionMessages.IdIsNull));
+            }
 
-            return View("Mine", myProperty);
+            IEnumerable<PropertyViewModel> myProperties = await _propertyService.AllPropertiesByUserIdAsync(userId);
+
+            if (myProperties == null)
+            {
+                throw new NullReferenceException(
+                    string.Format(ExceptionMessages.PropertiesNotFound));
+            }
+
+            return View(myProperties);
+        }
+
+
+        [AllowAnonymous]
+        public async Task<IActionResult> Details(string id)
+        {
+            var model = new PropertyDetailsViewModel();
+
+            return View(model);
         }
 
         [HttpGet]
         public async Task<IActionResult> Add()
         {
-            var model = new AddPropertyViewModel
+            var model = new CreatePropertyViewModel
             {
                 PropertyTypes = await _propertyTypeService.GetAllTypesAsync(),
                 Cities = await _cityService.GetAllCitiesAsync()
@@ -67,45 +84,31 @@ namespace Houses.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Add(AddPropertyViewModel propertyModel)
+        public async Task<IActionResult> Add(CreatePropertyViewModel propertyModel)
         {
-            ViewData["Title"] = "Add new property";
-
-            if (propertyModel == null)
+            if (await _userService.ExistsById(User.Id()) == false)
             {
-                throw new NullReferenceException(
-                    string.Format(ExceptionMessages.PropertyNotFound, propertyModel?.Id));
+                return RedirectToAction(nameof(All));
             }
 
-            var user = await _userManager.GetUserAsync(User);
-
-            if (user == null)
+            if (!ModelState.IsValid)
             {
-                throw new NullReferenceException(
-                    string.Format(ExceptionMessages.UserNotFound, _userManager.GetUserId(User)));
+                propertyModel.PropertyTypes = await _propertyTypeService.GetAllTypesAsync();
+                propertyModel.Cities = await _cityService.GetAllCitiesAsync();
+
+                return View(propertyModel);
             }
 
-            try
-            {
-                if (ModelState.IsValid)
-                {
-                    await _propertyService.AddAsync(propertyModel, user.Id);
+            string userId = await _userService.GetUserId(User.Id());
 
-                    return RedirectToAction(nameof(Mine));
-                }
+            string id = await _propertyService.CreateAsync(propertyModel, userId);
 
-            }
-            catch (DataException)
-            {
-                ModelState.AddModelError(string.Empty, ExceptionMessages.InvalidOperation);
-            }
-
-            return View(propertyModel);
+            return RedirectToAction(nameof(Details), new { id });
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddToMyCollection(MyPropertyViewModel model, string? propertyId)
+        public async Task<IActionResult> AddToMyCollection(PropertyViewModel model, string? propertyId)
         {
             if (propertyId == null)
             {
@@ -137,7 +140,7 @@ namespace Houses.Web.Controllers
 
         [HttpPost, ActionName("Edit")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditProperty(EditPropertyViewModel propertyToUpdate)
+        public async Task<IActionResult> Edit(EditPropertyViewModel propertyToUpdate, string id)
         {
             if (propertyToUpdate == null)
             {
@@ -145,17 +148,9 @@ namespace Houses.Web.Controllers
                     string.Format(ExceptionMessages.PropertyNotFound, propertyToUpdate!.Id));
             }
 
-            var user = await _userManager.GetUserAsync(User);
-
-            if (user == null)
-            {
-                throw new NullReferenceException(
-                    string.Format(ExceptionMessages.UserNotFound, _userManager.GetUserId(User)));
-            }
-
             try
             {
-                await _propertyService.EditAsync(propertyToUpdate, user.Id);
+                //await _propertyService.EditAsync(propertyToUpdate, user.Id);
 
                 return RedirectToAction(nameof(Mine));
             }
@@ -172,9 +167,9 @@ namespace Houses.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete(string propertyId, string userId)
+        public async Task<IActionResult> Delete(string propertyId)
         {
-            await _propertyService.RemovePropertyFromCollectionAsync(propertyId, userId);
+            await _propertyService.RemovePropertyFromCollectionAsync(propertyId);
 
             return RedirectToAction(nameof(All));
         }

@@ -39,8 +39,9 @@ namespace Houses.Infrastructure.Data.Entities
 
         public bool IsActive { set; get; } = true;
 
-        // Navigational properties
+        public string OwnerId { get; set; }
 
+        // Navigational properties
         [ForeignKey(nameof(PropertyType))]
         public string PropertyTypeId { get; set; } = null!;
         public virtual PropertyType PropertyType { get; set; } = null!;

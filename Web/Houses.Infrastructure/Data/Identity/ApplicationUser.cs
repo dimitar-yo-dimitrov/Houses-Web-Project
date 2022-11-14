@@ -12,8 +12,6 @@ namespace Houses.Infrastructure.Data.Identity
         {
             ApplicationUserProperties = new HashSet<ApplicationUserProperty>();
             Posts = new HashSet<Post>();
-
-            Id = Guid.NewGuid().ToString();
         }
 
         [StringLength(UserFirstNameMaxLength)]

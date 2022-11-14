@@ -2,7 +2,6 @@
 using Houses.Core.Services.Contracts;
 using Houses.Core.ViewModels.Property;
 using Houses.Infrastructure.Data.Entities;
-using Houses.Infrastructure.Data.Identity;
 using Houses.Infrastructure.Data.Repositories;
 using Houses.Infrastructure.GlobalConstants;
 using Microsoft.EntityFrameworkCore;
@@ -32,13 +31,13 @@ namespace Houses.Core.Services
                     SquareMeters = p.SquareMeters.ToString(),
                     PropertyType = p.PropertyType.Title,
                     City = p.City.Name,
-                    ImageUrl = p.ImageUrl
+                    ImageUrl = p.ImageUrl,
                 })
                 .OrderBy(p => p.Title)
                 .ToListAsync();
         }
 
-        public async Task<string> AddAsync(AddPropertyViewModel model, string userId)
+        public async Task<string> CreateAsync(CreatePropertyViewModel model, string userId)
         {
             var property = new Property
             {
@@ -49,9 +48,9 @@ namespace Houses.Core.Services
                 SquareMeters = double.Parse(model.SquareMeters!),
                 ImageUrl = model.ImageUrl,
                 CityId = model.CityId,
-                PropertyTypeId = model.PropertyTypeId
+                PropertyTypeId = model.PropertyTypeId,
+                OwnerId = userId
             };
-
 
             if (property == null)
             {
@@ -98,12 +97,13 @@ namespace Houses.Core.Services
             await _repository.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<MyPropertyViewModel>> GetUserPropertiesAsync(string userId)
+        public async Task<IEnumerable<PropertyViewModel>> AllPropertiesByUserIdAsync(string userId)
         {
             return await _repository
                 .All<Property>()
                 .Where(p => p.ApplicationUserProperties.Any(aup => aup.ApplicationUserId == userId))
-                .Select(p => new MyPropertyViewModel
+                .OrderBy(p => p.Title)
+                .Select(p => new PropertyViewModel
                 {
                     Id = p.Id,
                     Title = p.Title,
@@ -114,8 +114,9 @@ namespace Houses.Core.Services
                     PropertyType = p.PropertyType.Title,
                     City = p.City.Name,
                     ImageUrl = p.ImageUrl,
+                    Owner = userId
+
                 })
-                .OrderBy(p => p.Title)
                 .ToListAsync();
         }
 
@@ -150,19 +151,15 @@ namespace Houses.Core.Services
             return property;
         }
 
-        public async Task RemovePropertyFromCollectionAsync(string propertyId, string applicationUserId)
+        public async Task RemovePropertyFromCollectionAsync(string propertyId)
         {
-            var user = await _repository
-                .All<ApplicationUser>()
-                .FirstOrDefaultAsync(u => u.Id == applicationUserId);
-
-            if (user == null)
-            {
-                throw new ArgumentException("Invalid user ID");
-            }
-
             var property = await _repository.All<Property>()
                 .FirstOrDefaultAsync(p => p.Id == propertyId);
+
+            var model = new PropertyDetailsViewModel()
+            {
+                Title = mo
+            }
 
             if (property != null)
             {

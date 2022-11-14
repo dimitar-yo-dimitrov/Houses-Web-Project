@@ -24,5 +24,7 @@
         public string City { get; set; } = null!;
 
         public string PropertyType { get; set; } = null!;
+
+        public string Owner { get; set; } = null!;
     }
 }

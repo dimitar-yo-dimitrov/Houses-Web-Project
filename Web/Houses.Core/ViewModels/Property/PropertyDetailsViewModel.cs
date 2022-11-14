@@ -1,8 +1,8 @@
 ﻿namespace Houses.Core.ViewModels.Property
 {
-    public class MyPropertyViewModel
+    public class PropertyDetailsViewModel
     {
-        public MyPropertyViewModel()
+        public PropertyDetailsViewModel()
         {
             Id = new Guid().ToString();
         }
@@ -20,9 +20,5 @@
         public string? SquareMeters { get; set; }
 
         public string ImageUrl { get; set; } = null!;
-
-        public string City { get; set; } = null!;
-
-        public string PropertyType { get; set; } = null!;
     }
 }
