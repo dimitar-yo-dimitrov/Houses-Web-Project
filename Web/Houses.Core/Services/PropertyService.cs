@@ -156,17 +156,15 @@ namespace Houses.Core.Services
             var property = await _repository.All<Property>()
                 .FirstOrDefaultAsync(p => p.Id == propertyId);
 
-            var model = new PropertyDetailsViewModel()
+            if (property == null)
             {
-                Title = mo
+                throw new NullReferenceException(string.Format(ExceptionMessages.PropertyNotFound, propertyId));
             }
 
-            if (property != null)
-            {
-                property.IsActive = false;
 
-                await _repository.SaveChangesAsync();
-            }
+            property.IsActive = false;
+
+            await _repository.SaveChangesAsync();
         }
     }
 }

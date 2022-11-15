@@ -63,7 +63,7 @@ namespace Houses.Web.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Details(string id)
         {
-            var model = new PropertyDetailsViewModel();
+            var model = new DetailsPropertyViewModel();
 
             return View(model);
         }
@@ -162,14 +162,15 @@ namespace Houses.Web.Controllers
             return View(propertyToUpdate);
         }
 
-        [HttpGet]
-        public IActionResult Delete() => RedirectToAction(nameof(All));
+        //[HttpGet]
+        //public IActionResult Delete() => RedirectToAction(nameof(All));
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete(string propertyId)
+        public async Task<IActionResult> Delete([FromForm] string id)
         {
-            await _propertyService.RemovePropertyFromCollectionAsync(propertyId);
+            //Guid idGuid = Guid.Parse(id);
+            await _propertyService.RemovePropertyFromCollectionAsync(id);
 
             return RedirectToAction(nameof(All));
         }

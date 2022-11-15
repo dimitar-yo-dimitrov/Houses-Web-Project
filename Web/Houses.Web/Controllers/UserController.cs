@@ -55,7 +55,8 @@ namespace Houses.Web.Controllers
 
             var result = await _userManager.CreateAsync(user, model.Password);
 
-            await _userManager.AddClaimAsync(user, new System.Security.Claims.Claim(FirstName, user.FirstName ?? user.Email));
+            await _userManager
+                .AddClaimAsync(user, new System.Security.Claims.Claim(FirstName, user.FirstName ?? user.Email));
 
             if (result.Succeeded)
             {
