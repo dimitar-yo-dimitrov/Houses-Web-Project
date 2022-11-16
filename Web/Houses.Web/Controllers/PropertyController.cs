@@ -106,30 +106,6 @@ namespace Houses.Web.Controllers
             return RedirectToAction(nameof(Details), new { id });
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddToMyCollection(PropertyViewModel model, string? propertyId)
-        {
-            if (propertyId == null)
-            {
-                throw new NullReferenceException(
-                    string.Format(ExceptionMessages.IdIsNull));
-            }
-
-            try
-            {
-                await _propertyService.AddPropertyToCollectionAsync(propertyId, model.Id);
-
-                return RedirectToAction(nameof(Mine));
-            }
-            catch (DataException)
-            {
-                ModelState.AddModelError(string.Empty, ExceptionMessages.InvalidOperation);
-            }
-
-            return View(nameof(All));
-        }
-
         [HttpGet]
         public async Task<IActionResult> Edit(string id)
         {
@@ -162,9 +138,6 @@ namespace Houses.Web.Controllers
             return View(propertyToUpdate);
         }
 
-        //[HttpGet]
-        //public IActionResult Delete() => RedirectToAction(nameof(All));
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete([FromForm] string id)
@@ -172,7 +145,7 @@ namespace Houses.Web.Controllers
             //Guid idGuid = Guid.Parse(id);
             await _propertyService.RemovePropertyFromCollectionAsync(id);
 
-            return RedirectToAction(nameof(All));
+            return RedirectToAction(nameof(Mine));
         }
     }
 }

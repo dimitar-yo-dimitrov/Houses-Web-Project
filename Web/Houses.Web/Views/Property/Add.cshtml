@@ -1,71 +1,11 @@
-﻿@model CreatePropertyViewModel
-
-@{
+﻿@{
     ViewBag.Title = "Add Property for sale";
 }
 
-<div class="row">
-    <div class="col-sm-12 offset-lg-2 col-lg-8 offset-xl-3 col-xl-6">
-        <section>
-            <form asp-action="Add" method="post">
-                <div class="from-gtoup">
-                    <label asp-for="@Model.Title" class="form-label">Title</label>
-                    <input asp-for="@Model.Title" class="form-control" aria-required="true" placeholder="Title"/>
-                    <span asp-validation-for="Title" class="text-danger"></span>
-                </div>
-                <div class="mb-3">
-                    <label asp-for="@Model.Price" class="form-label">Price</label>
-                    <input asp-for="@Model.Price" class="form-control" aria-required="true" placeholder="0.00"/>
-                    <span asp-validation-for="Price" class="text-danger"></span>
-                </div>
-                <div class="mb-3">
-                    <label asp-for="@Model.Address" class="form-label">Address</label>
-                    <input asp-for="@Model.Address" class="form-control" aria-required="true" placeholder="City name, street name, number, post code" />
-                    <span asp-validation-for="Address" class="text-danger"></span>
-                </div>
-                <div class="mb-3">
-                    <label asp-for="@Model.Description" class="form-label">Description</label>
-                    <textarea asp-for="@Model.Description" class="form-control" aria-required="true" rows="5" placeholder="Descriptions..."></textarea>
-                    <span asp-validation-for="Description" class="text-danger"></span>
-                </div>
-                <div class="mb-3">
-                    <label asp-for="@Model.ImageUrl" class="form-label">Image URL</label>
-                    <input asp-for="@Model.ImageUrl" class="form-control" aria-required="true" placeholder="Add your URL here..." />
-                    <span asp-validation-for="ImageUrl" class="text-dark"></span>
-                </div>
-                <div class="mb-3">
-                    <label asp-for="@Model.SquareMeters" class="form-label">Square Meters</label>
-                    <input asp-for="@Model.SquareMeters" class="form-control" aria-required="true" placeholder="0.00" />
-                    <span asp-validation-for="SquareMeters" class="text-dark"></span>
-                </div>
-                <div class="mb-3">
-                    <label asp-for="@Model.CityId" class="form-label">Cities</label>
-                    <select asp-for="@Model.CityId" class="form-control">
-                        @foreach (var city in Model.Cities)
-                        {
-                            <option value="@city.Id">@city.Name</option>
-                        }
-                    </select>
-                    <span asp-validation-for="CityId" class="text-danger"></span>
-                </div>
-                <div class="mb-3">
-                    <label asp-for="@Model.PropertyTypeId" class="form-label">PropertyTypes</label>
-                    <select asp-for="@Model.PropertyTypeId" class="form-control">
-                        @foreach (var propertyType in Model.PropertyTypes)
-                        {
-                            <option value="@propertyType.Id">@propertyType.Name</option>
-                        }
-                    </select>
-                    <span asp-validation-for="PropertyTypeId" class="text-danger"></span>
-                </div>
-                <div class="text-center">
-                    <input class="btn btn-primary mt-3" type="submit" value="Save" />
-                </div>
-            </form>
-        </section>
-    </div>
-</div>
+<h2 class="text-center">@ViewBag.Title</h2>
+<hr />
 
+<partial name="_PropertyFormPartial" model="@Model"/>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

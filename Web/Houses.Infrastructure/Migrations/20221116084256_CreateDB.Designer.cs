@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Houses.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20221108085300_SeedCities")]
-    partial class SeedCities
+    [Migration("20221116084256_CreateDB")]
+    partial class CreateDB
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -203,6 +203,10 @@ namespace Houses.Infrastructure.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
+                    b.Property<string>("OwnerId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<decimal>("Price")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
@@ -246,32 +250,32 @@ namespace Houses.Infrastructure.Migrations
                         new
                         {
                             Id = "1",
-                            Title = "Houses"
+                            Title = "House"
                         },
                         new
                         {
                             Id = "2",
-                            Title = "Apartments"
+                            Title = "Apartment"
                         },
                         new
                         {
                             Id = "3",
-                            Title = "Villas"
+                            Title = "Villa"
                         },
                         new
                         {
                             Id = "4",
-                            Title = "Offices"
+                            Title = "Office"
                         },
                         new
                         {
                             Id = "5",
-                            Title = "Shops"
+                            Title = "Shop"
                         },
                         new
                         {
                             Id = "6",
-                            Title = "Hotels"
+                            Title = "Hotel"
                         });
                 });
 

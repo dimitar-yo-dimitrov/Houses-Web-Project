@@ -40,8 +40,6 @@ namespace Houses.Core.ViewModels.Property
         [Display(Name = "Image URL")]
         public string ImageUrl { get; set; } = null!;
 
-        public string OwnerId { get; set; } = null!;
-
         [Display(Name = "City")]
         public string CityId { get; set; } = null!;
 

@@ -11,8 +11,6 @@ namespace Houses.Core.Services.Contracts
 
         Task RemovePropertyFromCollectionAsync(string propertyId);
 
-        Task AddPropertyToCollectionAsync(string propertyId, string userId);
-
         Task<Property> GetPropertyAsync(string propertyId);
 
         Task EditAsync(EditPropertyViewModel propertyToUpdate, string id);

@@ -21,7 +21,7 @@ namespace Houses.Infrastructure.Data.Identity
         public string? LastName { get; set; }
 
         [MaxLength(MaxUrl)]
-        public virtual string? ProfilePicture { get; set; }
+        public string? ProfilePicture { get; set; }
 
         public virtual ICollection<ApplicationUserProperty> ApplicationUserProperties { get; set; }
 

@@ -114,27 +114,10 @@ namespace Houses.Core.Services
                     PropertyType = p.PropertyType.Title,
                     City = p.City.Name,
                     ImageUrl = p.ImageUrl,
-                    Owner = userId
+                    Owner = p.OwnerId
 
                 })
                 .ToListAsync();
-        }
-
-        public async Task AddPropertyToCollectionAsync(string propertyId, string userId)
-        {
-            var property = _repository
-                .All<Property>()
-                .FirstOrDefaultAsync(p => p.ApplicationUserProperties
-                    .Any(aup => aup.PropertyId == propertyId && aup.ApplicationUserId == userId));
-
-            if (property == null)
-            {
-                throw new ArgumentException(ExceptionMessages.AddPropertyToCollectionNotFound);
-            }
-
-            await _repository.AddAsync(new ApplicationUserProperty { ApplicationUserId = userId, PropertyId = propertyId });
-
-            await _repository.SaveChangesAsync();
         }
 
         public async Task<Property> GetPropertyAsync(string propertyId)
