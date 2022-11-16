@@ -37,8 +37,14 @@ namespace Houses.Core.Services
                 .ToListAsync();
         }
 
-        public async Task<string> CreateAsync(CreatePropertyViewModel model, string userId)
+        public async Task<string> CreateAsync(CreatePropertyViewModel model, string? userId)
         {
+            if (userId == null)
+            {
+                throw new NullReferenceException(
+                    string.Format(ExceptionMessages.IdIsNull));
+            }
+
             var property = new Property
             {
                 Title = model.Title,
@@ -64,7 +70,7 @@ namespace Houses.Core.Services
             return model.Id;
         }
 
-        public async Task EditAsync(EditPropertyViewModel propertyToUpdate, string id)
+        public async Task EditAsync(CreatePropertyViewModel propertyToUpdate, string? id)
         {
             if (id == null)
             {
@@ -73,7 +79,7 @@ namespace Houses.Core.Services
             }
 
             var property = await _repository
-                .All<Property>()
+                .AllReadonly<Property>()
                 .Where(p => p.Id == id)
                 .FirstOrDefaultAsync();
 

@@ -1,4 +1,4 @@
-﻿using System.Data;
+﻿using System.Globalization;
 using Houses.Core.Services.Contracts;
 using Houses.Core.ViewModels.Property;
 using Houses.Infrastructure.GlobalConstants;
@@ -107,42 +107,70 @@ namespace Houses.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Edit(string id)
+        public async Task<IActionResult> Edit(string? id)
         {
+            if (id == null)
+            {
+                throw new NullReferenceException(
+                    string.Format(ExceptionMessages.IdIsNull));
+            }
+
             var property = await _propertyService.GetPropertyAsync(id);
 
-            return (property as IActionResult)!;
+            if (property == null)
+            {
+                throw new NullReferenceException(
+                    string.Format(ExceptionMessages.PropertyNotFound, id));
+            }
+
+            var model = new CreatePropertyViewModel
+            {
+                Title = property.Title,
+                Price = property.Price.ToString(CultureInfo.InvariantCulture),
+                Description = property.Description,
+                Address = property.Address,
+                SquareMeters = property.SquareMeters.ToString(),
+                ImageUrl = property.ImageUrl,
+                CityId = property.CityId,
+                PropertyTypeId = property.PropertyTypeId,
+            };
+
+            return View(model);
         }
 
         [HttpPost, ActionName("Edit")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(EditPropertyViewModel propertyToUpdate, string id)
+        public async Task<IActionResult> Edit(CreatePropertyViewModel propertyToUpdate, string? id)
         {
+            if (id == null)
+            {
+                throw new NullReferenceException(
+                    string.Format(ExceptionMessages.IdIsNull));
+            }
+
             if (propertyToUpdate == null)
             {
                 throw new NullReferenceException(
                     string.Format(ExceptionMessages.PropertyNotFound, propertyToUpdate!.Id));
             }
 
-            try
+            if (!ModelState.IsValid)
             {
-                //await _propertyService.EditAsync(propertyToUpdate, user.Id);
+                propertyToUpdate.PropertyTypes = await _propertyTypeService.GetAllTypesAsync();
+                propertyToUpdate.Cities = await _cityService.GetAllCitiesAsync();
 
-                return RedirectToAction(nameof(Mine));
-            }
-            catch (DataException)
-            {
-                ModelState.AddModelError(string.Empty, ExceptionMessages.InvalidOperation);
+                return View(propertyToUpdate);
             }
 
-            return View(propertyToUpdate);
+            await _propertyService.EditAsync(propertyToUpdate, id);
+
+            return RedirectToAction(nameof(Details), new { id });
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete([FromForm] string id)
         {
-            //Guid idGuid = Guid.Parse(id);
             await _propertyService.RemovePropertyFromCollectionAsync(id);
 
             return RedirectToAction(nameof(Mine));
