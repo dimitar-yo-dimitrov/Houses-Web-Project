@@ -1,4 +1,4 @@
-﻿@model IEnumerable<PropertyViewModel>
+﻿@model AllPropertyQueryViewModel
 
 @{
     ViewBag.Title = "All Properties";
@@ -7,30 +7,92 @@
 <h2 class="text-center">@ViewBag.Title</h2>
 <hr />
 
-<div class="text-center row">
-    @foreach (var property in Model)
-    {
-        <div class="card col-4" style="display:inline">
-            <img class="card-img-top" style="width: 18rem;"
-             src="@property.ImageUrl" alt="Property Image">
-            <div class="card-body">
-                <h5 class="card-title mt-1">@property.Title</h5>
-                <p class="mb-0">Description: @property.Description</p>
-                <p class="mb-0">City: @property.City</p>
-                <p class="mb-0">Price: @property.Price</p>
-                <p class="mb-0">Square Meters: @property.SquareMeters</p>
-                <p>Property Type: @property.PropertyType</p>
+<form method="get">
+    <div class="row mt-3 mb-3">
+        <div class="form-group col-md-3 d-flex justify-content-between">
+            <div class="form-group">
+                <label asp-for="PropertyType"></label>
+                <select asp-for="PropertyType" class="form-control">
+                    <option value="">All</option>
+                    @foreach (var propertyType in Model.PropertyTypes)
+                    {
+                        <option value="@propertyType">@propertyType</option>
+                    }
+                </select>
             </div>
-            <form class="input-group-sm" asp-controller="Property" asp-action="Details" asp-route-PropertyId="@property.Id">
-                <input class="btn btn-info" type="submit" value="Details" />
-            </form>
-            <form class="input-group-sm" asp-controller="Property" asp-action="Edit" asp-route-PropertyId="@property.Id">
-                <input class="btn btn-warning" type="submit" value="Edit" />
-            </form>
-            <form asp-action="Delete" asp-controller="Property" method="post">
-                <input name="id" type="hidden" value="@property.Id" />
-                <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this Product: @property.Title')">Remove</button>
-            </form>
         </div>
+
+        <div class="form-group col-md-3">
+            <label asp-for="SearchTerm"></label>
+            <input asp-for="SearchTerm" class="form-control" placeholder="...">
+        </div>
+
+        <div class="form-group col-md-3">
+            <div class="form-group">
+                <label asp-for="Sorting"></label>
+                <select asp-for="Sorting" class="form-control">
+                    <option value="0">Newest</option>
+                    <option value="1">Lowest price first</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="form-group mt-4 p-2">
+                <input type="submit" value="Search" class="btn btn-primary" />
+            </div>
+        </div>
+    </div>
+</form>
+
+
+@{
+    var previousPage = Model.CurrentPage - 1;
+    if (previousPage < 1)
+    {
+        previousPage = 1;
+    }
+
+    var maxPage = Math.Ceiling((double)Model.TotalHousesCount /
+        AllPropertyQueryViewModel.HousesPerPage);
+}
+
+<div class="row mb-5">
+    <div class="col-md-6 d-grid gap-2 d-md-flex justify-content-md-start">
+        <a class="btn btn-primary @(Model.CurrentPage == 1 ? "disabled" : string.Empty)"
+           asp-controller="Property"
+           asp-action="All"
+           asp-route-currentPage="@previousPage"
+           asp-route-category="@Model.PropertyType"
+           asp-route-searchTerm="@Model.SearchTerm"
+           asp-route-sorting="@((int)Model.Sorting)"><<</a>
+    </div>
+
+    @{
+        var shouldButtonBeDisabled = Model.CurrentPage == maxPage ||
+        !Model.Properties.Any();
+    }
+
+    <div class="col-md-6 d-grid gap-2 d-md-flex justify-content-md-end">
+        <a class="btn btn-primary
+           @(shouldButtonBeDisabled ? "disabled" : string.Empty)"
+           asp-controller="Property"
+           asp-action="All"
+           asp-route-currentPage="@(Model.CurrentPage + 1)"
+           asp-route-category="@Model.PropertyType"
+           asp-route-searchTerm="@Model.SearchTerm"
+           asp-route-sorting="@((int)Model.Sorting)">>></a>
+    </div>
+</div>
+
+@if (!Model.Properties.Any())
+{
+    <h2 class="text-center">No properties found by the given criteria!</h2>
+}
+
+<div class="row">
+    @foreach (var property in Model.Properties)
+    {
+        <partial name="_PropertyPartial" model="@property" />
     }
 </div>

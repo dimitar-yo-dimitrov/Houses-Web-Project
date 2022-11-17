@@ -13,6 +13,18 @@ namespace Houses.Infrastructure.Data.Configuration
                 .Property(p => p.Description)
                 .HasMaxLength(PropertyMaxDescription)
                 .IsRequired();
+
+            //builder
+            //    .HasOne(p => p.PropertyType)
+            //    .WithMany(pt => pt.Properties)
+            //    .HasForeignKey(p => p.OwnerId)
+            //    .OnDelete(DeleteBehavior.Restrict);
+
+            //builder
+            //    .HasOne(p => p.OwnerId)
+            //    .WithMany()
+            //    .HasForeignKey(p => p.PropertyTypeId)
+            //    .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

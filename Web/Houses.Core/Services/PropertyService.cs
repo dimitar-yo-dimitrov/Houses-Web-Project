@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using Houses.Core.Services.Contracts;
 using Houses.Core.ViewModels.Property;
+using Houses.Core.ViewModels.Property.Enums;
 using Houses.Infrastructure.Data.Entities;
 using Houses.Infrastructure.Data.Repositories;
 using Houses.Infrastructure.GlobalConstants;
@@ -17,11 +18,42 @@ namespace Houses.Core.Services
             _repository = repository;
         }
 
-        public async Task<IEnumerable<PropertyViewModel>> GetAllAsync()
+        public async Task<PropertyQueryViewModel> GetAllAsync(string? propertyType = null,
+            string? searchTerm = null,
+            PropertySorting sorting = PropertySorting.Newest,
+            int currentPage = 1,
+            int housesPerPage = 1)
         {
-            return await _repository
-                .AllReadonly<Property>(p => p.IsActive)
-                .Select(p => new PropertyViewModel
+            var result = new PropertyQueryViewModel();
+            var properties = _repository.AllReadonly<Property>();
+
+            if (string.IsNullOrEmpty(propertyType) == false)
+            {
+                properties = properties
+                    .Where(p => p.Title == propertyType);
+            }
+
+            if (string.IsNullOrEmpty(searchTerm) == false)
+            {
+                searchTerm = $"%{searchTerm!.ToLower()}%";
+
+                properties = properties
+                    .Where(p => EF.Functions.Like(p.Title.ToLower(), searchTerm) ||
+                                EF.Functions.Like(p.Address.ToLower(), searchTerm) ||
+                                EF.Functions.Like(p.Description.ToLower(), searchTerm));
+            }
+
+            properties = sorting switch
+            {
+                PropertySorting.Newest => properties.OrderBy(p => p.Id),
+                PropertySorting.Price => properties.OrderBy(p => p.Price),
+                _ => properties.OrderByDescending(p => p.Id)
+            };
+
+            result.Properties = await properties
+                .Skip((currentPage - 1) * housesPerPage)
+                .Take(housesPerPage)
+                .Select(p => new PropertyServiceViewModel
                 {
                     Id = p.Id,
                     Title = p.Title,
@@ -29,12 +61,13 @@ namespace Houses.Core.Services
                     Description = p.Description,
                     Address = p.Address,
                     SquareMeters = p.SquareMeters.ToString(),
-                    PropertyType = p.PropertyType.Title,
-                    City = p.City.Name,
                     ImageUrl = p.ImageUrl,
                 })
-                .OrderBy(p => p.Title)
                 .ToListAsync();
+
+            result.TotalPropertyCount = await properties.CountAsync();
+
+            return result;
         }
 
         public async Task<string> CreateAsync(CreatePropertyViewModel model, string? userId)

@@ -4,6 +4,8 @@ namespace Houses.Core.Services.Contracts
 {
     public interface IPropertiesTypesService
     {
-        public Task<IEnumerable<PropertyTypeViewModel>> GetAllTypesAsync();
+        public Task<IEnumerable<string>> AllPropertyTypeNamesAsync();
+
+        public Task<IEnumerable<PropertyTypeViewModel>> AllPropertyTypesAsync();
     }
 }

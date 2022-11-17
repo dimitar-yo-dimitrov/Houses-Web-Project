@@ -1,0 +1,28 @@
+﻿@model PropertyServiceViewModel
+
+<div class="col-md-4">
+    <div class="card mb-3">
+        <img class="card-img-top" src="@Model.ImageUrl" alt="House Image">
+        <div class="card-body text-center">
+            <h4>@Model.Title</h4>
+            <h6>Address: <b>@Model.Address</b></h6>
+            <h6>
+                Price:
+                <b>@($"{Model.Price:f2}") BGN</b>
+            </h6>
+            <br />
+            <a asp-controller="Property" asp-action="Details" asp-route-id="@Model.Id"
+               class="btn btn-success">Details</a>
+            @if (User.Identity!.IsAuthenticated)
+            {
+                <a asp-controller="Property" asp-action="Edit" asp-route-id="@Model.Id"
+               class="btn btn-warning">Edit</a>
+                <a asp-action="Delete" asp-controller="Property" method="post">
+                    <input name="id" type="hidden" value="@Model.Id" />
+                    <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this Product: @Model.Title')">Remove</button>
+                </a>
+                <p></p>
+            }
+        </div>
+    </div>
+</div>

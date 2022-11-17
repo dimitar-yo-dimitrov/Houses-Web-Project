@@ -29,13 +29,20 @@ namespace Houses.Web.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public async Task<IActionResult> All()
+        public async Task<IActionResult> All([FromQuery] AllPropertyQueryViewModel queryModel)
         {
-            var properties = await _propertyService.GetAllAsync();
+            var result = await _propertyService.GetAllAsync(
+                queryModel.PropertyType,
+                queryModel.SearchTerm,
+                queryModel.Sorting,
+                queryModel.CurrentPage,
+                AllPropertyQueryViewModel.HousesPerPage);
 
-            ViewData["Title"] = "All Properties";
+            queryModel.TotalHousesCount = result.TotalPropertyCount;
+            queryModel.PropertyTypes = await _propertyTypeService.AllPropertyTypeNamesAsync();
+            queryModel.Properties = result.Properties;
 
-            return View(properties);
+            return View(queryModel);
         }
 
         public async Task<IActionResult> Mine()
@@ -73,7 +80,7 @@ namespace Houses.Web.Controllers
         {
             var model = new CreatePropertyViewModel
             {
-                PropertyTypes = await _propertyTypeService.GetAllTypesAsync(),
+                PropertyTypes = await _propertyTypeService.AllPropertyTypesAsync(),
                 Cities = await _cityService.GetAllCitiesAsync()
             };
 
@@ -93,7 +100,7 @@ namespace Houses.Web.Controllers
 
             if (!ModelState.IsValid)
             {
-                propertyModel.PropertyTypes = await _propertyTypeService.GetAllTypesAsync();
+                propertyModel.PropertyTypes = await _propertyTypeService.AllPropertyTypesAsync();
                 propertyModel.Cities = await _cityService.GetAllCitiesAsync();
 
                 return View(propertyModel);
@@ -133,6 +140,8 @@ namespace Houses.Web.Controllers
                 ImageUrl = property.ImageUrl,
                 CityId = property.CityId,
                 PropertyTypeId = property.PropertyTypeId,
+                PropertyTypes = await _propertyTypeService.AllPropertyTypesAsync(),
+                Cities = await _cityService.GetAllCitiesAsync()
             };
 
             return View(model);
@@ -156,9 +165,6 @@ namespace Houses.Web.Controllers
 
             if (!ModelState.IsValid)
             {
-                propertyToUpdate.PropertyTypes = await _propertyTypeService.GetAllTypesAsync();
-                propertyToUpdate.Cities = await _cityService.GetAllCitiesAsync();
-
                 return View(propertyToUpdate);
             }
 
@@ -173,7 +179,7 @@ namespace Houses.Web.Controllers
         {
             await _propertyService.RemovePropertyFromCollectionAsync(id);
 
-            return RedirectToAction(nameof(Mine));
+            return RedirectToAction(nameof(All));
         }
     }
 }

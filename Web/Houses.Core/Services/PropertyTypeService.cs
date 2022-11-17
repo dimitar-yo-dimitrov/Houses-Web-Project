@@ -15,18 +15,24 @@ namespace Houses.Core.Services
             _repository = repository;
         }
 
-        public async Task<IEnumerable<PropertyTypeViewModel>> GetAllTypesAsync()
+        public async Task<IEnumerable<string>> AllPropertyTypeNamesAsync()
         {
-            var propertiesTypes = await _repository.AllReadonly<PropertyType>()
-                .OrderBy(pt => pt.Title)
-                .Select(pt => new PropertyTypeViewModel
+            return await _repository.AllReadonly<PropertyType>()
+                .Select(pt => pt.Title)
+                .Distinct()
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<PropertyTypeViewModel>> AllPropertyTypesAsync()
+        {
+            return await _repository.AllReadonly<PropertyType>()
+                .OrderBy(c => c.Title)
+                .Select(c => new PropertyTypeViewModel()
                 {
-                    Id = pt.Id,
-                    Name = pt.Title
+                    Id = c.Id,
+                    Name = c.Title
                 })
                 .ToListAsync();
-
-            return propertiesTypes;
         }
     }
 }

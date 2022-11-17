@@ -1,13 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Houses.Core.ViewModels.City;
-using Houses.Core.ViewModels.PropertyType;
 using static Houses.Infrastructure.GlobalConstants.ValidationConstants.Property;
 
 namespace Houses.Core.ViewModels.Property
 {
-    public class CreatePropertyViewModel
+    public class PropertyServiceViewModel
     {
-        public CreatePropertyViewModel()
+        public PropertyServiceViewModel()
         {
             Id = new Guid().ToString();
         }
@@ -39,15 +37,5 @@ namespace Houses.Core.ViewModels.Property
         [Url]
         [Display(Name = "Image URL")]
         public string ImageUrl { get; init; } = null!;
-
-        [Display(Name = "City")]
-        public string CityId { get; init; } = null!;
-
-        [Display(Name = "Property Type")]
-        public string PropertyTypeId { get; init; } = null!;
-
-        public IEnumerable<CityViewModel> Cities { get; set; } = new List<CityViewModel>();
-
-        public IEnumerable<PropertyTypeViewModel> PropertyTypes { get; set; } = new List<PropertyTypeViewModel>();
     }
 }
