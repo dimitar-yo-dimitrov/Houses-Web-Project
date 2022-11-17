@@ -1,7 +1,7 @@
 ﻿@model AllPropertyQueryViewModel
 
 @{
-    ViewBag.Title = "All Properties";
+    ViewBag.Title = "All Properties for sale";
 }
 
 <h2 class="text-center">@ViewBag.Title</h2>
@@ -11,7 +11,7 @@
     <div class="row mt-3 mb-3">
         <div class="form-group col-md-3 d-flex justify-content-between">
             <div class="form-group">
-                <label asp-for="PropertyType"></label>
+                <label asp-for="PropertyType">Property Types</label>
                 <select asp-for="PropertyType" class="form-control">
                     <option value="">All</option>
                     @foreach (var propertyType in Model.PropertyTypes)
