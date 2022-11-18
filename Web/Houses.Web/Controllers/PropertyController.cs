@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using Houses.Core.Services.Contracts;
+﻿using Houses.Core.Services.Contracts;
 using Houses.Core.ViewModels.Property;
 using Houses.Infrastructure.GlobalConstants;
 using Houses.Web.Extensions;
@@ -133,10 +132,10 @@ namespace Houses.Web.Controllers
             var model = new CreatePropertyViewModel
             {
                 Title = property.Title,
-                Price = property.Price.ToString(CultureInfo.InvariantCulture),
+                Price = property.Price,
                 Description = property.Description,
                 Address = property.Address,
-                SquareMeters = property.SquareMeters.ToString(),
+                SquareMeters = property.SquareMeters,
                 ImageUrl = property.ImageUrl,
                 CityId = property.CityId,
                 PropertyTypeId = property.PropertyTypeId,

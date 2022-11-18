@@ -84,7 +84,7 @@ namespace Houses.Core.Services
                 Price = Convert.ToDecimal(model.Price),
                 Description = model.Description,
                 Address = model.Address,
-                SquareMeters = double.Parse(model.SquareMeters!),
+                SquareMeters = model.SquareMeters!,
                 ImageUrl = model.ImageUrl,
                 CityId = model.CityId,
                 PropertyTypeId = model.PropertyTypeId,
@@ -125,7 +125,7 @@ namespace Houses.Core.Services
             property.Title = propertyToUpdate.Title;
             property.Description = propertyToUpdate.Description;
             property.Address = propertyToUpdate.Address;
-            property.SquareMeters = double.Parse(propertyToUpdate.SquareMeters!);
+            property.SquareMeters = propertyToUpdate.SquareMeters;
             property.ImageUrl = propertyToUpdate.ImageUrl;
             property.Price = Convert.ToDecimal(propertyToUpdate.Price);
             property.PropertyTypeId = propertyToUpdate.PropertyTypeId;
@@ -146,7 +146,7 @@ namespace Houses.Core.Services
                 {
                     Id = p.Id,
                     Title = p.Title,
-                    Price = p.Price.ToString(CultureInfo.CurrentCulture),
+                    Price = p.Price.ToString(CultureInfo.InvariantCulture),
                     Description = p.Description,
                     Address = p.Address,
                     SquareMeters = p.SquareMeters.ToString(),

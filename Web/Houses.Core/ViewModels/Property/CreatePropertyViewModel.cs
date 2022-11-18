@@ -21,7 +21,7 @@ namespace Houses.Core.ViewModels.Property
 
         [Required]
         //[Range(typeof(string), PriceMinLength, PriceMaxLength, ConvertValueInInvariantCulture = true, ParseLimitsInInvariantCulture = true)]
-        public string Price { get; init; } = null!;
+        public decimal Price { get; init; }
 
         [Required(AllowEmptyStrings = false)]
         [StringLength(PropertyMaxDescription, MinimumLength = PropertyMinDescription)]
@@ -33,7 +33,7 @@ namespace Houses.Core.ViewModels.Property
         public string Address { get; init; } = null!;
 
         //[Range(typeof(string), SquareMetersMin, SquareMetersMax, ConvertValueInInvariantCulture = true, ParseLimitsInInvariantCulture = true)]
-        public string? SquareMeters { get; init; }
+        public double? SquareMeters { get; init; }
 
         [Required]
         [Url]
