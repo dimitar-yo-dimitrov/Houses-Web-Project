@@ -2,13 +2,18 @@
 
 <div class="col-md-4">
     <div class="card mb-3">
-        <img class="card-img-top" src="@Model.ImageUrl" alt="House Image">
+        <img class="card-img-top" src="@Model.ImageUrl" alt="Property Image">
         <div class="card-body text-center">
             <h4>@Model.Title</h4>
             <h6>Address: <b>@Model.Address</b></h6>
+            <h6>Description: <b>@Model.Description</b></h6>
             <h6>
                 Price:
                 <b>@($"{Model.Price}") BGN</b>
+            </h6>
+            <h6>
+                Square Meters:
+                <b>@($"{Model.SquareMeters}") m2</b>
             </h6>
             <br />
             <a asp-controller="Property" asp-action="Details" asp-route-id="@Model.Id"

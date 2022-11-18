@@ -3,6 +3,7 @@
     public enum PropertySorting
     {
         Newest = 0,
-        Price = 1,
+        PriceAscending = 1,
+        PriceDescending = 2,
     }
 }

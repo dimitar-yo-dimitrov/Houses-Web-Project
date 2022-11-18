@@ -18,7 +18,8 @@ namespace Houses.Core.Services
             _repository = repository;
         }
 
-        public async Task<PropertyQueryViewModel> GetAllAsync(string? propertyType = null,
+        public async Task<PropertyQueryViewModel> GetAllAsync(
+            string? propertyType = null,
             string? searchTerm = null,
             PropertySorting sorting = PropertySorting.Newest,
             int currentPage = 1,
@@ -35,7 +36,7 @@ namespace Houses.Core.Services
 
             if (string.IsNullOrEmpty(searchTerm) == false)
             {
-                searchTerm = $"%{searchTerm!.ToLower()}%";
+                searchTerm = $"%{searchTerm.ToLower()}%";
 
                 properties = properties
                     .Where(p => EF.Functions.Like(p.Title.ToLower(), searchTerm) ||
@@ -46,7 +47,8 @@ namespace Houses.Core.Services
             properties = sorting switch
             {
                 PropertySorting.Newest => properties.OrderBy(p => p.Id),
-                PropertySorting.Price => properties.OrderBy(p => p.Price),
+                PropertySorting.PriceAscending => properties.OrderBy(p => p.Price),
+                PropertySorting.PriceDescending => properties.OrderByDescending(p => p.Price),
                 _ => properties.OrderByDescending(p => p.Id)
             };
 
@@ -57,10 +59,10 @@ namespace Houses.Core.Services
                 {
                     Id = p.Id,
                     Title = p.Title,
-                    Price = p.Price.ToString(CultureInfo.InvariantCulture),
+                    Price = p.Price,
                     Description = p.Description,
                     Address = p.Address,
-                    SquareMeters = p.SquareMeters.ToString(),
+                    SquareMeters = p.SquareMeters,
                     ImageUrl = p.ImageUrl,
                 })
                 .ToListAsync();
