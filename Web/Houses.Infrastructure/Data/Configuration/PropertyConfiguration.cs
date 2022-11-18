@@ -1,7 +1,7 @@
 ﻿using Houses.Infrastructure.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using static Houses.Infrastructure.GlobalConstants.ValidationConstants.Property;
+using static Houses.Common.GlobalConstants.ValidationConstants.Property;
 
 namespace Houses.Infrastructure.Data.Configuration
 {

@@ -3,7 +3,7 @@ using Houses.Infrastructure.Data.Identity;
 using Houses.Web.Extensions;
 using Houses.Web.ModelBinders;
 using Microsoft.AspNetCore.Mvc.Razor;
-using static Houses.Infrastructure.GlobalConstants.ValidationConstants.FormattingConstant;
+using static Houses.Common.GlobalConstants.ValidationConstants.FormattingConstant;
 
 var builder = WebApplication.CreateBuilder(args);
 

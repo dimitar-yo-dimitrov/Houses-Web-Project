@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Houses.Infrastructure.Data.Entities;
 using Microsoft.AspNetCore.Identity;
-using static Houses.Infrastructure.GlobalConstants.ValidationConstants.Property;
-using static Houses.Infrastructure.GlobalConstants.ValidationConstants.User;
+using static Houses.Common.GlobalConstants.ValidationConstants.Property;
+using static Houses.Common.GlobalConstants.ValidationConstants.User;
 
 namespace Houses.Infrastructure.Data.Identity
 {

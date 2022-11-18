@@ -1,6 +1,6 @@
-﻿using Houses.Core.Services.Contracts;
+﻿using Houses.Common.GlobalConstants;
+using Houses.Core.Services.Contracts;
 using Houses.Core.ViewModels.Property;
-using Houses.Infrastructure.GlobalConstants;
 using Houses.Web.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Houses.Core.ViewModels.City;
 using Houses.Core.ViewModels.PropertyType;
-using static Houses.Infrastructure.GlobalConstants.ValidationConstants.Property;
+using static Houses.Common.GlobalConstants.ValidationConstants.Property;
 
 namespace Houses.Core.ViewModels.Property
 {

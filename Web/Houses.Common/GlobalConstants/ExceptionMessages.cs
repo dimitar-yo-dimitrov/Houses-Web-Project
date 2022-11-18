@@ -1,4 +1,4 @@
-﻿namespace Houses.Infrastructure.GlobalConstants
+﻿namespace Houses.Common.GlobalConstants
 {
     public static class ExceptionMessages
     {

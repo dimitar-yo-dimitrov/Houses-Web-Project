@@ -1,10 +1,10 @@
 ﻿using System.Globalization;
+using Houses.Common.GlobalConstants;
 using Houses.Core.Services.Contracts;
 using Houses.Core.ViewModels.Property;
 using Houses.Core.ViewModels.Property.Enums;
 using Houses.Infrastructure.Data.Entities;
 using Houses.Infrastructure.Data.Repositories;
-using Houses.Infrastructure.GlobalConstants;
 using Microsoft.EntityFrameworkCore;
 
 namespace Houses.Core.Services
@@ -46,7 +46,7 @@ namespace Houses.Core.Services
 
             properties = sorting switch
             {
-                PropertySorting.Newest => properties.OrderBy(p => p.Id),
+                PropertySorting.Newest => properties.OrderByDescending(p => p.Id),
                 PropertySorting.PriceAscending => properties.OrderBy(p => p.Price),
                 PropertySorting.PriceDescending => properties.OrderByDescending(p => p.Price),
                 _ => properties.OrderByDescending(p => p.Id)
@@ -86,7 +86,7 @@ namespace Houses.Core.Services
                 Price = Convert.ToDecimal(model.Price),
                 Description = model.Description,
                 Address = model.Address,
-                SquareMeters = model.SquareMeters!,
+                SquareMeters = Convert.ToDouble(model.SquareMeters!),
                 ImageUrl = model.ImageUrl,
                 CityId = model.CityId,
                 PropertyTypeId = model.PropertyTypeId,
@@ -127,7 +127,7 @@ namespace Houses.Core.Services
             property.Title = propertyToUpdate.Title;
             property.Description = propertyToUpdate.Description;
             property.Address = propertyToUpdate.Address;
-            property.SquareMeters = propertyToUpdate.SquareMeters;
+            property.SquareMeters = Convert.ToDouble(propertyToUpdate.SquareMeters);
             property.ImageUrl = propertyToUpdate.ImageUrl;
             property.Price = Convert.ToDecimal(propertyToUpdate.Price);
             property.PropertyTypeId = propertyToUpdate.PropertyTypeId;

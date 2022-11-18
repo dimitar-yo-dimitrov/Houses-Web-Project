@@ -26,6 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Houses.Common\Houses.Common.csproj" />
     <ProjectReference Include="..\Houses.Core\Houses.Core.csproj" />
   </ItemGroup>
 

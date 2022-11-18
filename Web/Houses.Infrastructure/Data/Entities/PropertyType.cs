@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using static Houses.Infrastructure.GlobalConstants.ValidationConstants.Property;
+using static Houses.Common.GlobalConstants.ValidationConstants.Property;
 
 namespace Houses.Infrastructure.Data.Entities
 {

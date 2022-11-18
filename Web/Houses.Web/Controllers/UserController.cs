@@ -1,10 +1,10 @@
-﻿using Houses.Core.ViewModels.User;
+﻿using Houses.Common.GlobalConstants;
+using Houses.Core.ViewModels.User;
 using Houses.Infrastructure.Data.Identity;
-using Houses.Infrastructure.GlobalConstants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using static Houses.Infrastructure.GlobalConstants.ValidationConstants.ClaimsConstants;
+using static Houses.Common.GlobalConstants.ValidationConstants.ClaimsConstants;
 
 namespace Houses.Web.Controllers
 {

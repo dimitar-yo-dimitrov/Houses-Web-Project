@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
-using static Houses.Infrastructure.GlobalConstants.ValidationConstants.Property;
+using static Houses.Common.GlobalConstants.ValidationConstants.Property;
 
 namespace Houses.Infrastructure.Data.Entities
 {
