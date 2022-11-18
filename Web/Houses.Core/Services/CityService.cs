@@ -15,6 +15,15 @@ namespace Houses.Core.Services
             _repository = repository;
         }
 
+        public async Task<IEnumerable<string>> AllCityNamesAsync()
+        {
+            return await _repository
+                .AllReadonly<City>()
+                .Select(c => c.Name)
+                .Distinct()
+                .ToListAsync();
+        }
+
         public async Task<IEnumerable<CityViewModel>> GetAllCitiesAsync()
         {
             var cities = await _repository.AllReadonly<City>()

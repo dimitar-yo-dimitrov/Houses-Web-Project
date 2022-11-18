@@ -8,6 +8,7 @@ namespace Houses.Core.Services.Contracts
     {
         Task<PropertyQueryViewModel> GetAllAsync(
             string? propertyType = null,
+            string? city = null,
             string? searchTerm = null,
             PropertySorting sorting = PropertySorting.Newest,
             int currentPage = 1,

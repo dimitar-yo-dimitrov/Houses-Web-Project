@@ -20,6 +20,7 @@ namespace Houses.Core.Services
 
         public async Task<PropertyQueryViewModel> GetAllAsync(
             string? propertyType = null,
+            string? city = null,
             string? searchTerm = null,
             PropertySorting sorting = PropertySorting.Newest,
             int currentPage = 1,
@@ -31,7 +32,13 @@ namespace Houses.Core.Services
             if (string.IsNullOrEmpty(propertyType) == false)
             {
                 properties = properties
-                    .Where(p => p.PropertyType.Title == propertyType);
+                    .Where(p => p.PropertyType.Title == propertyType && p.City.Name == city);
+            }
+
+            if (string.IsNullOrEmpty(city) == false)
+            {
+                properties = properties
+                    .Where(p => p.City.Name == city);
             }
 
             if (string.IsNullOrEmpty(searchTerm) == false)

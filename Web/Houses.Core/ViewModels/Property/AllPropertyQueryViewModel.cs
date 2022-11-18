@@ -9,6 +9,8 @@ namespace Houses.Core.ViewModels.Property
 
         public string? PropertyType { get; init; }
 
+        public string? City { get; init; }
+
         [Display(Name = "Search by text")]
         public string? SearchTerm { get; init; }
 
@@ -19,6 +21,8 @@ namespace Houses.Core.ViewModels.Property
         public int TotalHousesCount { get; set; }
 
         public IEnumerable<string> PropertyTypes { get; set; } = Enumerable.Empty<string>();
+
+        public IEnumerable<string> Cities { get; set; } = Enumerable.Empty<string>();
 
         public IEnumerable<PropertyServiceViewModel> Properties { get; set; } = new HashSet<PropertyServiceViewModel>();
     }

@@ -32,6 +32,7 @@ namespace Houses.Web.Controllers
         {
             var result = await _propertyService.GetAllAsync(
                 queryModel.PropertyType,
+                queryModel.City,
                 queryModel.SearchTerm,
                 queryModel.Sorting,
                 queryModel.CurrentPage,
@@ -39,6 +40,7 @@ namespace Houses.Web.Controllers
 
             queryModel.TotalHousesCount = result.TotalPropertyCount;
             queryModel.PropertyTypes = await _propertyTypeService.AllPropertyTypeNamesAsync();
+            queryModel.Cities = await _cityService.AllCityNamesAsync();
             queryModel.Properties = result.Properties;
 
             return View(queryModel);
