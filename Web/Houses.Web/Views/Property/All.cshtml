@@ -65,7 +65,7 @@
            asp-controller="Property"
            asp-action="All"
            asp-route-currentPage="@previousPage"
-           asp-route-category="@Model.PropertyType"
+           asp-route-category="@Model.PropertyTypes"
            asp-route-searchTerm="@Model.SearchTerm"
            asp-route-sorting="@((int)Model.Sorting)"><<</a>
     </div>
@@ -81,7 +81,7 @@
            asp-controller="Property"
            asp-action="All"
            asp-route-currentPage="@(Model.CurrentPage + 1)"
-           asp-route-category="@Model.PropertyType"
+           asp-route-category="@Model.PropertyTypes"
            asp-route-searchTerm="@Model.SearchTerm"
            asp-route-sorting="@((int)Model.Sorting)">>></a>
     </div>

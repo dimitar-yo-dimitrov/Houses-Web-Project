@@ -7,7 +7,7 @@ namespace Houses.Core.ViewModels.Property
     {
         public const int HousesPerPage = 3;
 
-        public string PropertyType { get; init; } = null!;
+        public string? PropertyType { get; init; }
 
         [Display(Name = "Search by text")]
         public string? SearchTerm { get; init; }

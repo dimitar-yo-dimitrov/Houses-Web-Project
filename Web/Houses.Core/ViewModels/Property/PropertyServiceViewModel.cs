@@ -15,8 +15,6 @@
 
         public string Description { get; init; } = null!;
 
-        public string PropertyType { get; set; } = null!;
-
         public string Address { get; init; } = null!;
 
         public double? SquareMeters { get; init; }

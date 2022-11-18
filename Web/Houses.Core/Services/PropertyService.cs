@@ -31,7 +31,7 @@ namespace Houses.Core.Services
             if (string.IsNullOrEmpty(propertyType) == false)
             {
                 properties = properties
-                    .Where(p => p.Title == propertyType);
+                    .Where(p => p.PropertyType.Title == propertyType);
             }
 
             if (string.IsNullOrEmpty(searchTerm) == false)
