@@ -32,7 +32,7 @@ namespace Houses.Core.Services
             if (string.IsNullOrEmpty(propertyType) == false)
             {
                 properties = properties
-                    .Where(p => p.PropertyType.Title == propertyType && p.City.Name == city);
+                    .Where(p => p.PropertyType.Title == propertyType && p.PropertyType.Title == propertyType);
             }
 
             if (string.IsNullOrEmpty(city) == false)
@@ -112,7 +112,7 @@ namespace Houses.Core.Services
             return model.Id;
         }
 
-        public async Task EditAsync(CreatePropertyViewModel propertyToUpdate, string? id)
+        public async Task EditAsync(CreatePropertyViewModel model, string? id)
         {
             if (id == null)
             {
@@ -128,17 +128,17 @@ namespace Houses.Core.Services
             if (property == null)
             {
                 throw new NullReferenceException(
-                    string.Format(ExceptionMessages.PropertyNotFound, propertyToUpdate.Id));
+                    string.Format(ExceptionMessages.PropertyNotFound, model.Id));
             }
 
-            property.Title = propertyToUpdate.Title;
-            property.Description = propertyToUpdate.Description;
-            property.Address = propertyToUpdate.Address;
-            property.SquareMeters = Convert.ToDouble(propertyToUpdate.SquareMeters);
-            property.ImageUrl = propertyToUpdate.ImageUrl;
-            property.Price = Convert.ToDecimal(propertyToUpdate.Price);
-            property.PropertyTypeId = propertyToUpdate.PropertyTypeId;
-            property.CityId = propertyToUpdate.CityId;
+            property.Title = model.Title;
+            property.Description = model.Description;
+            property.Address = model.Address;
+            property.SquareMeters = Convert.ToDouble(model.SquareMeters);
+            property.ImageUrl = model.ImageUrl;
+            property.Price = Convert.ToDecimal(model.Price);
+            property.PropertyTypeId = model.PropertyTypeId;
+            property.CityId = model.CityId;
 
             _repository.Update(property);
 
@@ -148,7 +148,7 @@ namespace Houses.Core.Services
         public async Task<IEnumerable<PropertyViewModel>> AllPropertiesByUserIdAsync(string userId)
         {
             return await _repository
-                .All<Property>()
+                .AllReadonly<Property>(p => p.IsActive)
                 .Where(p => p.ApplicationUserProperties.Any(aup => aup.ApplicationUserId == userId))
                 .OrderBy(p => p.Title)
                 .Select(p => new PropertyViewModel

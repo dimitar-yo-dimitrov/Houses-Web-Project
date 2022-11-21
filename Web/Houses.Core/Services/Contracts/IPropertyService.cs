@@ -20,7 +20,7 @@ namespace Houses.Core.Services.Contracts
 
         Task<Property> GetPropertyAsync(string propertyId);
 
-        Task EditAsync(CreatePropertyViewModel propertyToUpdate, string id);
+        Task EditAsync(CreatePropertyViewModel model, string id);
 
         Task<IEnumerable<PropertyViewModel>> AllPropertiesByUserIdAsync(string userId);
     }

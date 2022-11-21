@@ -56,7 +56,7 @@ namespace Houses.Web.Controllers
                     string.Format(ExceptionMessages.IdIsNull));
             }
 
-            IEnumerable<PropertyViewModel> myProperties = await _propertyService.AllPropertiesByUserIdAsync(userId);
+            var myProperties = await _propertyService.AllPropertiesByUserIdAsync(userId);
 
             if (myProperties == null)
             {
