@@ -18,6 +18,8 @@
 
             public const int PasswordMaxLength = 6;
             public const int PasswordMinLength = 20;
+
+            public const string RegexPhoneNumber = @"^(\d{4})\-?(\d{3})\-?(\d{3})$";
         }
 
         public static class Property

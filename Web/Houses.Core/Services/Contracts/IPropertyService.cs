@@ -18,10 +18,14 @@ namespace Houses.Core.Services.Contracts
 
         Task RemovePropertyFromCollectionAsync(string propertyId);
 
+        Task<bool> ExistsAsync(string propertyId);
+
+        Task<DetailsPropertyServiceModel> PropertyDetailsByIdAsync(string propertyId);
+
         Task<Property> GetPropertyAsync(string propertyId);
 
         Task EditAsync(CreatePropertyViewModel model, string id);
 
-        Task<IEnumerable<PropertyViewModel>> AllPropertiesByUserIdAsync(string userId);
+        Task<IEnumerable<PropertyServiceViewModel>> AllPropertiesByUserIdAsync(string userId);
     }
 }

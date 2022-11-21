@@ -21,6 +21,11 @@ namespace Houses.Core.ViewModels.User
         public string Email { get; set; } = null!;
 
         [Required(AllowEmptyStrings = false)]
+        [RegularExpression(RegexPhoneNumber)]
+        [Display(Name = "Phone Number")]
+        public string PhoneNumber { get; set; } = null!;
+
+        [Required(AllowEmptyStrings = false)]
         [Compare(nameof(ConfirmPassword))]
         [DataType(DataType.Password)]
         public string Password { get; set; } = null!;

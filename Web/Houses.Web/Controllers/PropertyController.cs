@@ -56,7 +56,7 @@ namespace Houses.Web.Controllers
                     string.Format(ExceptionMessages.IdIsNull));
             }
 
-            var myProperties = await _propertyService.AllPropertiesByUserIdAsync(userId);
+            IEnumerable<PropertyServiceViewModel> myProperties = await _propertyService.AllPropertiesByUserIdAsync(userId);
 
             if (myProperties == null)
             {
@@ -71,7 +71,12 @@ namespace Houses.Web.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Details(string id)
         {
-            var model = new DetailsPropertyViewModel();
+            if (await _propertyService.ExistsAsync(id) == false)
+            {
+                return RedirectToAction(nameof(All));
+            }
+
+            var model = await _propertyService.PropertyDetailsByIdAsync(id);
 
             return View(model);
         }
@@ -174,13 +179,37 @@ namespace Houses.Web.Controllers
             return RedirectToAction(nameof(Details), new { id });
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Delete(string id)
+        {
+            if ((await _propertyService.ExistsAsync(id)) == false)
+            {
+                return RedirectToAction(nameof(All));
+            }
+
+            var property = await _propertyService.PropertyDetailsByIdAsync(id);
+            var model = new DetailsPropertyViewModel
+            {
+                Title = property.Title,
+                Address = property.Address,
+                ImageUrl = property.ImageUrl
+            };
+
+            return View(model);
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete([FromForm] string id)
+        public async Task<IActionResult> Delete(string id, DetailsPropertyViewModel model)
         {
+            if (await _propertyService.ExistsAsync(id) == false)
+            {
+                return RedirectToAction(nameof(All));
+            }
+
             await _propertyService.RemovePropertyFromCollectionAsync(id);
 
-            return RedirectToAction(nameof(All));
+            return RedirectToAction(nameof(Mine));
         }
     }
 }

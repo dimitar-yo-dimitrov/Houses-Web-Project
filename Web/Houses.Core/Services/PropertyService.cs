@@ -1,9 +1,9 @@
-﻿using System.Globalization;
-using Houses.Common.GlobalConstants;
+﻿using Houses.Common.GlobalConstants;
 using Houses.Core.Services.Contracts;
 using Houses.Core.ViewModels.Property;
 using Houses.Core.ViewModels.Property.Enums;
 using Houses.Infrastructure.Data.Entities;
+using Houses.Infrastructure.Data.Identity;
 using Houses.Infrastructure.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
 
@@ -145,27 +145,53 @@ namespace Houses.Core.Services
             await _repository.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<PropertyViewModel>> AllPropertiesByUserIdAsync(string userId)
+        public async Task<IEnumerable<PropertyServiceViewModel>> AllPropertiesByUserIdAsync(string userId)
         {
             return await _repository
                 .AllReadonly<Property>(p => p.IsActive)
-                .Where(p => p.ApplicationUserProperties.Any(aup => aup.ApplicationUserId == userId))
+                .Where(p => p.OwnerId == userId)
                 .OrderBy(p => p.Title)
-                .Select(p => new PropertyViewModel
+                .Select(p => new PropertyServiceViewModel
                 {
                     Id = p.Id,
                     Title = p.Title,
-                    Price = p.Price.ToString(CultureInfo.InvariantCulture),
+                    Price = p.Price,
                     Description = p.Description,
                     Address = p.Address,
-                    SquareMeters = p.SquareMeters.ToString(),
-                    PropertyType = p.PropertyType.Title,
-                    City = p.City.Name,
+                    SquareMeters = p.SquareMeters,
                     ImageUrl = p.ImageUrl,
-                    Owner = p.OwnerId
-
                 })
                 .ToListAsync();
+        }
+
+        public async Task<bool> ExistsAsync(string propertyId)
+        {
+            return await _repository.AllReadonly<Property>()
+                .AnyAsync(p => p.Id == propertyId && p.IsActive);
+        }
+
+        public async Task<DetailsPropertyServiceModel> PropertyDetailsByIdAsync(string propertyId)
+        {
+            return await _repository
+                .AllReadonly<Property>(p => p.IsActive)
+                .Where(p => p.Id == propertyId)
+                .Select(p => new DetailsPropertyServiceModel
+                {
+                    Id = p.Id,
+                    Title = p.Title,
+                    Price = p.Price,
+                    Description = p.Description,
+                    Address = p.Address,
+                    SquareMeters = p.SquareMeters,
+                    ImageUrl = p.ImageUrl,
+                    PropertyType = p.PropertyType.Title,
+                    User = new ApplicationUser()
+                    {
+                        Email = p.Owner.Email,
+                        PhoneNumber = p.Owner.PhoneNumber,
+                    }
+                })
+                .FirstAsync();
         }
 
         public async Task<Property> GetPropertyAsync(string propertyId)
@@ -184,14 +210,12 @@ namespace Houses.Core.Services
 
         public async Task RemovePropertyFromCollectionAsync(string propertyId)
         {
-            var property = await _repository.All<Property>()
-                .FirstOrDefaultAsync(p => p.Id == propertyId);
+            var property = await _repository.GetByIdAsync<Property>(propertyId);
 
             if (property == null)
             {
                 throw new NullReferenceException(string.Format(ExceptionMessages.PropertyNotFound, propertyId));
             }
-
 
             property.IsActive = false;
 
