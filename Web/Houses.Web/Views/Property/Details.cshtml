@@ -1,4 +1,4 @@
-﻿@model DetailsPropertyViewModel
+﻿@model DetailsPropertyServiceModel
 
 @{
     ViewBag.Title = "Property Details";
@@ -6,3 +6,39 @@
 
 <h2 class="text-center">@ViewBag.Title</h2>
 <hr />
+
+<div class="container" style="display:inline">
+    <div class="row">
+        <div class="col-4">
+            <img class="card-img-top" style="width: 20rem;"
+                 src="@Model.ImageUrl" alt="House Image">
+        </div>
+        <div class="card col-8 border-0">
+            <p style="font-size:25px;"><u>@Model.Title</u></p>
+            <p>Located in: <b>@Model.Address</b></p>
+            <p>
+                Price Per Month:
+                <b>@String.Format("{0:f2}", Model.Price) BGN</b>
+            </p>
+            <p>@Model.Description</p>
+            <p>Category: <b>@Model.PropertyType</b></p>
+            <div class="form-inline">
+                @if (User.Identity!.IsAuthenticated)
+                {
+                    <a class="btn btn-warning" asp-controller="Property" asp-action="Edit"
+                   asp-route-id="@Model.Id">Edit</a>
+                    <a class="ml-2 btn btn-danger" asp-controller="Property" asp-action="Delete"
+                   asp-route-id="@Model.Id">Delete</a>
+                }
+            </div>
+            <p></p>
+            <div class="card" style="width: 18rem;">
+                <div class="card-body">
+                    <h5 class="card-title">Agent Info</h5>
+                    <p class="card-text">Email:  @Model.User.Email</p>
+                    <p class="card-text">Phone Number: @Model.User.PhoneNumber</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

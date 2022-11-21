@@ -182,7 +182,7 @@ namespace Houses.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Delete(string id)
         {
-            if ((await _propertyService.ExistsAsync(id)) == false)
+            if (await _propertyService.ExistsAsync(id) == false)
             {
                 return RedirectToAction(nameof(All));
             }
