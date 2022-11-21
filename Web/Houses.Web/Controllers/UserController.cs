@@ -47,10 +47,13 @@ namespace Houses.Web.Controllers
             var user = new ApplicationUser
             {
                 Email = model.Email,
+                PhoneNumber = model.PhoneNumber,
                 FirstName = model.FirstName,
                 EmailConfirmed = true,
                 LastName = model.LastName,
-                UserName = model.Email
+                UserName = model.Email,
+                ProfilePicture = model.ProfilePicture
+
             };
 
             var result = await _userManager.CreateAsync(user, model.Password);

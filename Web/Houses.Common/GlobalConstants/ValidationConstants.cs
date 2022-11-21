@@ -20,6 +20,7 @@
             public const int PasswordMinLength = 20;
 
             public const string RegexPhoneNumber = @"^(\d{4})\-?(\d{3})\-?(\d{3})$";
+            public const string RegexPhoneNumberError = "Phone Number is not corect!";
         }
 
         public static class Property
