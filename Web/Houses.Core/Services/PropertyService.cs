@@ -27,7 +27,7 @@ namespace Houses.Core.Services
             int housesPerPage = 1)
         {
             var result = new PropertyQueryViewModel();
-            var properties = _repository.AllReadonly<Property>();
+            var properties = _repository.AllReadonly<Property>(p => p.IsActive);
 
             if (string.IsNullOrEmpty(propertyType) == false)
             {
@@ -121,7 +121,7 @@ namespace Houses.Core.Services
             }
 
             var property = await _repository
-                .AllReadonly<Property>()
+                .AllReadonly<Property>(p => p.IsActive)
                 .Where(p => p.Id == id)
                 .FirstOrDefaultAsync();
 
@@ -197,7 +197,7 @@ namespace Houses.Core.Services
         public async Task<Property> GetPropertyAsync(string propertyId)
         {
             var property = await _repository
-                .All<Property>()
+                .All<Property>(p => p.IsActive)
                 .FirstOrDefaultAsync(p => p.Id == propertyId);
 
             if (property == null)

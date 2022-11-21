@@ -7,7 +7,7 @@
             public const int UserNameMinLength = 5;
             public const int UserNameMaxLength = 50;
 
-            public const int UserFirstNameMinLength = 5;
+            public const int UserFirstNameMinLength = 1;
             public const int UserFirstNameMaxLength = 50;
 
             public const int UserLastNameMinLength = 5;
