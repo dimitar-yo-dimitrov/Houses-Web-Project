@@ -27,7 +27,6 @@ namespace Houses.Infrastructure.Data
             modelBuilder.ApplyConfiguration(new CitiesConfiguration());
             modelBuilder.ApplyConfiguration(new PropertyConfiguration());
             modelBuilder.ApplyConfiguration(new PostConfiguration());
-            // modelBuilder.ApplyConfiguration(new OwnerConfiguration());
 
             base.OnModelCreating(modelBuilder);
         }

@@ -1,6 +1,7 @@
 using Houses.Infrastructure.Data;
 using Houses.Infrastructure.Data.Identity;
 using Houses.Web.Extensions;
+using Houses.Web.Hubs;
 using Houses.Web.ModelBinders;
 using Microsoft.AspNetCore.Mvc.Razor;
 using static Houses.Common.GlobalConstants.ValidationConstants.FormattingConstant;
@@ -19,6 +20,7 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/User/Login";
+    options.LogoutPath = "/User/Logout";
 });
 
 builder.Services.AddApplicationServices();
@@ -31,6 +33,8 @@ builder.Services.AddControllersWithViews()
         options.ModelBinderProviders.Insert(2, new DoubleModelBinderProvider());
     })
     .AddMvcLocalization(LanguageViewLocationExpanderFormat.Suffix);
+
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 
@@ -58,5 +62,6 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();
+app.MapHub<ChatHub>("/chatHub");
 
 app.Run();
