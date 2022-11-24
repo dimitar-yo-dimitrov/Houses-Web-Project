@@ -79,7 +79,7 @@ namespace Houses.Core.Services
             return result;
         }
 
-        public async Task<string> CreateAsync(CreatePropertyViewModel model, string? userId)
+        public async Task<string> CreateAsync(CreatePropertyInputModel model, string? userId)
         {
             if (userId == null)
             {
@@ -90,10 +90,10 @@ namespace Houses.Core.Services
             var property = new Property
             {
                 Title = model.Title,
-                Price = Convert.ToDecimal(model.Price),
+                Price = model.Price,
                 Description = model.Description,
                 Address = model.Address,
-                SquareMeters = Convert.ToDouble(model.SquareMeters!),
+                SquareMeters = model.SquareMeters,
                 ImageUrl = model.ImageUrl,
                 CityId = model.CityId,
                 PropertyTypeId = model.PropertyTypeId,
@@ -112,7 +112,7 @@ namespace Houses.Core.Services
             return model.Id;
         }
 
-        public async Task EditAsync(CreatePropertyViewModel model, string? id)
+        public async Task EditAsync(CreatePropertyInputModel model, string? id)
         {
             if (id == null)
             {
@@ -134,9 +134,9 @@ namespace Houses.Core.Services
             property.Title = model.Title;
             property.Description = model.Description;
             property.Address = model.Address;
-            property.SquareMeters = Convert.ToDouble(model.SquareMeters);
+            property.SquareMeters = model.SquareMeters;
             property.ImageUrl = model.ImageUrl;
-            property.Price = Convert.ToDecimal(model.Price);
+            property.Price = model.Price;
             property.PropertyTypeId = model.PropertyTypeId;
             property.CityId = model.CityId;
 

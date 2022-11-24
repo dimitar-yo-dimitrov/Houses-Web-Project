@@ -1,39 +1,36 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using Houses.Infrastructure.Data.Identity;
+using Ganss.Xss;
 using static Houses.Common.GlobalConstants.ValidationConstants.Comment;
 using static Houses.Common.GlobalConstants.ValidationConstants.User;
 
-namespace Houses.Infrastructure.Data.Entities
+namespace Houses.Core.ViewModels.User
 {
-    public class Post
+    public class PostInputModel
     {
-        public Post()
+        private readonly IHtmlSanitizer _sanitizer;
+
+        public PostInputModel()
         {
+            _sanitizer = new HtmlSanitizer();
             Id = new Guid().ToString();
         }
 
-        [Key]
         public string Id { get; set; }
 
-        [Required]
-        [MaxLength(UserNameMaxLength)]
+        [StringLength(UserNameMaxLength, MinimumLength = UserNameMinLength)]
         public string Title { get; set; } = null!;
 
-        [Required]
         public DateTime Date { get; set; } = DateTime.UtcNow;
 
-        [Required]
-        [MaxLength(MassageMax)]
+        [StringLength(MassageMax, MinimumLength = MassageMin)]
         public string Content { get; set; } = null!;
 
-        [Required]
-        public bool IsDeleted { get; set; } = false;
+        public string SanitizedContent
+            => _sanitizer.Sanitize(Content);
 
         [Required]
-        [ForeignKey(nameof(Author))]
         public string AuthorId { get; set; } = null!;
 
-        public virtual ApplicationUser Author { get; set; } = null!;
+        public string ReceiverId { get; set; } = null!;
     }
 }

@@ -14,7 +14,7 @@ namespace Houses.Core.Services.Contracts
             int currentPage = 1,
             int housesPerPage = 1);
 
-        Task<string> CreateAsync(CreatePropertyViewModel property, string userId);
+        Task<string> CreateAsync(CreatePropertyInputModel property, string userId);
 
         Task RemovePropertyFromCollectionAsync(string propertyId);
 
@@ -24,7 +24,7 @@ namespace Houses.Core.Services.Contracts
 
         Task<Property> GetPropertyAsync(string propertyId);
 
-        Task EditAsync(CreatePropertyViewModel model, string id);
+        Task EditAsync(CreatePropertyInputModel model, string id);
 
         Task<IEnumerable<PropertyServiceViewModel>> AllPropertiesByUserIdAsync(string userId);
     }

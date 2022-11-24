@@ -4,7 +4,7 @@
     {
         public static class User
         {
-            public const int UserNameMinLength = 5;
+            public const int UserNameMinLength = 1;
             public const int UserNameMaxLength = 50;
 
             public const int UserFirstNameMinLength = 1;
@@ -55,12 +55,6 @@
             public const int CityMaxName = 50;
         }
 
-        public static class Neighborhood
-        {
-            public const int NeighborhoodMinName = 2;
-            public const int NeighborhoodMaxName = 50;
-        }
-
         public static class Comment
         {
             public const int MassageMin = 2;
@@ -75,6 +69,13 @@
         public static class ClaimsConstants
         {
             public const string FirstName = "urn:softuni:houses.bg:firstName";
+        }
+
+        public static class Role
+        {
+            public const string AdministratorRoleName = "Admin";
+            public const string OwnerRoleName = "Owner";
+            public const string UserRoleName = "User";
         }
     }
 }

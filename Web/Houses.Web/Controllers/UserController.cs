@@ -1,129 +1,94 @@
 ﻿using Houses.Common.GlobalConstants;
+using Houses.Core.Services.Contracts;
 using Houses.Core.ViewModels.User;
-using Houses.Infrastructure.Data.Identity;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using static Houses.Common.GlobalConstants.ValidationConstants.ClaimsConstants;
+using static Houses.Common.GlobalConstants.ValidationConstants.Role;
 
 namespace Houses.Web.Controllers
 {
+    [Authorize(Roles = $"{AdministratorRoleName}, {UserRoleName}")]
     public class UserController : BaseController
     {
-        private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IUserService _userService;
 
-        public UserController(
-            SignInManager<ApplicationUser> signInManager,
-            UserManager<ApplicationUser> userManager)
+        public UserController(IUserService userService)
         {
-            _signInManager = signInManager;
-            _userManager = userManager;
+            _userService = userService;
         }
 
         [HttpGet]
-        [AllowAnonymous]
-        public IActionResult Register()
+        public async Task<IActionResult> MyProfile()
         {
-            if (User.Identity?.IsAuthenticated ?? false)
+            var model = await _userService.GetUserByName(User.Identity!.Name!);
+
+            if (model == null)
             {
-                return RedirectToAction("All", "Property");
+                throw new NullReferenceException(
+                    string.Format(ExceptionMessages.IdIsNull));
             }
 
-            var model = new RegisterViewModel();
+            return View(model);
+        }
+
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<IActionResult> UserProfile([FromQuery] string name)
+        {
+            var model = await _userService.GetUserByName(name);
+
+            if (model == null)
+            {
+                throw new NullReferenceException(
+                    string.Format(ExceptionMessages.IdIsNull));
+            }
+
+            return View(model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> EditProfile()
+        {
+            var model = await _userService.GetUserByName(User.Identity!.Name!);
+
+            if (model == null)
+            {
+                throw new NullReferenceException(
+                    string.Format(ExceptionMessages.IdIsNull));
+            }
 
             return View(model);
         }
 
         [HttpPost]
-        [AllowAnonymous]
-        public async Task<IActionResult> Register(RegisterViewModel model)
+        public async Task<IActionResult> EditProfile(EditUserProfileInputModel model)
         {
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
 
-            var user = new ApplicationUser
+            var inputModel = new EditUserProfileInputModel
             {
+                FirstName = model.FirstName,
+                LastName = model.LastName,
                 Email = model.Email,
                 PhoneNumber = model.PhoneNumber,
-                FirstName = model.FirstName,
-                EmailConfirmed = true,
-                LastName = model.LastName,
-                UserName = model.Email,
-                ProfilePicture = model.ProfilePicture
-
+                Password = model.Password,
+                ConfirmPassword = model.ConfirmPassword,
+                ProfilePicture = model.ProfilePicture,
             };
 
-            var result = await _userManager.CreateAsync(user, model.Password);
-
-            await _userManager
-                .AddClaimAsync(user, new System.Security.Claims.Claim(FirstName, user.FirstName ?? user.Email));
-
-            if (result.Succeeded)
+            if (await _userService.UpdateUser(inputModel))
             {
-                await _signInManager.SignInAsync(user, isPersistent: false);
-
-                return RedirectToAction("Index", "Home");
+                ViewData[ExceptionMessages.SuccessMessage] = ExceptionMessages.SuccessfulRecord;
             }
-
-            foreach (var error in result.Errors)
+            else
             {
-                ModelState.AddModelError("", error.Description);
+                ViewData[ExceptionMessages.ErrorMessage] = ExceptionMessages.InvalidOperation;
             }
 
             return View(model);
-        }
-
-        [HttpGet]
-        [AllowAnonymous]
-        public IActionResult Login(string? returnUrl = null)
-        {
-            var model = new LoginViewModel
-            {
-                ReturnUrl = returnUrl
-            };
-
-            return View(model);
-        }
-
-        [HttpPost]
-        [AllowAnonymous]
-        public async Task<IActionResult> Login(LoginViewModel model)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View(model);
-            }
-
-            var user = await _userManager.FindByEmailAsync(model.Email);
-
-            if (user != null)
-            {
-                var result = await _signInManager.PasswordSignInAsync(user, model.Password, false, false);
-
-                if (result.Succeeded)
-                {
-                    if (model.ReturnUrl != null)
-                    {
-                        return Redirect(model.ReturnUrl);
-                    }
-
-                    return RedirectToAction("Index", "Home");
-                }
-            }
-
-            ModelState.AddModelError(string.Empty, ExceptionMessages.InvalidLogin);
-
-            return View(model);
-        }
-
-        public async Task<IActionResult> Logout()
-        {
-            await _signInManager.SignOutAsync();
-
-            return RedirectToAction("Index", "Home");
         }
     }
 }

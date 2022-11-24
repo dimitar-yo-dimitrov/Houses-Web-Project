@@ -3,7 +3,7 @@ using static Houses.Common.GlobalConstants.ValidationConstants.User;
 
 namespace Houses.Core.ViewModels.User
 {
-    public class RegisterViewModel
+    public class RegisterInputModel
     {
         [Required(AllowEmptyStrings = false)]
         [StringLength(UserFirstNameMaxLength, MinimumLength = UserFirstNameMinLength)]

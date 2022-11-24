@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using static Houses.Common.GlobalConstants.ValidationConstants.Role;
 
 namespace Houses.Web.Extensions
 {
@@ -8,5 +9,8 @@ namespace Houses.Web.Extensions
         {
             return user.FindFirstValue(ClaimTypes.NameIdentifier);
         }
+
+        public static bool IsAdministrator(this ClaimsPrincipal claimsPrincipal)
+            => claimsPrincipal.IsInRole(AdministratorRoleName);
     }
 }

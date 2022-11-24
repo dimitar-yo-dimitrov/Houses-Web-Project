@@ -30,4 +30,8 @@
     <ProjectReference Include="..\Houses.Core\Houses.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Pages\" />
+  </ItemGroup>
+
 </Project>

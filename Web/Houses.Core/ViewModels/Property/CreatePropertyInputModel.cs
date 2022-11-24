@@ -5,9 +5,9 @@ using static Houses.Common.GlobalConstants.ValidationConstants.Property;
 
 namespace Houses.Core.ViewModels.Property
 {
-    public class CreatePropertyViewModel
+    public class CreatePropertyInputModel
     {
-        public CreatePropertyViewModel()
+        public CreatePropertyInputModel()
         {
             Id = new Guid().ToString();
         }

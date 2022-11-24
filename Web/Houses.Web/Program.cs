@@ -19,8 +19,8 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
-    options.LoginPath = "/User/Login";
-    options.LogoutPath = "/User/Logout";
+    options.LoginPath = "/Account/Login";
+    options.LogoutPath = "/Account/Logout";
 });
 
 builder.Services.AddApplicationServices();

@@ -15,10 +15,10 @@ namespace Houses.Infrastructure.Data.Identity
         }
 
         [StringLength(UserFirstNameMaxLength)]
-        public string? FirstName { get; set; }
+        public string FirstName { get; set; }
 
         [StringLength(UserLastNameMaxLength)]
-        public string? LastName { get; set; }
+        public string LastName { get; set; }
 
         [MaxLength(MaxUrl)]
         public string? ProfilePicture { get; set; }

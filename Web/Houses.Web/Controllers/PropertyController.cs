@@ -84,7 +84,7 @@ namespace Houses.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Add()
         {
-            var model = new CreatePropertyViewModel
+            var model = new CreatePropertyInputModel
             {
                 PropertyTypes = await _propertyTypeService.AllPropertyTypesAsync(),
                 Cities = await _cityService.GetAllCitiesAsync()
@@ -97,7 +97,7 @@ namespace Houses.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Add(CreatePropertyViewModel propertyModel)
+        public async Task<IActionResult> Add(CreatePropertyInputModel propertyModel)
         {
             if (await _userService.ExistsById(User.Id()) == false)
             {
@@ -136,7 +136,7 @@ namespace Houses.Web.Controllers
                     string.Format(ExceptionMessages.PropertyNotFound, id));
             }
 
-            var model = new CreatePropertyViewModel
+            var model = new CreatePropertyInputModel
             {
                 Title = property.Title,
                 Price = property.Price,
@@ -155,7 +155,7 @@ namespace Houses.Web.Controllers
 
         [HttpPost, ActionName("Edit")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(CreatePropertyViewModel propertyToUpdate, string? id)
+        public async Task<IActionResult> Edit(CreatePropertyInputModel propertyToUpdate, string? id)
         {
             if (id == null)
             {

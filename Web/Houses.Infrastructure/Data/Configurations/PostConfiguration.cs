@@ -11,7 +11,8 @@ namespace Houses.Infrastructure.Data.Configuration
             builder
                 .HasOne(p => p.Author)
                 .WithMany(au => au.Posts)
-                .OnDelete(DeleteBehavior.ClientNoAction);
+                .HasForeignKey(p => p.AuthorId);
+            //.OnDelete(DeleteBehavior.ClientNoAction);
         }
     }
 }
