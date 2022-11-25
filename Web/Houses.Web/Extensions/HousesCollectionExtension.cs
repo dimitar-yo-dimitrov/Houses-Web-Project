@@ -15,6 +15,7 @@ namespace Houses.Web.Extensions
             services.AddScoped<IPropertiesTypesService, PropertyTypeService>();
             services.AddScoped<ICityService, CityService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IPostService, PostService>();
 
             return services;
         }

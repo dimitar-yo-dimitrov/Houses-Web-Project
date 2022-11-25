@@ -7,12 +7,16 @@ namespace Houses.Core.Services.Contracts
     {
         Task<bool> ExistsById(string userId);
 
-        Task<string> GetUserId(string userId);
+        Task<IEnumerable<UserListViewModel>> GetUsers();
 
-        Task<ApplicationUser> GetAppUserByName(string username);
+        Task<EditUserInputViewModel> GetUserForEdit(string id);
 
         Task<IEnumerable<UserServiceViewModel>> GetUserByName(string author);
 
-        Task<bool> UpdateUser(EditUserProfileInputModel model);
+        Task<bool> UpdateUser(EditUserInputViewModel model);
+
+        Task<ApplicationUser> GetUserById(string id);
+
+        Task<string> GetUserId(string userId);
     }
 }

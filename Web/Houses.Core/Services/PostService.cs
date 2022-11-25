@@ -15,11 +15,11 @@ namespace Houses.Core.Services
             _repository = repository;
         }
 
-        public async Task<PostInputModel> PostsAsync(string id)
+        public async Task<PostInputViewModel> PostsAsync(string id)
         {
             return await _repository.AllReadonly<Post>()
                 .Where(p => p.Id == id)
-                .Select(p => new PostInputModel
+                .Select(p => new PostInputViewModel
                 {
                     Title = p.Title,
                     Date = p.Date,
@@ -31,7 +31,7 @@ namespace Houses.Core.Services
 
         public async Task CreateAsync(string content, string authorId, string receiverId)
         {
-            var message = new PostInputModel
+            var message = new PostInputViewModel
             {
                 Content = content,
                 AuthorId = authorId,

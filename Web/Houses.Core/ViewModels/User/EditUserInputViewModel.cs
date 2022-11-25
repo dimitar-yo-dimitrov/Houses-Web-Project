@@ -3,9 +3,9 @@ using static Houses.Common.GlobalConstants.ValidationConstants.User;
 
 namespace Houses.Core.ViewModels.User
 {
-    public class EditUserProfileInputModel
+    public class EditUserInputViewModel
     {
-        public EditUserProfileInputModel()
+        public EditUserInputViewModel()
         {
             Id = new Guid().ToString();
         }
@@ -31,15 +31,6 @@ namespace Houses.Core.ViewModels.User
         [RegularExpression(RegexPhoneNumber, ErrorMessage = RegexPhoneNumberError)]
         [Display(Name = "Phone Number")]
         public string PhoneNumber { get; set; } = null!;
-
-        [Required(AllowEmptyStrings = false)]
-        [Compare(nameof(ConfirmPassword))]
-        [DataType(DataType.Password)]
-        public string Password { get; set; } = null!;
-
-        [Required]
-        [DataType(DataType.Password)]
-        public string ConfirmPassword { get; set; } = null!;
 
         [Url]
         public string? ProfilePicture { get; set; }

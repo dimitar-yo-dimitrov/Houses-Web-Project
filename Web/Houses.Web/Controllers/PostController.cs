@@ -23,7 +23,7 @@ namespace Houses.Web.Controllers
             var posts = await _context.Posts
                 .AsNoTracking()
                 .Where(p => p.IsDeleted == false)
-                .Select(p => new PostInputModel()
+                .Select(p => new PostInputViewModel()
                 {
                     Title = p.Title,
                     Content = p.Content,
@@ -41,7 +41,7 @@ namespace Houses.Web.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public async Task<IActionResult> CreatePost(PostInputModel model)
+        public async Task<IActionResult> CreatePost(PostInputViewModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -73,7 +73,7 @@ namespace Houses.Web.Controllers
                 return BadRequest();
             }
 
-            return View(new PostInputModel()
+            return View(new PostInputViewModel()
             {
                 Title = post.Title,
                 Content = post.Content
@@ -82,7 +82,7 @@ namespace Houses.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditPost(PostInputModel model)
+        public async Task<IActionResult> EditPost(PostInputViewModel model)
         {
             if (!ModelState.IsValid)
             {

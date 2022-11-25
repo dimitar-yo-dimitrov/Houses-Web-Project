@@ -66,10 +66,10 @@
             public const string NormalDateFormat = "dd.MM.yyyy";
         }
 
-        public static class ClaimsConstants
-        {
-            public const string FirstName = "urn:softuni:houses.bg:firstName";
-        }
+        //public static class ClaimsConstants
+        //{
+        //    //public const string FirstName = "urn:softuni:houses.bg:firstName";
+        //}
 
         public static class Role
         {

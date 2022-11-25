@@ -4,7 +4,6 @@ using Houses.Infrastructure.Data.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using static Houses.Common.GlobalConstants.ValidationConstants.ClaimsConstants;
 
 namespace Houses.Web.Controllers
 {
@@ -51,15 +50,12 @@ namespace Houses.Web.Controllers
                 Email = model.Email,
                 PhoneNumber = model.PhoneNumber,
                 EmailConfirmed = true,
-                UserName = model.Email,
+                UserName = model.FirstName,
                 ProfilePicture = model.ProfilePicture
 
             };
 
             var result = await _userManager.CreateAsync(user, model.Password);
-
-            await _userManager
-                .AddClaimAsync(user, new System.Security.Claims.Claim(FirstName, user.FirstName ?? user.Email));
 
             if (result.Succeeded)
             {
@@ -114,7 +110,10 @@ namespace Houses.Web.Controllers
                 ////Sign In User
                 //await HttpContext.SignInAsync(claimsPrincipal);
 
-                var result = await _signInManager.PasswordSignInAsync(user, model.Password, false, false);
+                bool rememberMe = true;
+                bool shouldLockout = false;
+
+                var result = await _signInManager.PasswordSignInAsync(user, model.Password, rememberMe, shouldLockout);
 
                 if (result.Succeeded)
                 {

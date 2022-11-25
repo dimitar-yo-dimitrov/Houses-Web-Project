@@ -5,11 +5,11 @@ using static Houses.Common.GlobalConstants.ValidationConstants.User;
 
 namespace Houses.Core.ViewModels.User
 {
-    public class PostInputModel
+    public class PostInputViewModel
     {
         private readonly IHtmlSanitizer _sanitizer;
 
-        public PostInputModel()
+        public PostInputViewModel()
         {
             _sanitizer = new HtmlSanitizer();
             Id = new Guid().ToString();

@@ -2,6 +2,7 @@
 using Houses.Core.Services.Contracts;
 using Houses.Core.ViewModels.User;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using static Houses.Common.GlobalConstants.ValidationConstants.Role;
 
@@ -11,10 +12,14 @@ namespace Houses.Web.Controllers
     public class UserController : BaseController
     {
         private readonly IUserService _userService;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public UserController(IUserService userService)
+        public UserController(
+            IUserService userService,
+            RoleManager<IdentityRole> roleManager)
         {
             _userService = userService;
+            _roleManager = roleManager;
         }
 
         [HttpGet]
@@ -61,21 +66,19 @@ namespace Houses.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> EditProfile(EditUserProfileInputModel model)
+        public async Task<IActionResult> EditProfile(EditUserInputViewModel model)
         {
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
 
-            var inputModel = new EditUserProfileInputModel
+            var inputModel = new EditUserInputViewModel
             {
                 FirstName = model.FirstName,
                 LastName = model.LastName,
                 Email = model.Email,
                 PhoneNumber = model.PhoneNumber,
-                Password = model.Password,
-                ConfirmPassword = model.ConfirmPassword,
                 ProfilePicture = model.ProfilePicture,
             };
 
@@ -89,6 +92,16 @@ namespace Houses.Web.Controllers
             }
 
             return View(model);
+        }
+
+        public async Task<IActionResult> CreateRole()
+        {
+            //await _roleManager.CreateAsync(new IdentityRole()
+            //{
+            //    Name = AdministratorRoleName
+            //});
+
+            return Ok();
         }
     }
 }

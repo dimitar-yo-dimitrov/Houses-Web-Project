@@ -22,17 +22,31 @@ namespace Houses.Core.Services
                 .AnyAsync(u => u.Id == userId);
         }
 
-        public async Task<string> GetUserId(string userId)
+        public async Task<IEnumerable<UserListViewModel>> GetUsers()
         {
-            return ((await _repository.AllReadonly<ApplicationUser>()
-                .FirstOrDefaultAsync(au => au.Id == userId))?.Id ?? null)!;
+            return await _repository.All<ApplicationUser>()
+                .Select(u => new UserListViewModel()
+                {
+                    Id = u.Id,
+                    Email = u.Email,
+                    Name = $"{u.FirstName} {u.LastName}"
+                })
+                .ToListAsync();
         }
 
-        public async Task<ApplicationUser> GetAppUserByName(string name)
+        public async Task<EditUserInputViewModel> GetUserForEdit(string id)
         {
-            return await _repository.AllReadonly<ApplicationUser>()
-                .Where(u => u.FirstName == name)
-                .FirstAsync();
+            var user = await _repository.GetByIdAsync<ApplicationUser>(id);
+
+            return new EditUserInputViewModel()
+            {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber,
+                ProfilePicture = user.ProfilePicture,
+            };
         }
 
         public async Task<IEnumerable<UserServiceViewModel>> GetUserByName(string author)
@@ -49,7 +63,7 @@ namespace Houses.Core.Services
                 .ToListAsync();
         }
 
-        public async Task<bool> UpdateUser(EditUserProfileInputModel model)
+        public async Task<bool> UpdateUser(EditUserInputViewModel model)
         {
             bool result = false;
 
@@ -58,11 +72,9 @@ namespace Houses.Core.Services
             if (user != null)
             {
                 user.FirstName = model.FirstName;
-
                 user.LastName = model.LastName;
-
                 user.Email = model.Email;
-
+                user.PhoneNumber = model.PhoneNumber;
                 user.ProfilePicture = model.ProfilePicture;
 
                 await _repository.SaveChangesAsync();
@@ -71,6 +83,17 @@ namespace Houses.Core.Services
             }
 
             return result;
+        }
+
+        public async Task<ApplicationUser> GetUserById(string id)
+        {
+            return await _repository.GetByIdAsync<ApplicationUser>(id);
+        }
+
+        public async Task<string> GetUserId(string userId)
+        {
+            return ((await _repository.AllReadonly<ApplicationUser>()
+                .FirstOrDefaultAsync(au => au.Id == userId))?.Id ?? null)!;
         }
     }
 }

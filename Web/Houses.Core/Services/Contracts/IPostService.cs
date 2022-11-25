@@ -4,7 +4,7 @@ namespace Houses.Core.Services.Contracts
 {
     public interface IPostService
     {
-        Task<PostInputModel> PostsAsync(string id);
+        Task<PostInputViewModel> PostsAsync(string id);
 
         Task CreateAsync(string content, string authorId, string receiverId);
     }
