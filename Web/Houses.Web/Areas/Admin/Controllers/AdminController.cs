@@ -5,18 +5,17 @@ using Houses.Infrastructure.Data.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 
 namespace Houses.Web.Areas.Admin.Controllers
 {
-    public class UserController : BaseController
+    public class AdminController : BaseController
     {
         private readonly RoleManager<IdentityRole> _roleManager;
-
         private readonly UserManager<ApplicationUser> _userManager;
-
         private readonly IUserService _userService;
 
-        public UserController(
+        public AdminController(
             RoleManager<IdentityRole> roleManager,
             UserManager<ApplicationUser> userManager,
             IUserService userService)
@@ -24,6 +23,11 @@ namespace Houses.Web.Areas.Admin.Controllers
             _roleManager = roleManager;
             _userManager = userManager;
             _userService = userService;
+        }
+
+        public IActionResult Index()
+        {
+            return View();
         }
 
         public async Task<IActionResult> ManageUsers()
@@ -70,6 +74,7 @@ namespace Houses.Web.Areas.Admin.Controllers
             return RedirectToAction(nameof(ManageUsers));
         }
 
+        [HttpGet]
         public async Task<IActionResult> Edit(string id)
         {
             var model = await _userService.GetUserForEdit(id);
@@ -78,6 +83,7 @@ namespace Houses.Web.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(EditUserInputViewModel model)
         {
             if (!ModelState.IsValid)
@@ -97,6 +103,37 @@ namespace Houses.Web.Areas.Admin.Controllers
             return View(model);
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RemoveUser(string? id)
+        {
+            try
+            {
+                if (id == null)
+                {
+                    throw new NullReferenceException(
+                        string.Format(ExceptionMessages.IdIsNull));
+                }
+
+                var user = await _userManager.Users
+                    .FirstOrDefaultAsync(u => u.Id == id);
+
+                if (user == null)
+                {
+                    throw new NullReferenceException(
+                        string.Format(ExceptionMessages.UserNotFound, id));
+                }
+
+                await _userManager.DeleteAsync(user);
+
+                return RedirectToAction(nameof(ManageUsers));
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
         public async Task<IActionResult> CreateRole()
         {
             await _roleManager.CreateAsync(new IdentityRole()
@@ -104,7 +141,7 @@ namespace Houses.Web.Areas.Admin.Controllers
                 Name = "User"
             });
 
-            return Redirect("/");
+            return Ok();
         }
     }
 }

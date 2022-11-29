@@ -1,4 +1,5 @@
-﻿using Houses.Core.Services.Contracts;
+﻿using Houses.Common.GlobalConstants;
+using Houses.Core.Services.Contracts;
 using Houses.Core.ViewModels.User;
 using Houses.Infrastructure.Data.Identity;
 using Houses.Infrastructure.Data.Repositories;
@@ -38,7 +39,7 @@ namespace Houses.Core.Services
         {
             var user = await _repository.GetByIdAsync<ApplicationUser>(id);
 
-            return new EditUserInputViewModel()
+            return new EditUserInputViewModel
             {
                 Id = user.Id,
                 FirstName = user.FirstName,
@@ -65,7 +66,7 @@ namespace Houses.Core.Services
 
         public async Task<bool> UpdateUser(EditUserInputViewModel model)
         {
-            bool result = false;
+            bool result;
 
             var user = await _repository.GetByIdAsync<ApplicationUser>(model.Id);
 
@@ -76,10 +77,16 @@ namespace Houses.Core.Services
                 user.Email = model.Email;
                 user.PhoneNumber = model.PhoneNumber;
                 user.ProfilePicture = model.ProfilePicture;
+                user.UserName = model.FirstName;
 
                 await _repository.SaveChangesAsync();
 
                 result = true;
+            }
+            else
+            {
+                throw new NullReferenceException(
+                    string.Format(ExceptionMessages.UserNotFound, model.Id));
             }
 
             return result;

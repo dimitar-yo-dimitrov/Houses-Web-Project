@@ -1,66 +1,92 @@
 ﻿using Houses.Common.GlobalConstants;
 using Houses.Core.Services.Contracts;
+using Houses.Core.ViewModels.Property;
 using Houses.Core.ViewModels.User;
+using Houses.Web.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using static Houses.Common.GlobalConstants.ValidationConstants.Role;
 
 namespace Houses.Web.Controllers
 {
-    [Authorize(Roles = $"{AdministratorRoleName}, {UserRoleName}")]
+    //[Authorize(Roles = $"{AdministratorRoleName}, {UserRoleName}")]
     public class UserController : BaseController
     {
         private readonly IUserService _userService;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IPropertyService _propertyService;
 
         public UserController(
             IUserService userService,
-            RoleManager<IdentityRole> roleManager)
+            RoleManager<IdentityRole> roleManager, IPropertyService propertyService)
         {
             _userService = userService;
             _roleManager = roleManager;
+            _propertyService = propertyService;
         }
 
         [HttpGet]
         public async Task<IActionResult> MyProfile()
         {
-            var model = await _userService.GetUserByName(User.Identity!.Name!);
+            var userId = User.Id();
 
-            if (model == null)
+            if (userId == null)
             {
                 throw new NullReferenceException(
-                    string.Format(ExceptionMessages.IdIsNull));
+                string.Format(ExceptionMessages.IdIsNull));
             }
 
-            return View(model);
+            IEnumerable<PropertyServiceViewModel> myProperties = await _propertyService.AllPropertiesByUserIdAsync(userId);
+
+            if (myProperties == null)
+            {
+                throw new NullReferenceException(
+                    string.Format(ExceptionMessages.PropertiesNotFound));
+            }
+
+            return View(myProperties);
         }
 
         [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> UserProfile([FromQuery] string name)
         {
-            var model = await _userService.GetUserByName(name);
+            var user = await _userService.GetUserByName(name);
 
-            if (model == null)
+            if (user == null)
             {
                 throw new NullReferenceException(
                     string.Format(ExceptionMessages.IdIsNull));
             }
 
-            return View(model);
+            return View(user as UserServiceViewModel);
         }
 
         [HttpGet]
-        public async Task<IActionResult> EditProfile()
+        public async Task<IActionResult> EditProfile(string? id)
         {
-            var model = await _userService.GetUserByName(User.Identity!.Name!);
-
-            if (model == null)
+            if (id == null)
             {
                 throw new NullReferenceException(
                     string.Format(ExceptionMessages.IdIsNull));
             }
+
+            var user = await _userService.GetUserById(id);
+
+            if (user == null)
+            {
+                throw new NullReferenceException(
+                    string.Format(ExceptionMessages.UserNotFound, id));
+            }
+
+            var model = new EditUserInputViewModel
+            {
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber,
+                ProfilePicture = user.ProfilePicture,
+            };
 
             return View(model);
         }
@@ -94,14 +120,14 @@ namespace Houses.Web.Controllers
             return View(model);
         }
 
-        public async Task<IActionResult> CreateRole()
-        {
-            //await _roleManager.CreateAsync(new IdentityRole()
-            //{
-            //    Name = AdministratorRoleName
-            //});
+        //public async Task<IActionResult> CreateRole()
+        //{
+        //    await _roleManager.CreateAsync(new IdentityRole()
+        //    {
+        //        Name = AdministratorRoleName
+        //    });
 
-            return Ok();
-        }
+        //    return Ok();
+        //}
     }
 }

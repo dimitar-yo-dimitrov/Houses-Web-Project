@@ -1,7 +1,9 @@
-﻿using Houses.Core.Services;
+﻿using System.Security.Claims;
+using Houses.Core.Services;
 using Houses.Core.Services.Contracts;
 using Houses.Infrastructure.Data;
 using Houses.Infrastructure.Data.Repositories;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 namespace Houses.Web.Extensions
@@ -16,6 +18,7 @@ namespace Houses.Web.Extensions
             services.AddScoped<ICityService, CityService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IPostService, PostService>();
+            services.AddSingleton<IUserIdProvider, CustomEmailProvider>();
 
             return services;
         }
@@ -29,6 +32,14 @@ namespace Houses.Web.Extensions
             services.AddDatabaseDeveloperPageExceptionFilter();
 
             return services;
+        }
+
+        public class CustomEmailProvider : IUserIdProvider
+        {
+            public virtual string GetUserId(HubConnectionContext connection)
+            {
+                return connection.User.FindFirst(ClaimTypes.Email)?.Value!;
+            }
         }
     }
 }

@@ -33,6 +33,7 @@ namespace Houses.Core.ViewModels.User
         public string PhoneNumber { get; set; } = null!;
 
         [Url]
+        [Display(Name = "Profile Picture")]
         public string? ProfilePicture { get; set; }
     }
 }

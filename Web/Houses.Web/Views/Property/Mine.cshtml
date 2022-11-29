@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<PropertyServiceViewModel>
 
 @{
-    ViewBag.Title = "My Houses";
+    ViewBag.Title = "My Properties";
 }
 
 <h2 class="text-center">@ViewBag.Title</h2>
@@ -10,9 +10,9 @@
 @if (Model.Any())
 {
     <div class="row">
-        @foreach (var house in Model)
+        @foreach (var property in Model)
         {
-            <partial name="_PropertyPartial" model="@house" />
+            <partial name="_MinePropertyPartial" model="@property" />
         }
     </div>
 }

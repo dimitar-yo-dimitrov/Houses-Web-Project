@@ -150,7 +150,6 @@ namespace Houses.Core.Services
             return await _repository
                 .AllReadonly<Property>(p => p.IsActive)
                 .Where(p => p.OwnerId == userId)
-                .OrderBy(p => p.Title)
                 .Select(p => new PropertyServiceViewModel
                 {
                     Id = p.Id,

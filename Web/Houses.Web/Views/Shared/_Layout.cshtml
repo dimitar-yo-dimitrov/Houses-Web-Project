@@ -20,29 +20,29 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Property" asp-action="All">All Properties</a>
-                        </li>
+                        <form class="nav-item mt-4 mb-3 m-lg-2">
+                            <button class="btn btn-outline-primary text-black" asp-area="" asp-controller="Home" asp-action="Index">Home</button>
+                        </form>
+                        <form class="nav-item mt-4 mb-3 m-lg-2">
+                            <button class="btn btn-outline-primary text-black" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</button>
+                        </form>
+                        <form class="nav-item mt-4 mb-3 m-lg-2">
+                            <button class="btn btn-outline-primary text-black" asp-area="" asp-controller="Property" asp-action="All">All Properties</button>
+                        </form>
                         @if (User?.Identity != null && User.Identity.IsAuthenticated)
                         {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Property" asp-action="Add">Add Property</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Property" asp-action="Mine">My Properties</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-ligth" asp-area="" asp-controller="Post" asp-action="Index">Posts</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-ligth" asp-area="" asp-controller="User" asp-action="MyProfile">My Profile</a>
-                            </li>
+                            <form class="nav-item mt-4 mb-3 m-lg-2">
+                                <button class="btn btn-outline-primary text-black" asp-area="" asp-controller="Property" asp-action="Add">Add Property</button>
+                            </form>
+                            <form class="nav-item mt-4 mb-3 m-lg-2">
+                                <button class="btn btn-outline-primary text-black" asp-area="" asp-controller="Property" asp-action="Mine">My Properties</button>
+                            </form>
+                            <form class="nav-item mt-4 mb-3 m-lg-2">
+                                <button class="btn btn-outline-primary text-black" asp-area="" asp-controller="Post" asp-action="Index">Posts</button>
+                            </form>
+                            <form class="nav-item mt-4 mb-3 m-lg-2">
+                                <button class="btn btn-outline-primary text-black" asp-area="" asp-controller="User" asp-action="MyProfile">My Profile</button>
+                            </form>
                         }
                     </ul>
                     <partial name="_LoginPartial" />

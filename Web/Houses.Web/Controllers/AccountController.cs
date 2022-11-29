@@ -1,4 +1,5 @@
-﻿using Houses.Common.GlobalConstants;
+﻿using System.Security.Claims;
+using Houses.Common.GlobalConstants;
 using Houses.Core.ViewModels.User;
 using Houses.Infrastructure.Data.Identity;
 using Microsoft.AspNetCore.Authorization;
@@ -59,6 +60,7 @@ namespace Houses.Web.Controllers
 
             if (result.Succeeded)
             {
+                await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.NameIdentifier, model.FirstName));
                 await _signInManager.SignInAsync(user, isPersistent: false);
 
                 return RedirectToAction("Index", "Home");
@@ -97,19 +99,6 @@ namespace Houses.Web.Controllers
 
             if (user != null)
             {
-                ////create a claim
-                //var claimEmail = new Claim(ClaimTypes.Email, user.Email);
-                //var claimIdentifier = new Claim(ClaimTypes.NameIdentifier, user.Id);
-
-                ////create claimsIdentity
-                //var claimsIdentity = new ClaimsIdentity(new[] { claimEmail, claimIdentifier }, "serverAuth");
-
-                ////create claimsPrincipal
-                //var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
-
-                ////Sign In User
-                //await HttpContext.SignInAsync(claimsPrincipal);
-
                 bool rememberMe = true;
                 bool shouldLockout = false;
 

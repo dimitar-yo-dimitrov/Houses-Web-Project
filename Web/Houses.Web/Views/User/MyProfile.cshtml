@@ -1,4 +1,4 @@
-﻿@model IEnumerable<UserServiceViewModel>
+﻿@model IEnumerable<PropertyServiceViewModel>
 
 @{
     ViewBag.Title = "My Profile";
@@ -10,9 +10,9 @@
 @if (Model.Any())
 {
     <div class="row">
-        @foreach (var user in Model)
+        @foreach (var property in Model)
         {
-            <partial name="_UserPartial" model="@user" />
+            <partial name="_PropertyPartial" model="@property" />
         }
     </div>
 }

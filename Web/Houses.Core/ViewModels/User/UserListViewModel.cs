@@ -1,4 +1,6 @@
-﻿namespace Houses.Core.ViewModels.User
+﻿using Houses.Infrastructure.Data.Identity;
+
+namespace Houses.Core.ViewModels.User
 {
     public class UserListViewModel
     {
@@ -12,5 +14,7 @@
         public string Name { get; set; } = null!;
 
         public string Email { get; set; } = null!;
+
+        public IEnumerable<ApplicationUser> Users { get; set; } = new List<ApplicationUser>();
     }
 }
