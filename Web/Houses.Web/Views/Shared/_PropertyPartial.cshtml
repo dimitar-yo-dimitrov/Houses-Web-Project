@@ -16,8 +16,17 @@
                 <b>@($"{Model.SquareMeters}") m2</b>
             </h6>
             <br />
-            <a asp-controller="Property" asp-action="Details" asp-route-id="@Model.Id"
-               class="btn btn-success text-black">Details</a>
+            <form>
+                <a class="btn btn-success text-black" asp-controller="Property" asp-action="Details" asp-route-id="@Model.Id">Details</a>
+            </form>
+            <form>
+                <a class="btn btn-success text-black" asp-controller="Post" asp-action="Index" asp-route-id="@Model.Id">Posts</a>
+            </form>
+            
+            
+            @*<form class="nav-item mt-4 mb-3 m-lg-2">
+                <button class="btn btn-outline-primary text-black" asp-area="" asp-controller="Post" asp-action="Index">Posts</button>
+            </form>*@
         </div>
     </div>
 </div>

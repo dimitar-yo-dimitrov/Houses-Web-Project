@@ -11,7 +11,7 @@ namespace Houses.Core.Services.Contracts
 
         Task<EditUserInputViewModel> GetUserForEdit(string id);
 
-        Task<IEnumerable<UserServiceViewModel>> GetUserByName(string author);
+        Task<IEnumerable<UserServiceViewModel>> GetUserByIdForProfile(string id);
 
         Task<bool> UpdateUser(EditUserInputViewModel model);
 

@@ -5,7 +5,8 @@
         <div class="card">
             <div class="card-body">
                 <div class="d-flex flex-column align-items-center text-center">
-                    <img src="~/img/profile-img/@Model.ProfilePicture" alt="Admin" class="rounded-circle" width="150">
+                    <img src="@Model.ProfilePicture" alt="" class="rounded-3" width="200">
+                    @*<img class="card-img-top" src="@Model.ProfilePicture" alt="">*@
                     <div class="mt-3">
                         <input type="hidden" name="Id" value="@Model.Id" />
                     </div>

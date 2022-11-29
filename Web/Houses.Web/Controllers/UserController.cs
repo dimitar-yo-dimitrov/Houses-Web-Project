@@ -1,6 +1,5 @@
 ﻿using Houses.Common.GlobalConstants;
 using Houses.Core.Services.Contracts;
-using Houses.Core.ViewModels.Property;
 using Houses.Core.ViewModels.User;
 using Houses.Web.Extensions;
 using Microsoft.AspNetCore.Authorization;
@@ -36,22 +35,22 @@ namespace Houses.Web.Controllers
                 string.Format(ExceptionMessages.IdIsNull));
             }
 
-            IEnumerable<PropertyServiceViewModel> myProperties = await _propertyService.AllPropertiesByUserIdAsync(userId);
+            var user = await _userService.GetUserByIdForProfile(userId);
 
-            if (myProperties == null)
+            if (user == null)
             {
                 throw new NullReferenceException(
-                    string.Format(ExceptionMessages.PropertiesNotFound));
-            }
+                    string.Format(ExceptionMessages.UserNotFound, userId));
+            };
 
-            return View(myProperties);
+            return View(user);
         }
 
         [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> UserProfile([FromQuery] string name)
         {
-            var user = await _userService.GetUserByName(name);
+            var user = await _userService.GetUserByIdForProfile(name);
 
             if (user == null)
             {

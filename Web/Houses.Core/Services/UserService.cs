@@ -50,16 +50,17 @@ namespace Houses.Core.Services
             };
         }
 
-        public async Task<IEnumerable<UserServiceViewModel>> GetUserByName(string author)
+        public async Task<IEnumerable<UserServiceViewModel>> GetUserByIdForProfile(string id)
         {
             return await _repository.All<ApplicationUser>()
-                .Where(au => au.FirstName == author)
+                .Where(au => au.Id == id)
                 .Select(u => new UserServiceViewModel
                 {
                     FirstName = u.FirstName,
                     LastName = u.LastName,
                     Email = u.Email,
-                    PhoneNumber = u.PhoneNumber
+                    PhoneNumber = u.PhoneNumber,
+                    ProfilePicture = u.ProfilePicture
                 })
                 .ToListAsync();
         }
