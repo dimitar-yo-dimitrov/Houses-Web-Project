@@ -1,4 +1,4 @@
-﻿using Houses.Infrastructure.Data.Common;
+﻿using Houses.Infrastructure.Data.Common.Repositories;
 
 namespace Houses.Infrastructure.Data.Repositories
 {

@@ -67,11 +67,13 @@
         {
             public const string NormalDateFormat = "dd.MM.yyyy";
         }
-        public static class Role
+        public static class AdminConstants
         {
             public const string AdministratorRoleName = "Admin";
             public const string OwnerRoleName = "Owner";
             public const string UserRoleName = "User";
+
+            public const string AreaName = "Admin";
         }
     }
 }

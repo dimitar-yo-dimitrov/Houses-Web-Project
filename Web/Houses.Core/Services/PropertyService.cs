@@ -192,6 +192,7 @@ namespace Houses.Core.Services
                         LastName = p.Owner.LastName,
                         Email = p.Owner.Email,
                         PhoneNumber = p.Owner.PhoneNumber,
+                        ProfilePicture = p.Owner.ProfilePicture
                     }
                 })
                 .FirstAsync();

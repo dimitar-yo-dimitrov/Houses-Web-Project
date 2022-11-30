@@ -8,9 +8,9 @@
 <hr />
 
 <div class="container" style="display: inline">
-    <div class="row">
+    <div class="row card card-group">
         <div class="col-4">
-            <img class="card-img-top" style="width: 20rem;"
+            <img class="card card-img-top card-body" style="width: 20rem;" 
                  src="@Model.ImageUrl" alt="House Image">
         </div>
         <div class="card col-8 border-0">
@@ -23,9 +23,10 @@
             <p>@Model.Description</p>
             <p>Category: <b>@Model.PropertyType</b></p>
             <p></p>
-            <div class="card" style="width: 18rem;">
+            <div class="card card-img-top" style="width: 18rem;">
                 <div class="card-body">
                     <h5 class="card-title">Owner Info:</h5>
+                    <img src="@Model.User.ProfilePicture" class="rounded-circle" width="100" alt="">
                     <p class="card-text">First Name: @Model.User.FirstName</p>
                     <p class="card-text">LastName: @Model.User.LastName</p>
                     <p class="card-text">Email: @Model.User.Email</p>
