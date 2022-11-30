@@ -10,6 +10,8 @@
 
         public const string UserNotFound = "Unable to load user with ID '{0}'.";
 
+        public const string UsersNotFound = "No users found.";
+
         public const string InvalidOperation = "Invalid Operation!";
 
         public const string InvalidLogin = "Invalid login attempt!";

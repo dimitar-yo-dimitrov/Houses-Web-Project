@@ -78,6 +78,12 @@ namespace Houses.Web.Controllers
 
             var model = await _propertyService.PropertyDetailsByIdAsync(id);
 
+            if (model == null)
+            {
+                throw new ArgumentException(
+                    string.Format(ExceptionMessages.PropertyNotFound, id));
+            }
+
             return View(model);
         }
 
@@ -114,7 +120,19 @@ namespace Houses.Web.Controllers
 
             string userId = await _userService.GetUserId(User.Id());
 
+            if (userId == null)
+            {
+                throw new NullReferenceException(
+                    string.Format(ExceptionMessages.IdIsNull));
+            }
+
             string id = await _propertyService.CreateAsync(propertyModel, userId);
+
+            if (id == null)
+            {
+                throw new NullReferenceException(
+                    string.Format(ExceptionMessages.IdIsNull));
+            }
 
             return RedirectToAction(nameof(Details), new { id });
         }
@@ -132,7 +150,7 @@ namespace Houses.Web.Controllers
 
             if (property == null)
             {
-                throw new NullReferenceException(
+                throw new ArgumentException(
                     string.Format(ExceptionMessages.PropertyNotFound, id));
             }
 
@@ -165,7 +183,7 @@ namespace Houses.Web.Controllers
 
             if (propertyToUpdate == null)
             {
-                throw new NullReferenceException(
+                throw new ArgumentException(
                     string.Format(ExceptionMessages.PropertyNotFound, propertyToUpdate!.Id));
             }
 
@@ -188,6 +206,7 @@ namespace Houses.Web.Controllers
             }
 
             var property = await _propertyService.PropertyDetailsByIdAsync(id);
+
             var model = new DetailsPropertyViewModel
             {
                 Title = property.Title,

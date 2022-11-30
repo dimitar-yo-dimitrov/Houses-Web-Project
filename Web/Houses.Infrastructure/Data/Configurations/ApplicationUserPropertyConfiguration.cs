@@ -15,7 +15,7 @@ namespace Houses.Infrastructure.Data.Configuration
                 .HasOne(aup => aup.ApplicationUser)
                 .WithMany(p => p.ApplicationUserProperties)
                 .HasForeignKey(aup => aup.PropertyId)
-                .OnDelete(DeleteBehavior.ClientNoAction);
+                .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

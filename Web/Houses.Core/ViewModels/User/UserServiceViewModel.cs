@@ -1,6 +1,4 @@
-﻿using Houses.Core.ViewModels.Property;
-
-namespace Houses.Core.ViewModels.User
+﻿namespace Houses.Core.ViewModels.User
 {
     public class UserServiceViewModel
     {
@@ -19,7 +17,5 @@ namespace Houses.Core.ViewModels.User
         public string PhoneNumber { get; set; } = null!;
 
         public string? ProfilePicture { get; set; }
-
-        public IEnumerable<PropertyServiceViewModel> Properties { get; set; } = new HashSet<PropertyServiceViewModel>();
     }
 }

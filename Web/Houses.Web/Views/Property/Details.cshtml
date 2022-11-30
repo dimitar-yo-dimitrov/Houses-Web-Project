@@ -18,7 +18,7 @@
             <p>Located in: <b>@Model.Address</b></p>
             <p>
                 Price:
-                <b>@String.Format("{0:f2}", Model.Price) BGN</b>
+                <b>@($"{Model.Price:f2}") BGN</b>
             </p>
             <p>@Model.Description</p>
             <p>Category: <b>@Model.PropertyType</b></p>

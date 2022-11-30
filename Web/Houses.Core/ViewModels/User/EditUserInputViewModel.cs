@@ -28,7 +28,7 @@ namespace Houses.Core.ViewModels.User
         public string Email { get; set; } = null!;
 
         [Required(AllowEmptyStrings = false)]
-        [RegularExpression(RegexPhoneNumber, ErrorMessage = RegexPhoneNumberError)]
+        [MaxLength(PhoneNumberMaxLength)]
         [Display(Name = "Phone Number")]
         public string PhoneNumber { get; set; } = null!;
 

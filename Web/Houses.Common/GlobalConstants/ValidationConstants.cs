@@ -19,6 +19,8 @@
             public const int PasswordMaxLength = 6;
             public const int PasswordMinLength = 20;
 
+            public const int PhoneNumberMaxLength = 15;
+
             public const string RegexPhoneNumber = @"^(\d{4})\-?(\d{3})\-?(\d{3})$";
             public const string RegexPhoneNumberError = "Phone Number is not corect!";
         }
@@ -65,12 +67,6 @@
         {
             public const string NormalDateFormat = "dd.MM.yyyy";
         }
-
-        //public static class ClaimsConstants
-        //{
-        //    //public const string FirstName = "urn:softuni:houses.bg:firstName";
-        //}
-
         public static class Role
         {
             public const string AdministratorRoleName = "Admin";

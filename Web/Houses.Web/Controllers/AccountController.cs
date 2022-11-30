@@ -1,5 +1,4 @@
-﻿using System.Security.Claims;
-using Houses.Common.GlobalConstants;
+﻿using Houses.Common.GlobalConstants;
 using Houses.Core.ViewModels.User;
 using Houses.Infrastructure.Data.Identity;
 using Microsoft.AspNetCore.Authorization;
@@ -60,7 +59,6 @@ namespace Houses.Web.Controllers
 
             if (result.Succeeded)
             {
-                await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.NameIdentifier, model.FirstName));
                 await _signInManager.SignInAsync(user, isPersistent: false);
 
                 return RedirectToAction("Index", "Home");

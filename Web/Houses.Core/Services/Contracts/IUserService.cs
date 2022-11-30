@@ -5,7 +5,7 @@ namespace Houses.Core.Services.Contracts
 {
     public interface IUserService
     {
-        Task<bool> ExistsById(string userId);
+        Task<bool> ExistsById(string id);
 
         Task<IEnumerable<UserListViewModel>> GetUsers();
 
@@ -17,6 +17,6 @@ namespace Houses.Core.Services.Contracts
 
         Task<ApplicationUser> GetUserById(string id);
 
-        Task<string> GetUserId(string userId);
+        Task<string> GetUserId(string id);
     }
 }

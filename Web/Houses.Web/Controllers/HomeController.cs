@@ -26,7 +26,7 @@ namespace Houses.Web.Controllers
         }
 
         [AllowAnonymous]
-        public IActionResult Privacy()
+        public IActionResult About()
         {
             return View();
         }

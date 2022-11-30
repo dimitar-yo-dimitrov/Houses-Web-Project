@@ -1,122 +1,152 @@
 ﻿using Houses.Common.GlobalConstants;
 using Houses.Core.Services.Contracts;
 using Houses.Core.ViewModels.User;
+using Houses.Infrastructure.Data.Identity;
 using Houses.Web.Extensions;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Houses.Web.Controllers
 {
     //[Authorize(Roles = $"{AdministratorRoleName}, {UserRoleName}")]
     public class UserController : BaseController
     {
-        private readonly IUserService _userService;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IUserService _userService;
         private readonly IPropertyService _propertyService;
 
         public UserController(
+
+            RoleManager<IdentityRole> roleManager,
+            UserManager<ApplicationUser> userManager,
             IUserService userService,
-            RoleManager<IdentityRole> roleManager, IPropertyService propertyService)
+            IPropertyService propertyService)
         {
-            _userService = userService;
             _roleManager = roleManager;
+            _userManager = userManager;
+            _userService = userService;
             _propertyService = propertyService;
         }
 
         [HttpGet]
         public async Task<IActionResult> MyProfile()
         {
-            var userId = User.Id();
-
-            if (userId == null)
+            try
             {
-                throw new NullReferenceException(
-                string.Format(ExceptionMessages.IdIsNull));
+                var userId = User.Id();
+
+                if (userId == null)
+                {
+                    throw new NullReferenceException(
+                        string.Format(ExceptionMessages.IdIsNull));
+                }
+
+                var user = await _userService.GetUserByIdForProfile(userId);
+
+                if (user == null)
+                {
+                    throw new NullReferenceException(
+                        string.Format(ExceptionMessages.UserNotFound, userId));
+                };
+
+                return View(user);
             }
-
-            var user = await _userService.GetUserByIdForProfile(userId);
-
-            if (user == null)
+            catch (Exception ex)
             {
-                throw new NullReferenceException(
-                    string.Format(ExceptionMessages.UserNotFound, userId));
-            };
-
-            return View(user);
-        }
-
-        [AllowAnonymous]
-        [HttpGet]
-        public async Task<IActionResult> UserProfile([FromQuery] string name)
-        {
-            var user = await _userService.GetUserByIdForProfile(name);
-
-            if (user == null)
-            {
-                throw new NullReferenceException(
-                    string.Format(ExceptionMessages.IdIsNull));
+                return NotFound(ex.Message);
             }
-
-            return View(user as UserServiceViewModel);
         }
 
         [HttpGet]
-        public async Task<IActionResult> EditProfile(string? id)
+        public async Task<IActionResult> EditProfile()
         {
-            if (id == null)
+            try
             {
-                throw new NullReferenceException(
-                    string.Format(ExceptionMessages.IdIsNull));
+                string id = User.Id();
+
+                if (id == null)
+                {
+                    throw new NullReferenceException(
+                        string.Format(ExceptionMessages.IdIsNull));
+                }
+
+                var user = await _userService.GetUserForEdit(id);
+
+                if (user == null)
+                {
+                    throw new ArgumentException(
+                        string.Format(ExceptionMessages.UserNotFound, id));
+                }
+
+                return View(user);
             }
-
-            var user = await _userService.GetUserById(id);
-
-            if (user == null)
+            catch (Exception ex)
             {
-                throw new NullReferenceException(
-                    string.Format(ExceptionMessages.UserNotFound, id));
+                return NotFound(ex.Message);
             }
-
-            var model = new EditUserInputViewModel
-            {
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Email = user.Email,
-                PhoneNumber = user.PhoneNumber,
-                ProfilePicture = user.ProfilePicture,
-            };
-
-            return View(model);
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditProfile(EditUserInputViewModel model)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return View(model);
-            }
+                if (!ModelState.IsValid)
+                {
+                    return View(model);
+                }
 
-            var inputModel = new EditUserInputViewModel
-            {
-                FirstName = model.FirstName,
-                LastName = model.LastName,
-                Email = model.Email,
-                PhoneNumber = model.PhoneNumber,
-                ProfilePicture = model.ProfilePicture,
-            };
+                if (await _userService.UpdateUser(model))
+                {
+                    ViewData[ExceptionMessages.SuccessMessage] = ExceptionMessages.SuccessfulRecord;
+                }
+                else
+                {
+                    ViewData[ExceptionMessages.ErrorMessage] = ExceptionMessages.InvalidOperation;
+                }
 
-            if (await _userService.UpdateUser(inputModel))
-            {
-                ViewData[ExceptionMessages.SuccessMessage] = ExceptionMessages.SuccessfulRecord;
+                return RedirectToAction(nameof(MyProfile));
             }
-            else
+            catch (Exception ex)
             {
-                ViewData[ExceptionMessages.ErrorMessage] = ExceptionMessages.InvalidOperation;
+                return NotFound(ex.Message);
             }
+        }
 
-            return View(model);
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RemoveProfile()
+        {
+            try
+            {
+                string id = User.Id();
+
+                if (id == null)
+                {
+                    throw new NullReferenceException(
+                        string.Format(ExceptionMessages.IdIsNull));
+                }
+
+                var user = await _userManager.Users
+                    .FirstOrDefaultAsync(u => u.Id == id);
+
+                if (user == null)
+                {
+                    throw new ArgumentException(
+                        string.Format(ExceptionMessages.UserNotFound, id));
+                }
+
+                await _userManager.DeleteAsync(user);
+
+                return View(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex.Message);
+            }
         }
 
         //public async Task<IActionResult> CreateRole()

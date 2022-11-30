@@ -9,21 +9,21 @@
             <h6>Description: <b>@Model.Description</b></h6>
             <h6>
                 Price:
-                <b>@($"{Model.Price}") BGN</b>
+                <b>@($"{Model.Price:f2}") BGN</b>
             </h6>
             <h6>
                 Square Meters:
-                <b>@($"{Model.SquareMeters}") m2</b>
+                <b>@($"{Model.SquareMeters:f2}") m2</b>
             </h6>
             <br />
             <a asp-controller="Property" asp-action="Details" asp-route-id="@Model.Id"
-               class="btn btn-success text-black">Details</a>
+               class="btn btn-info text-black">Details</a>
             @if (User.Identity!.IsAuthenticated)
             {
                 <a class="btn btn-warning" asp-controller="Property" asp-action="Edit"
-                   asp-route-id="@Model.Id">Edit</a>
+               asp-route-id="@Model.Id">Edit</a>
                 <a class="ml-2 btn btn-danger" asp-controller="Property" asp-action="Delete"
-                   asp-route-id="@Model.Id">Delete</a>
+               asp-route-id="@Model.Id">Delete</a>
             }
         </div>
     </div>

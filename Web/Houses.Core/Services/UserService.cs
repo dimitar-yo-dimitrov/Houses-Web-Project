@@ -16,11 +16,11 @@ namespace Houses.Core.Services
             _repository = repository;
         }
 
-        public async Task<bool> ExistsById(string userId)
+        public async Task<bool> ExistsById(string id)
         {
             return await _repository
                 .All<ApplicationUser>()
-                .AnyAsync(u => u.Id == userId);
+                .AnyAsync(u => u.Id == id);
         }
 
         public async Task<IEnumerable<UserListViewModel>> GetUsers()
@@ -98,10 +98,10 @@ namespace Houses.Core.Services
             return await _repository.GetByIdAsync<ApplicationUser>(id);
         }
 
-        public async Task<string> GetUserId(string userId)
+        public async Task<string> GetUserId(string id)
         {
             return ((await _repository.AllReadonly<ApplicationUser>()
-                .FirstOrDefaultAsync(au => au.Id == userId))?.Id ?? null)!;
+                .FirstOrDefaultAsync(au => au.Id == id))?.Id ?? null)!;
         }
     }
 }

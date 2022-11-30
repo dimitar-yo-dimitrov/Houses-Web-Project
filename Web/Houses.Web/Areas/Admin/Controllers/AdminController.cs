@@ -34,18 +34,36 @@ namespace Houses.Web.Areas.Admin.Controllers
         {
             var users = await _userService.GetUsers();
 
+            if (users == null)
+            {
+                throw new ArgumentException(
+                    string.Format(ExceptionMessages.UsersNotFound));
+            }
+
             return View(users);
         }
 
         public async Task<IActionResult> Roles(string id)
         {
+            if (id == null)
+            {
+                throw new NullReferenceException(
+                    string.Format(ExceptionMessages.IdIsNull));
+            }
+
             var user = await _userService.GetUserById(id);
+
+            if (user == null)
+            {
+                throw new ArgumentException(
+                    string.Format(ExceptionMessages.UserNotFound, id));
+            }
+
             var model = new UserRolesViewModel()
             {
                 UserId = user.Id,
                 Name = $"{user.FirstName} {user.LastName}"
             };
-
 
             ViewBag.RoleItems = _roleManager.Roles
                 .ToList()
@@ -64,6 +82,7 @@ namespace Houses.Web.Areas.Admin.Controllers
         {
             var user = await _userService.GetUserById(model.UserId);
             var userRoles = await _userManager.GetRolesAsync(user);
+
             await _userManager.RemoveFromRolesAsync(user, userRoles);
 
             if (model.RoleNames.Length > 0)
@@ -77,9 +96,21 @@ namespace Houses.Web.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(string id)
         {
-            var model = await _userService.GetUserForEdit(id);
+            if (id == null)
+            {
+                throw new NullReferenceException(
+                    string.Format(ExceptionMessages.IdIsNull));
+            }
 
-            return View(model);
+            var user = await _userService.GetUserForEdit(id);
+
+            if (user == null)
+            {
+                throw new ArgumentException(
+                    string.Format(ExceptionMessages.UserNotFound, id));
+            }
+
+            return View(user);
         }
 
         [HttpPost]
@@ -100,7 +131,7 @@ namespace Houses.Web.Areas.Admin.Controllers
                 ViewData[ExceptionMessages.ErrorMessage] = ExceptionMessages.InvalidOperation;
             }
 
-            return View(model);
+            return RedirectToAction(nameof(ManageUsers));
         }
 
         [HttpPost]
