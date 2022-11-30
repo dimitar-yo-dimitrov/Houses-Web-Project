@@ -38,6 +38,8 @@ namespace Houses.Infrastructure.Data.Entities
         [MaxLength(MaxUrl)]
         public string ImageUrl { get; set; } = null!;
 
+        public DateTime CreatedOn { get; set; }
+
         public bool IsActive { set; get; } = true;
 
         // Navigational properties
@@ -53,7 +55,7 @@ namespace Houses.Infrastructure.Data.Entities
         // Navigational properties
         [ForeignKey(nameof(Owner))]
         public string OwnerId { get; set; } = null!;
-        public virtual ApplicationUser Owner { get; set; }
+        public virtual ApplicationUser Owner { get; set; } = null!;
 
         public virtual ICollection<ApplicationUserProperty> ApplicationUserProperties { get; set; }
     }

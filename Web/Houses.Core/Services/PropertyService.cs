@@ -32,7 +32,7 @@ namespace Houses.Core.Services
             if (string.IsNullOrEmpty(propertyType) == false)
             {
                 properties = properties
-                    .Where(p => p.PropertyType.Title == propertyType && p.PropertyType.Title == propertyType);
+                    .Where(p => p.PropertyType.Title == propertyType);
             }
 
             if (string.IsNullOrEmpty(city) == false)
@@ -53,10 +53,11 @@ namespace Houses.Core.Services
 
             properties = sorting switch
             {
-                PropertySorting.Newest => properties.OrderByDescending(p => p.Id),
+                PropertySorting.Newest => properties.OrderBy(p => p.CreatedOn),
+                PropertySorting.Oldest => properties.OrderByDescending(p => p.CreatedOn),
                 PropertySorting.PriceAscending => properties.OrderBy(p => p.Price),
                 PropertySorting.PriceDescending => properties.OrderByDescending(p => p.Price),
-                _ => properties.OrderByDescending(p => p.Id)
+                _ => throw new ArgumentOutOfRangeException(nameof(sorting), sorting, null)
             };
 
             result.Properties = await properties
@@ -95,6 +96,7 @@ namespace Houses.Core.Services
                 Address = model.Address,
                 SquareMeters = model.SquareMeters,
                 ImageUrl = model.ImageUrl,
+                CreatedOn = DateTime.UtcNow,
                 CityId = model.CityId,
                 PropertyTypeId = model.PropertyTypeId,
                 OwnerId = userId
@@ -186,6 +188,8 @@ namespace Houses.Core.Services
                     PropertyType = p.PropertyType.Title,
                     User = new ApplicationUser()
                     {
+                        FirstName = p.Owner.FirstName,
+                        LastName = p.Owner.LastName,
                         Email = p.Owner.Email,
                         PhoneNumber = p.Owner.PhoneNumber,
                     }

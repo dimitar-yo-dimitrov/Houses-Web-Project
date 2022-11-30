@@ -18,6 +18,7 @@ namespace Houses.Core.Services
         public async Task<IEnumerable<string>> AllPropertyTypeNamesAsync()
         {
             return await _repository.AllReadonly<PropertyType>()
+                .OrderBy(pt => pt.Title)
                 .Select(pt => pt.Title)
                 .Distinct()
                 .ToListAsync();
@@ -26,10 +27,10 @@ namespace Houses.Core.Services
         public async Task<IEnumerable<PropertyTypeViewModel>> AllPropertyTypesAsync()
         {
             return await _repository.AllReadonly<PropertyType>()
-                .Select(c => new PropertyTypeViewModel()
+                .Select(pt => new PropertyTypeViewModel
                 {
-                    Id = c.Id,
-                    Name = c.Title
+                    Id = pt.Id,
+                    Name = pt.Title
                 })
                 .ToListAsync();
         }
