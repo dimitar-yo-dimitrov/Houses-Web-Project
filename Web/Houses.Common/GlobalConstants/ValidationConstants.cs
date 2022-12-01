@@ -44,8 +44,8 @@
             public const string PriceMinLength = "0.00";
             public const string PriceMaxLength = "1000000000.00";
 
-            public const string RegexAddress = @"^[A-Za-z-. ]+,\s[A-Za-z-. ]+,\s[\d-]{1,4},\s[\d]{4,4}";
-            public const string RegexAddressError = "Enter address in the format: City name, street name, number, post code";
+            public const string RegexAddress = @"^([A-Za-z]+),\s([A-Za-z]+),\s([\d]{1,4}),?\s?([\d+]{1,4})?,?\s?([A-Za-z])?,?\s?([\d+]{1,4})?,?\s?([\d+]{1,4})?,\s([\d]{4,4})$";
+            public const string RegexAddressError = "Enter address in the format: City, street, number, block, entrance, floor, apartment, postal code";
 
             public const string SquareMetersMin = "1.00";
             public const string SquareMetersMax = "100000.00";
@@ -60,7 +60,7 @@
         public static class Comment
         {
             public const int MassageMin = 2;
-            public const int MassageMax = 2000;
+            public const int MassageMax = 200;
         }
 
         public class FormattingConstant
@@ -73,7 +73,7 @@
             public const string OwnerRoleName = "Owner";
             public const string UserRoleName = "User";
 
-            public const string AreaName = "Admin";
+            public const string AdminAreaName = "Admin";
         }
     }
 }

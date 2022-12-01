@@ -9,10 +9,9 @@ namespace Houses.Infrastructure.Data.Configuration
         public void Configure(EntityTypeBuilder<Post> builder)
         {
             builder
-                .HasOne(p => p.Author)
-                .WithMany(au => au.Posts)
-                .HasForeignKey(p => p.AuthorId);
-            //.OnDelete(DeleteBehavior.ClientNoAction);
+                .HasOne(p => p.Property)
+                .WithMany(au => au.Comments)
+                .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

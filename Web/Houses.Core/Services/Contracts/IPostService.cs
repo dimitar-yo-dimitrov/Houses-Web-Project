@@ -1,11 +1,17 @@
-﻿using Houses.Core.ViewModels.User;
+﻿using Houses.Core.ViewModels.Post;
 
 namespace Houses.Core.Services.Contracts
 {
     public interface IPostService
     {
-        Task<PostInputViewModel> PostsAsync(string id);
+        Task<IEnumerable<PostInputViewModel>> GetAllAsync();
 
-        Task CreateAsync(string content, string authorId, string receiverId);
+        Task<string> CreatePostAsync(string id, PostInputViewModel model);
+
+        Task DeletePostAsync(string id);
+
+        Task<PostInputViewModel> GetByIdAsync(string id);
+
+        Task EditAsync(EditPostInputModel model, string id);
     }
 }

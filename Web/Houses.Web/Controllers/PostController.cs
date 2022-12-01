@@ -1,4 +1,4 @@
-﻿using Houses.Core.ViewModels.User;
+﻿using Houses.Core.ViewModels.Post;
 using Houses.Infrastructure.Data;
 using Houses.Infrastructure.Data.Entities;
 using Microsoft.AspNetCore.Authorization;
@@ -27,7 +27,7 @@ namespace Houses.Web.Controllers
                 {
                     Title = p.Title,
                     Content = p.Content,
-                    Date = p.Date,
+                    Date = p.CreatedOn,
                     AuthorId = p.AuthorId,
                 })
                 .ToListAsync();

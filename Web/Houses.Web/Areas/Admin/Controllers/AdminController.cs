@@ -2,6 +2,7 @@
 using Houses.Core.Services.Contracts;
 using Houses.Core.ViewModels.User;
 using Houses.Infrastructure.Data.Identity;
+using Houses.Web.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -28,6 +29,35 @@ namespace Houses.Web.Areas.Admin.Controllers
         public IActionResult Index()
         {
             return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> MyProfile()
+        {
+            try
+            {
+                var userId = User.Id();
+
+                if (userId == null)
+                {
+                    throw new NullReferenceException(
+                        string.Format(ExceptionMessages.IdIsNull));
+                }
+
+                var user = await _userService.GetUserByIdForProfile(userId);
+
+                if (user == null)
+                {
+                    throw new NullReferenceException(
+                        string.Format(ExceptionMessages.UserNotFound, userId));
+                };
+
+                return View(user);
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex.Message);
+            }
         }
 
         public async Task<IActionResult> ManageUsers()

@@ -16,7 +16,8 @@
                 </div>
                 <div class="mb-3">
                     <label asp-for="Address" class="form-label">Address</label>
-                    <input asp-for="Address" class="form-control" aria-required="true" placeholder="City name..., street name..., number..., post code..." />
+                    <input asp-for="Address" class="form-control" aria-required="true" 
+                           placeholder="City..., street..., number..., block..., entrance..., floor..., apartment..., postal code..." />
                     <span asp-validation-for="Address" class="text-danger"></span>
                 </div>
                 <div class="mb-3">
@@ -61,3 +62,7 @@
         </section>
     </div>
 </div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

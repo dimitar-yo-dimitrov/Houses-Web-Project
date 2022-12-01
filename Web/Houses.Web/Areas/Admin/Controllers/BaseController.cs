@@ -5,7 +5,8 @@ using static Houses.Common.GlobalConstants.ValidationConstants.AdminConstants;
 namespace Houses.Web.Areas.Admin.Controllers
 {
     [Authorize(Roles = AdministratorRoleName)]
-    [Area(AreaName)]
+    //[Route("Admin/[controller]/[Action]/{id?}")]
+    [Area(AdminAreaName)]
     public class BaseController : Controller
     {
     }

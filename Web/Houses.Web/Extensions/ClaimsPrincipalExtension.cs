@@ -1,5 +1,5 @@
 ﻿using System.Security.Claims;
-using static Houses.Common.GlobalConstants.ValidationConstants.Role;
+using static Houses.Common.GlobalConstants.ValidationConstants.AdminConstants;
 
 namespace Houses.Web.Extensions
 {

@@ -1,5 +1,6 @@
-﻿using Houses.Core.Services.Contracts;
-using Houses.Core.ViewModels.User;
+﻿using Houses.Common.GlobalConstants;
+using Houses.Core.Services.Contracts;
+using Houses.Core.ViewModels.Post;
 using Houses.Infrastructure.Data.Entities;
 using Houses.Infrastructure.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -15,30 +16,93 @@ namespace Houses.Core.Services
             _repository = repository;
         }
 
-        public async Task<PostInputViewModel> PostsAsync(string id)
+        public async Task<IEnumerable<PostInputViewModel>> GetAllAsync()
         {
-            return await _repository.AllReadonly<Post>()
-                .Where(p => p.Id == id)
+            var post = await _repository.AllReadonly<Post>()
                 .Select(p => new PostInputViewModel
                 {
+                    Id = p.Id,
                     Title = p.Title,
-                    Date = p.Date,
                     Content = p.Content,
-                    AuthorId = p.AuthorId
+                    Date = p.CreatedOn,
+                    AuthorId = p.Author.UserName
                 })
-                .FirstAsync();
+                .ToListAsync();
+
+            return post;
         }
 
-        public async Task CreateAsync(string content, string authorId, string receiverId)
+        public async Task<string> CreatePostAsync(string id, PostInputViewModel model)
         {
-            var message = new PostInputViewModel
+            if (id == null)
             {
-                Content = content,
-                AuthorId = authorId,
-                ReceiverId = receiverId,
+                throw new NullReferenceException(
+                    string.Format(ExceptionMessages.IdIsNull));
+            }
+
+            var post = new Post
+            {
+                Title = model.Title,
+                CreatedOn = DateTime.UtcNow,
+                Content = model.Content,
+                AuthorId = id
             };
 
-            await _repository.AddAsync(message);
+            if (post == null)
+            {
+                throw new NullReferenceException(
+                    string.Format(ExceptionMessages.PropertyNotFound, string.Empty));
+            }
+
+            await _repository.AddAsync(post);
+            await _repository.SaveChangesAsync();
+
+            return model.Id;
+        }
+
+        public async Task DeletePostAsync(string id)
+        {
+            var post = await _repository.GetByIdAsync<Post>(id);
+
+            if (post == null)
+            {
+                throw new NullReferenceException(string.Format(ExceptionMessages.PostNotFound, id));
+            }
+
+            post.IsDeleted = false;
+
+            await _repository.SaveChangesAsync();
+        }
+
+        public Task<PostInputViewModel> GetByIdAsync(string id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task EditAsync(EditPostInputModel model, string id)
+        {
+            if (id == null)
+            {
+                throw new NullReferenceException(
+                    string.Format(ExceptionMessages.IdIsNull));
+            }
+
+            var post = await _repository
+                .AllReadonly<Post>(p => p.IsDeleted)
+                .Where(p => p.Id == id)
+                .FirstOrDefaultAsync();
+
+            if (post == null)
+            {
+                throw new NullReferenceException(
+                    string.Format(ExceptionMessages.PostNotFound, model.Id));
+            }
+
+            post.Title = model.Title;
+            post.Content = model.Content;
+
+            _repository.Update(post);
+
             await _repository.SaveChangesAsync();
         }
     }

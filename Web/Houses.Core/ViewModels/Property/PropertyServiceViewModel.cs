@@ -19,6 +19,8 @@
 
         public double? SquareMeters { get; init; }
 
+        public string Date { get; set; } = null!;
+
         public string ImageUrl { get; init; } = null!;
     }
 }

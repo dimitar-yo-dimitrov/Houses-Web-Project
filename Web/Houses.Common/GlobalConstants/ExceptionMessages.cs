@@ -4,6 +4,8 @@
     {
         public const string PropertyNotFound = "Property with id {0} is not found.";
 
+        public const string PostNotFound = "Post with id {0} is not found.";
+
         public const string PropertiesNotFound = "Properties is not found.";
 
         public const string IdIsNull = "Id is not found.";

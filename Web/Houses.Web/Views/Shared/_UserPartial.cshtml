@@ -43,6 +43,15 @@
                         @Model.Email
                     </div>
                 </div>
+                <hr/>
+                <div class="row">
+                    <div class="col-sm-3">
+                        <h6 class="mb-0">Phone Number</h6>
+                    </div>
+                    <div class="col-sm-9 text-secondary">
+                        @Model.PhoneNumber
+                    </div>
+                </div>
                 <hr>
             </div>
         </div>
@@ -62,3 +71,7 @@
         </form>
     </div>
 </div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

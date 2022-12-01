@@ -21,10 +21,14 @@
             @if (User.Identity!.IsAuthenticated)
             {
                 <a class="btn btn-warning" asp-controller="Property" asp-action="Edit"
-               asp-route-id="@Model.Id">Edit</a>
+                   asp-route-id="@Model.Id">Edit</a>
                 <a class="btn btn-danger" asp-controller="Property" asp-action="Delete"
-               asp-route-id="@Model.Id">Delete</a>
+                   asp-route-id="@Model.Id">Delete</a>
             }
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

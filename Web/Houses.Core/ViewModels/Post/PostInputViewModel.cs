@@ -3,7 +3,7 @@ using Ganss.Xss;
 using static Houses.Common.GlobalConstants.ValidationConstants.Comment;
 using static Houses.Common.GlobalConstants.ValidationConstants.User;
 
-namespace Houses.Core.ViewModels.User
+namespace Houses.Core.ViewModels.Post
 {
     public class PostInputViewModel
     {
@@ -20,6 +20,7 @@ namespace Houses.Core.ViewModels.User
         [StringLength(UserNameMaxLength, MinimumLength = UserNameMinLength)]
         public string Title { get; set; } = null!;
 
+        [DataType(DataType.Date)]
         public DateTime Date { get; set; } = DateTime.UtcNow;
 
         [StringLength(MassageMax, MinimumLength = MassageMin)]

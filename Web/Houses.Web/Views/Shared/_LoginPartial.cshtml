@@ -8,7 +8,7 @@
                 <a asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @(User.Identity!.Name)!</a>
             </form>
         </li>
-        if (User.IsInRole(ValidationConstants.Role.AdministratorRoleName))
+        if (User.IsInRole(AdministratorRoleName))
         {
             <li>
                 <form class="mt-2 mb-3 m-lg-4">
@@ -36,3 +36,7 @@
         </li>
     }
 </ul>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

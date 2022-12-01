@@ -21,19 +21,25 @@ namespace Houses.Infrastructure.Data.Entities
         public string Title { get; set; } = null!;
 
         [Required]
-        public DateTime Date { get; set; } = DateTime.UtcNow;
+        public DateTime CreatedOn { get; set; }
 
         [Required]
         [MaxLength(MassageMax)]
         public string Content { get; set; } = null!;
 
         [Required]
-        public bool IsDeleted { get; set; } = false;
+        public bool IsDeleted { get; set; } = true;
 
         [Required]
         [ForeignKey(nameof(Author))]
         public string AuthorId { get; set; } = null!;
 
         public virtual ApplicationUser Author { get; set; } = null!;
+
+        [Required]
+        [ForeignKey(nameof(Property))]
+        public string PropertyId { get; set; } = null!;
+
+        public virtual Property Property { get; set; } = null!;
     }
 }

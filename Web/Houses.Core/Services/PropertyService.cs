@@ -1,4 +1,5 @@
-﻿using Houses.Common.GlobalConstants;
+﻿using System.Globalization;
+using Houses.Common.GlobalConstants;
 using Houses.Core.Services.Contracts;
 using Houses.Core.ViewModels.Property;
 using Houses.Core.ViewModels.Property.Enums;
@@ -72,6 +73,7 @@ namespace Houses.Core.Services
                     Address = p.Address,
                     SquareMeters = p.SquareMeters,
                     ImageUrl = p.ImageUrl,
+                    Date = p.CreatedOn.ToString(CultureInfo.InvariantCulture)
                 })
                 .ToListAsync();
 

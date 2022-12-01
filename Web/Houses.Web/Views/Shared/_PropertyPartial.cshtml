@@ -15,22 +15,23 @@
                 Square Meters:
                 <b>@($"{Model.SquareMeters:f2}") m2</b>
             </h6>
+            <h6>Published on: <b>@Model.Date</b></h6>
             <br />
             <form>
                 <div class="navbar-collapse collapse d-sm-inline-flex">
                     <div class="mt-2 mb-2 m-lg-2">
-                        <button class="btn btn-info" asp-controller="Property" asp-action="Details" asp-route-id="@Model.Id">Details</button>
+                        <button asp-area="" class="btn btn-info" asp-controller="Property" asp-action="Details" asp-route-id="@Model.Id">Details</button>
                     </div>
                     <div class="mt-2 mb-2 m-lg-2">
-                        <button class="btn btn-primary" asp-controller="Post" asp-action="Index" asp-route-id="@Model.Id">Posts</button>
+                        <button asp-area="" class="btn btn-primary" asp-controller="Post" asp-action="Index" asp-route-id="@Model.Id">Posts</button>
                     </div>
-                    @if (User.IsInRole(ValidationConstants.Role.AdministratorRoleName))
+                    @if (User.IsInRole(AdministratorRoleName))
                     {
                         <div class="mt-2 mb-2 m-lg-2">
-                            <button class="btn btn-warning" asp-controller="Property" asp-action="Edit" asp-route-id="@Model.Id">Edit</button>
+                            <button asp-area="" class="btn btn-warning" asp-controller="Property" asp-action="Edit" asp-route-id="@Model.Id">Edit</button>
                         </div>
                         <div class="mt-2 mb-2 m-lg-2">
-                            <button class="btn btn-danger" asp-controller="Property" asp-action="Delete" asp-route-id="@Model.Id">Delete</button>
+                            <button asp-area="" class="btn btn-danger" asp-controller="Property" asp-action="Delete" asp-route-id="@Model.Id">Delete</button>
                         </div>
                     }
                 </div>
@@ -38,3 +39,7 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

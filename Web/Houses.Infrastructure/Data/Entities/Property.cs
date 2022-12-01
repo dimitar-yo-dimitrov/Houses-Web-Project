@@ -12,6 +12,7 @@ namespace Houses.Infrastructure.Data.Entities
         {
             Id = Guid.NewGuid().ToString();
             ApplicationUserProperties = new HashSet<ApplicationUserProperty>();
+            Comments = new HashSet<Post>();
         }
 
         [Key]
@@ -58,5 +59,7 @@ namespace Houses.Infrastructure.Data.Entities
         public virtual ApplicationUser Owner { get; set; } = null!;
 
         public virtual ICollection<ApplicationUserProperty> ApplicationUserProperties { get; set; }
+
+        public virtual ICollection<Post> Comments { get; set; }
     }
 }
