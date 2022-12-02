@@ -17,6 +17,8 @@ namespace Houses.Core.Services.Contracts
 
         Task<ApplicationUser> GetUserById(string id);
 
+        Task<ApplicationUser> GetApplicationUserByUserName(string email);
+
         Task<string> GetUserId(string id);
     }
 }

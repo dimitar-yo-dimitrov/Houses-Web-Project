@@ -17,11 +17,6 @@ namespace Houses.Web.Controllers
         [AllowAnonymous]
         public IActionResult Index()
         {
-            //if (User.IsInRole(AdministratorRoleName))
-            //{
-            //    return RedirectToAction("Index", "Admin", new { area = AdminAreaName });
-            //}
-
             if (User.Identity?.IsAuthenticated ?? false)
             {
                 return RedirectToAction("All", "Property");

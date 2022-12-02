@@ -2,7 +2,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Houses.Infrastructure.Data.Identity;
 using static Houses.Common.GlobalConstants.ValidationConstants.Comment;
-using static Houses.Common.GlobalConstants.ValidationConstants.User;
 
 namespace Houses.Infrastructure.Data.Entities
 {
@@ -17,18 +16,14 @@ namespace Houses.Infrastructure.Data.Entities
         public string Id { get; set; }
 
         [Required]
-        [MaxLength(UserNameMaxLength)]
-        public string Title { get; set; } = null!;
-
-        [Required]
-        public DateTime CreatedOn { get; set; }
+        public DateTime CreatedOn { get; set; } = DateTime.UtcNow;
 
         [Required]
         [MaxLength(MassageMax)]
         public string Content { get; set; } = null!;
 
         [Required]
-        public bool IsDeleted { get; set; } = true;
+        public bool IsActive { get; set; } = true;
 
         [Required]
         [ForeignKey(nameof(Author))]

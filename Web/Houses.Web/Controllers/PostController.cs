@@ -1,127 +1,180 @@
-﻿using Houses.Core.ViewModels.Post;
-using Houses.Infrastructure.Data;
-using Houses.Infrastructure.Data.Entities;
-using Microsoft.AspNetCore.Authorization;
+﻿using Houses.Common.GlobalConstants;
+using Houses.Core.Services.Contracts;
+using Houses.Core.ViewModels.Post;
+using Houses.Web.Extensions;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using static Houses.Common.GlobalConstants.ExceptionMessages;
 
 namespace Houses.Web.Controllers
 {
     public class PostController : BaseController
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IPostService _postService;
+        private readonly IUserService _userService;
 
-        public PostController(ApplicationDbContext context)
+        public PostController(IPostService postService, IUserService userService)
         {
-            _context = context;
-        }
-
-        [AllowAnonymous]
-        public async Task<IActionResult> Index()
-        {
-            ViewBag.Title = "All posts";
-            var posts = await _context.Posts
-                .AsNoTracking()
-                .Where(p => p.IsDeleted == false)
-                .Select(p => new PostInputViewModel()
-                {
-                    Title = p.Title,
-                    Content = p.Content,
-                    Date = p.CreatedOn,
-                    AuthorId = p.AuthorId,
-                })
-                .ToListAsync();
-
-            return View(posts);
+            _postService = postService;
+            _userService = userService;
         }
 
         [HttpGet]
-        [AllowAnonymous]
-        public IActionResult CreatePost() => View();
+        public async Task<IActionResult> All([FromQuery] AllPostQueryViewModel queryModel)
+        {
+            ViewBag.Title = "All posts";
+
+            var result = await _postService.GetAllAsync(
+                queryModel.SearchTerm,
+                queryModel.Sorting,
+                queryModel.CurrentPage,
+                AllPostQueryViewModel.PostPerPage);
+
+            queryModel.TotalPostCount = result.TotalPostCount;
+            queryModel.Posts = result.Posts;
+
+            if (queryModel == null)
+            {
+                throw new NullReferenceException(
+                    string.Format(PostsNotFound));
+            }
+
+            return View(queryModel);
+        }
+
+        public async Task<IActionResult> Mine()
+        {
+            var userId = User.Id();
+
+            if (userId == null)
+            {
+                throw new NullReferenceException(
+                    string.Format(ExceptionMessages.IdIsNull));
+            }
+
+            IEnumerable<PostInputViewModel> myPosts = await _postService.GetAllByIdAsync(userId);
+
+            if (myPosts == null)
+            {
+                throw new NullReferenceException(
+                    string.Format(PropertiesNotFound));
+            }
+
+            return View(myPosts);
+        }
+
+        [HttpGet]
+        public IActionResult Create() => View();
 
         [HttpPost]
-        [AllowAnonymous]
-        public async Task<IActionResult> CreatePost(PostInputViewModel model)
+        public async Task<IActionResult> Create(CreatePostInputViewModel model)
         {
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
 
-            Post post = new()
+            string userId = await _userService.GetUserId(User.Id());
+
+            if (userId == null)
             {
-                Title = model.Title,
-                Content = model.Content
-            };
+                throw new NullReferenceException(
+                    string.Format(IdIsNull));
+            }
 
-            await _context.Posts.AddAsync(post);
-            await _context.SaveChangesAsync();
+            string id = await _postService.CreatePostAsync(userId, model);
 
-            return RedirectToAction(nameof(Index));
+            if (id == null)
+            {
+                throw new NullReferenceException(
+                    string.Format(IdIsNull));
+            }
+
+            return RedirectToAction(nameof(All), new { id });
         }
 
         [HttpGet]
-        public async Task<IActionResult> EditPost(string id)
+        public async Task<IActionResult> Edit(string? id)
         {
-            Post post = await _context
-                .Posts
-                .AsNoTracking()
-                .SingleOrDefaultAsync(p => p.Id == id && !p.IsDeleted) ?? new Post();
+            if (id == null)
+            {
+                throw new NullReferenceException(
+                    string.Format(IdIsNull));
+            }
+
+            var post = await _postService.GetPostAsync(id);
 
             if (post == null)
             {
-                return BadRequest();
+                throw new ArgumentException(
+                    string.Format(PostNotFound, id));
             }
 
-            return View(new PostInputViewModel()
+            var model = new PostInputViewModel
             {
-                Title = post.Title,
+                AuthorName = post.Author.UserName,
                 Content = post.Content
-            });
+            };
+
+            return View(model);
+        }
+
+        [HttpPost, ActionName("Edit")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(EditPostInputModel model, string? id)
+        {
+            if (id == null)
+            {
+                throw new NullReferenceException(
+                    string.Format(IdIsNull));
+            }
+
+            if (model == null)
+            {
+                throw new ArgumentException(
+                    string.Format(PostNotFound, id));
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            await _postService.EditAsync(model, id);
+
+            return RedirectToAction(nameof(All), new { id });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Delete(string id)
+        {
+            if (await _postService.ExistsAsync(id) == false)
+            {
+                return RedirectToAction(nameof(All));
+            }
+
+            var post = await _postService.GetPostAsync(id);
+
+            var model = new PostInputViewModel
+            {
+                AuthorName = post.Author.UserName,
+                Content = post.Content
+            };
+
+            return View(model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditPost(PostInputViewModel model)
+        public async Task<IActionResult> Delete(string id, PostInputViewModel model)
         {
-            if (!ModelState.IsValid)
+            if (await _postService.ExistsAsync(id) == false)
             {
-                return View(model);
+                return RedirectToAction(nameof(All));
             }
 
-            Post post = await _context
-                .Posts
-                .FirstOrDefaultAsync(p => p.Id == model.Id && !p.IsDeleted) ?? new Post();
+            await _postService.DeletePostAsync(id);
 
-            if (post == null)
-            {
-                return BadRequest();
-            }
-
-            post.Title = model.Title;
-            post.Content = model.Content;
-
-            await _context.SaveChangesAsync();
-
-            return RedirectToAction(nameof(Index));
-        }
-
-        public async Task<IActionResult> Delete(string id)
-        {
-            Post post = (await _context
-                .Posts
-                .FirstOrDefaultAsync(p => p.Id == id))!;
-
-            if (post == null)
-            {
-                return BadRequest();
-            }
-
-            post.IsDeleted = true;
-
-            await _context.SaveChangesAsync();
-
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Mine));
         }
     }
 }

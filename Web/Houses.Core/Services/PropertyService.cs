@@ -188,7 +188,7 @@ namespace Houses.Core.Services
                     SquareMeters = p.SquareMeters,
                     ImageUrl = p.ImageUrl,
                     PropertyType = p.PropertyType.Title,
-                    User = new ApplicationUser()
+                    User = new ApplicationUser
                     {
                         FirstName = p.Owner.FirstName,
                         LastName = p.Owner.LastName,

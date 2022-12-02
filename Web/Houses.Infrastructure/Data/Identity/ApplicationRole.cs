@@ -20,7 +20,7 @@ namespace Houses.Infrastructure.Data.Identity
 
         public DateTime? ModifiedOn { get; set; }
 
-        public bool IsDeleted { get; set; }
+        public bool IsActive { get; set; } = true;
 
         public DateTime? DeletedOn { get; set; }
     }

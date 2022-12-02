@@ -39,6 +39,12 @@ namespace Houses.Core.Services
         {
             var user = await _repository.GetByIdAsync<ApplicationUser>(id);
 
+            if (user == null)
+            {
+                throw new ArgumentException(
+                    string.Format(ExceptionMessages.UserNotFound, id));
+            }
+
             return new EditUserInputViewModel
             {
                 Id = user.Id,
@@ -71,24 +77,22 @@ namespace Houses.Core.Services
 
             var user = await _repository.GetByIdAsync<ApplicationUser>(model.Id);
 
-            if (user != null)
+            if (user == null)
             {
-                user.FirstName = model.FirstName;
-                user.LastName = model.LastName;
-                user.Email = model.Email;
-                user.PhoneNumber = model.PhoneNumber;
-                user.ProfilePicture = model.ProfilePicture;
-                user.UserName = model.FirstName;
-
-                await _repository.SaveChangesAsync();
-
-                result = true;
-            }
-            else
-            {
-                throw new NullReferenceException(
+                throw new ArgumentException(
                     string.Format(ExceptionMessages.UserNotFound, model.Id));
             }
+
+            user.FirstName = model.FirstName;
+            user.LastName = model.LastName;
+            user.Email = model.Email;
+            user.PhoneNumber = model.PhoneNumber;
+            user.ProfilePicture = model.ProfilePicture;
+            user.UserName = model.FirstName;
+
+            await _repository.SaveChangesAsync();
+
+            result = true;
 
             return result;
         }
@@ -96,6 +100,13 @@ namespace Houses.Core.Services
         public async Task<ApplicationUser> GetUserById(string id)
         {
             return await _repository.GetByIdAsync<ApplicationUser>(id);
+        }
+
+        public async Task<ApplicationUser> GetApplicationUserByUserName(string userName)
+        {
+            return await _repository.All<ApplicationUser>()
+                .Where(u => u.UserName == userName)
+                .FirstAsync();
         }
 
         public async Task<string> GetUserId(string id)

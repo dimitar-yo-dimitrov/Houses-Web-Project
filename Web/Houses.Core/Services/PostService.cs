@@ -1,7 +1,9 @@
 ﻿using Houses.Common.GlobalConstants;
 using Houses.Core.Services.Contracts;
 using Houses.Core.ViewModels.Post;
+using Houses.Core.ViewModels.Post.Enums;
 using Houses.Infrastructure.Data.Entities;
+using Houses.Infrastructure.Data.Identity;
 using Houses.Infrastructure.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,29 +12,60 @@ namespace Houses.Core.Services
     public class PostService : IPostService
     {
         private readonly IApplicationDbRepository _repository;
+        private readonly IUserService _userService;
 
-        public PostService(IApplicationDbRepository repository)
+        public PostService(
+            IApplicationDbRepository repository,
+            IUserService userService)
         {
             _repository = repository;
+            _userService = userService;
         }
 
-        public async Task<IEnumerable<PostInputViewModel>> GetAllAsync()
+        public async Task<PostQueryViewModel> GetAllAsync(
+            string? searchTerm = null,
+            PostSorting sorting = PostSorting.Newest,
+            int currentPage = 1,
+            int postPerPage = 1)
         {
-            var post = await _repository.AllReadonly<Post>()
+            var result = new PostQueryViewModel();
+            var posts = _repository.AllReadonly<Post>(p => p.IsActive);
+
+            if (string.IsNullOrEmpty(searchTerm) == false)
+            {
+                searchTerm = $"%{searchTerm.ToLower()}%";
+
+                posts = posts
+                    .Where(p => EF.Functions.Like(p.Author.UserName.ToLower(), searchTerm) ||
+                                EF.Functions.Like(p.Content.ToLower(), searchTerm));
+            }
+
+            posts = sorting switch
+            {
+                PostSorting.Newest => posts.OrderBy(p => p.CreatedOn),
+                PostSorting.Oldest => posts.OrderByDescending(p => p.CreatedOn),
+                _ => throw new ArgumentOutOfRangeException(nameof(sorting), sorting, null)
+            };
+
+            result.Posts = await posts
+                .Skip((currentPage - 1) * postPerPage)
+                .Take(postPerPage)
                 .Select(p => new PostInputViewModel
                 {
                     Id = p.Id,
-                    Title = p.Title,
+                    AuthorName = p.Author.UserName,
                     Content = p.Content,
                     Date = p.CreatedOn,
-                    AuthorId = p.Author.UserName
+                    AuthorId = p.AuthorId
                 })
                 .ToListAsync();
 
-            return post;
+            result.TotalPostCount = await posts.CountAsync();
+
+            return result;
         }
 
-        public async Task<string> CreatePostAsync(string id, PostInputViewModel model)
+        public async Task<string> CreatePostAsync(string id, CreatePostInputViewModel model)
         {
             if (id == null)
             {
@@ -40,18 +73,30 @@ namespace Houses.Core.Services
                     string.Format(ExceptionMessages.IdIsNull));
             }
 
+            var user = await _userService.GetApplicationUserByUserName(model.AuthorName);
+
+            if (user == null)
+            {
+                throw new ArgumentException(
+                    string.Format(ExceptionMessages.UserNotFound, id));
+            }
+
             var post = new Post
             {
-                Title = model.Title,
+                Author = new ApplicationUser
+                {
+                    UserName = model.AuthorName,
+                },
                 CreatedOn = DateTime.UtcNow,
                 Content = model.Content,
-                AuthorId = id
+                AuthorId = id,
+                PropertyId = model.Id
             };
 
             if (post == null)
             {
                 throw new NullReferenceException(
-                    string.Format(ExceptionMessages.PropertyNotFound, string.Empty));
+                    string.Format(ExceptionMessages.PostsNotFound));
             }
 
             await _repository.AddAsync(post);
@@ -69,14 +114,25 @@ namespace Houses.Core.Services
                 throw new NullReferenceException(string.Format(ExceptionMessages.PostNotFound, id));
             }
 
-            post.IsDeleted = false;
+            post.IsActive = false;
 
             await _repository.SaveChangesAsync();
         }
 
-        public Task<PostInputViewModel> GetByIdAsync(string id)
+        public async Task<IEnumerable<PostInputViewModel>> GetAllByIdAsync(string id)
         {
-            throw new NotImplementedException();
+            return await _repository
+                .AllReadonly<Post>(p => p.IsActive)
+                .Where(p => p.AuthorId == id)
+                .Select(p => new PostInputViewModel
+                {
+                    Id = p.Id,
+                    AuthorName = p.Author.UserName,
+                    Content = p.Content,
+                    Date = p.CreatedOn,
+                    AuthorId = p.AuthorId
+                })
+                .ToListAsync();
         }
 
         public async Task EditAsync(EditPostInputModel model, string id)
@@ -88,7 +144,7 @@ namespace Houses.Core.Services
             }
 
             var post = await _repository
-                .AllReadonly<Post>(p => p.IsDeleted)
+                .AllReadonly<Post>(p => p.IsActive)
                 .Where(p => p.Id == id)
                 .FirstOrDefaultAsync();
 
@@ -98,12 +154,32 @@ namespace Houses.Core.Services
                     string.Format(ExceptionMessages.PostNotFound, model.Id));
             }
 
-            post.Title = model.Title;
+            post.AuthorId = model.AuthorId;
             post.Content = model.Content;
 
             _repository.Update(post);
 
             await _repository.SaveChangesAsync();
+        }
+
+        public async Task<Post> GetPostAsync(string postId)
+        {
+            var post = await _repository
+                .All<Post>(p => p.IsActive)
+                .FirstOrDefaultAsync(p => p.Id == postId);
+
+            if (post == null)
+            {
+                throw new NullReferenceException(string.Format(ExceptionMessages.PostNotFound, postId));
+            }
+
+            return post;
+        }
+
+        public async Task<bool> ExistsAsync(string postId)
+        {
+            return await _repository.AllReadonly<Post>()
+                .AnyAsync(p => p.Id == postId && p.IsActive);
         }
     }
 }

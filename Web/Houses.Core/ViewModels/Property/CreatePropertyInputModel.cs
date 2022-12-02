@@ -20,7 +20,6 @@ namespace Houses.Core.ViewModels.Property
         public string Title { get; init; } = null!;
 
         [Required]
-        //[Range(typeof(string), PriceMinLength, PriceMaxLength, ConvertValueInInvariantCulture = true, ParseLimitsInInvariantCulture = true)]
         public decimal Price { get; init; }
 
         [Required(AllowEmptyStrings = false)]
@@ -32,7 +31,6 @@ namespace Houses.Core.ViewModels.Property
         [RegularExpression(RegexAddress, ErrorMessage = RegexAddressError)]
         public string Address { get; init; } = null!;
 
-        //[Range(typeof(string), SquareMetersMin, SquareMetersMax, ConvertValueInInvariantCulture = true, ParseLimitsInInvariantCulture = true)]
         public double? SquareMeters { get; init; }
 
         [Required]

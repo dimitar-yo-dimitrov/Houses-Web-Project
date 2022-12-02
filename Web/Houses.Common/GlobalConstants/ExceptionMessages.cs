@@ -8,6 +8,8 @@
 
         public const string PropertiesNotFound = "Properties is not found.";
 
+        public const string PostsNotFound = "Posts is not found.";
+
         public const string IdIsNull = "Id is not found.";
 
         public const string UserNotFound = "Unable to load user with ID '{0}'.";

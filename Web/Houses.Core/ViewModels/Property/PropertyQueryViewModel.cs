@@ -4,6 +4,7 @@
     {
         public int TotalPropertyCount { get; set; }
 
-        public IEnumerable<PropertyServiceViewModel> Properties { get; set; } = new HashSet<PropertyServiceViewModel>();
+        public IEnumerable<PropertyServiceViewModel> Properties { get; set; }
+            = new HashSet<PropertyServiceViewModel>();
     }
 }

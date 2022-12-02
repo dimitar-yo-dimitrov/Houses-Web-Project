@@ -43,6 +43,12 @@ namespace Houses.Web.Controllers
             queryModel.Cities = await _cityService.AllCityNamesAsync();
             queryModel.Properties = result.Properties;
 
+            if (queryModel == null)
+            {
+                throw new NullReferenceException(
+                    string.Format(ExceptionMessages.PropertiesNotFound));
+            }
+
             return View(queryModel);
         }
 
@@ -184,7 +190,7 @@ namespace Houses.Web.Controllers
             if (propertyToUpdate == null)
             {
                 throw new ArgumentException(
-                    string.Format(ExceptionMessages.PropertyNotFound, propertyToUpdate!.Id));
+                    string.Format(ExceptionMessages.PropertyNotFound, id));
             }
 
             if (!ModelState.IsValid)
