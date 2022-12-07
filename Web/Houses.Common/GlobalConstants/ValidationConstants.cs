@@ -60,7 +60,10 @@
         public static class Comment
         {
             public const int MassageMin = 2;
-            public const int MassageMax = 200;
+            public const int MassageMax = 2000;
+
+            public const int PostMinSender = 5;
+            public const int PostMaxSender = 50;
         }
 
         public class FormattingConstant

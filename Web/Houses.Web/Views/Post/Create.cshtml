@@ -7,26 +7,6 @@
 
 <partial name="_PostSendPartial" model="@Model" />
 
-@*<div class="row">
-    <div class="col-sm-12 offset-lg-2 col-lg-8 offset-xl-3 col-xl-6">
-        <form method="post">
-            <div class="form-group">
-                <div class="mb-3">
-                    <label asp-for="AuthorName"></label>
-                    <input asp-for="AuthorName" class="form-control">
-                    <span asp-validation-for="@Model.AuthorName" class="small text-danger"></span>
-                </div>
-                <div class="mb-3">
-                    <label asp-for="Content" class="form-label">Your request</label>
-                    <textarea asp-for="Content" class="form-control" aria-required="true" rows="5"></textarea>
-                    <span asp-validation-for="Content" class="text-danger"></span>
-                </div>
-            </div>
-            <button class="btn btn-primary mt-3" asp-route-id="@Model.Id">Send</button>
-        </form>
-    </div>
-</div>*@
-
 @section Scripts{
     <partial name="_ValidationScriptsPartial" />
 }

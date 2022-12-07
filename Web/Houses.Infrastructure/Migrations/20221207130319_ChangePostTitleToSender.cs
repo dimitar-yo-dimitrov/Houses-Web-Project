@@ -4,22 +4,22 @@
 
 namespace Houses.Infrastructure.Migrations
 {
-    public partial class AddTitlePropertyInPost : Migration
+    public partial class ChangePostTitleToSender : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.RenameColumn(
-                name: "UserName",
+                name: "Title",
                 table: "Posts",
-                newName: "Title");
+                newName: "Sender");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.RenameColumn(
-                name: "Title",
+                name: "Sender",
                 table: "Posts",
-                newName: "UserName");
+                newName: "Title");
         }
     }
 }

@@ -1,9 +1,9 @@
-﻿using Houses.Common.GlobalConstants;
+﻿using System.Globalization;
+using Houses.Common.GlobalConstants;
 using Houses.Core.Services.Contracts;
 using Houses.Core.ViewModels.Post;
 using Houses.Core.ViewModels.Post.Enums;
 using Houses.Infrastructure.Data.Entities;
-using Houses.Infrastructure.Data.Identity;
 using Houses.Infrastructure.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,14 +12,14 @@ namespace Houses.Core.Services
     public class PostService : IPostService
     {
         private readonly IApplicationDbRepository _repository;
-        private readonly IUserService _userService;
+        private readonly IPropertyService _propertyService;
 
         public PostService(
             IApplicationDbRepository repository,
-            IUserService userService)
+            IPropertyService propertyService)
         {
             _repository = repository;
-            _userService = userService;
+            _propertyService = propertyService;
         }
 
         public async Task<PostQueryViewModel> GetAllAsync(
@@ -50,13 +50,11 @@ namespace Houses.Core.Services
             result.Posts = await posts
                 .Skip((currentPage - 1) * postPerPage)
                 .Take(postPerPage)
-                .Select(p => new PostInputViewModel
+                .Select(p => new PostServiceViewModel
                 {
                     Id = p.Id,
-                    AuthorName = p.Author.UserName,
                     Content = p.Content,
-                    Date = p.CreatedOn,
-                    AuthorId = p.AuthorId
+                    Date = p.CreatedOn.ToString(CultureInfo.InvariantCulture)
                 })
                 .ToListAsync();
 
@@ -65,33 +63,29 @@ namespace Houses.Core.Services
             return result;
         }
 
-        public async Task<string> CreatePostAsync(string id, CreatePostInputViewModel model)
+        public async Task<string> CreatePostAsync(CreatePostInputViewModel model, string? userId)
         {
-            if (id == null)
+            if (userId == null)
             {
                 throw new NullReferenceException(
                     string.Format(ExceptionMessages.IdIsNull));
             }
 
-            var user = await _userService.GetApplicationUserByUserName(model.AuthorName);
-
-            if (user == null)
-            {
-                throw new ArgumentException(
-                    string.Format(ExceptionMessages.UserNotFound, id));
-            }
-
-            var post = new Post
-            {
-                Author = new ApplicationUser
+            //TODO:
+            var post = await _repository
+                .AllReadonly<Post>(p => p.IsActive)
+                .Select(p => new CreatePostInputViewModel
                 {
-                    UserName = model.AuthorName,
-                },
-                CreatedOn = DateTime.UtcNow,
-                Content = model.Content,
-                AuthorId = id,
-                PropertyId = model.Id
-            };
+                    Id = p.Id,
+                    Sender = p.Sender,
+                    Content = p.Content,
+                    AuthorId = userId,
+                    PropertyId = new DetailsPostPropertyViewModel
+                    {
+                        Id = p.Property.Id
+                    }
+                })
+                .FirstAsync();
 
             if (post == null)
             {
@@ -119,23 +113,21 @@ namespace Houses.Core.Services
             await _repository.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<PostInputViewModel>> GetAllByIdAsync(string id)
+        public async Task<IEnumerable<PostServiceViewModel>> GetAllByIdAsync(string id)
         {
             return await _repository
                 .AllReadonly<Post>(p => p.IsActive)
                 .Where(p => p.AuthorId == id)
-                .Select(p => new PostInputViewModel
+                .Select(p => new PostServiceViewModel
                 {
                     Id = p.Id,
-                    AuthorName = p.Author.UserName,
                     Content = p.Content,
-                    Date = p.CreatedOn,
-                    AuthorId = p.AuthorId
+                    Date = p.CreatedOn.ToString(CultureInfo.CurrentCulture),
                 })
                 .ToListAsync();
         }
 
-        public async Task EditAsync(EditPostInputModel model, string id)
+        public async Task EditAsync(CreatePostInputViewModel model, string id)
         {
             if (id == null)
             {
@@ -154,7 +146,7 @@ namespace Houses.Core.Services
                     string.Format(ExceptionMessages.PostNotFound, model.Id));
             }
 
-            post.AuthorId = model.AuthorId;
+            post.Sender = model.Sender;
             post.Content = model.Content;
 
             _repository.Update(post);

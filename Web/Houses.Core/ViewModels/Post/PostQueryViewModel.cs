@@ -4,7 +4,7 @@
     {
         public int TotalPostCount { get; set; }
 
-        public IEnumerable<PostInputViewModel> Posts { get; set; }
-            = new HashSet<PostInputViewModel>();
+        public IEnumerable<PostServiceViewModel> Posts { get; set; }
+            = new HashSet<PostServiceViewModel>();
     }
 }

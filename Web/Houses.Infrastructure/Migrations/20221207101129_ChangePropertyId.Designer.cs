@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Houses.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20221130171915_ApplicationRoloIsAdded")]
-    partial class ApplicationRoloIsAdded
+    [Migration("20221207101129_ChangePropertyId")]
+    partial class ChangePropertyId
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -157,23 +157,28 @@ namespace Houses.Infrastructure.Migrations
 
                     b.Property<string>("Content")
                         .IsRequired()
-                        .HasMaxLength(2000)
-                        .HasColumnType("nvarchar(2000)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
-                    b.Property<DateTime>("Date")
+                    b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("IsDeleted")
+                    b.Property<bool>("IsActive")
                         .HasColumnType("bit");
+
+                    b.Property<string>("PropertyId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("AuthorId");
+
+                    b.HasIndex("PropertyId");
 
                     b.ToTable("Posts");
                 });
@@ -317,7 +322,7 @@ namespace Houses.Infrastructure.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<bool>("IsDeleted")
+                    b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
                     b.Property<string>("LastName")
@@ -529,7 +534,7 @@ namespace Houses.Infrastructure.Migrations
                     b.HasOne("Houses.Infrastructure.Data.Entities.Property", "Property")
                         .WithMany("ApplicationUserProperties")
                         .HasForeignKey("PropertyId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Houses.Infrastructure.Data.Identity.ApplicationUser", "ApplicationUser")
@@ -548,10 +553,16 @@ namespace Houses.Infrastructure.Migrations
                     b.HasOne("Houses.Infrastructure.Data.Identity.ApplicationUser", "Author")
                         .WithMany("Posts")
                         .HasForeignKey("AuthorId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("Houses.Infrastructure.Data.Entities.Property", "Property")
+                        .WithMany("Posts")
+                        .HasForeignKey("PropertyId");
+
                     b.Navigation("Author");
+
+                    b.Navigation("Property");
                 });
 
             modelBuilder.Entity("Houses.Infrastructure.Data.Entities.Property", b =>
@@ -559,19 +570,19 @@ namespace Houses.Infrastructure.Migrations
                     b.HasOne("Houses.Infrastructure.Data.Entities.City", "City")
                         .WithMany()
                         .HasForeignKey("CityId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Houses.Infrastructure.Data.Identity.ApplicationUser", "Owner")
                         .WithMany()
                         .HasForeignKey("OwnerId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Houses.Infrastructure.Data.Entities.PropertyType", "PropertyType")
                         .WithMany("Properties")
                         .HasForeignKey("PropertyTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("City");
@@ -639,6 +650,8 @@ namespace Houses.Infrastructure.Migrations
             modelBuilder.Entity("Houses.Infrastructure.Data.Entities.Property", b =>
                 {
                     b.Navigation("ApplicationUserProperties");
+
+                    b.Navigation("Posts");
                 });
 
             modelBuilder.Entity("Houses.Infrastructure.Data.Entities.PropertyType", b =>

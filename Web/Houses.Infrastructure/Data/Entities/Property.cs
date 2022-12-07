@@ -12,7 +12,7 @@ namespace Houses.Infrastructure.Data.Entities
         {
             Id = Guid.NewGuid().ToString();
             ApplicationUserProperties = new HashSet<ApplicationUserProperty>();
-            Comments = new HashSet<Post>();
+            Posts = new HashSet<Post>();
         }
 
         [Key]
@@ -46,20 +46,23 @@ namespace Houses.Infrastructure.Data.Entities
         // Navigational properties
         [ForeignKey(nameof(PropertyType))]
         public string PropertyTypeId { get; set; } = null!;
+
         public virtual PropertyType PropertyType { get; set; } = null!;
 
         // Navigational properties
         [ForeignKey(nameof(City))]
         public string CityId { get; set; } = null!;
+
         public virtual City City { get; set; } = null!;
 
         // Navigational properties
         [ForeignKey(nameof(Owner))]
         public string OwnerId { get; set; } = null!;
+
         public virtual ApplicationUser Owner { get; set; } = null!;
 
         public virtual ICollection<ApplicationUserProperty> ApplicationUserProperties { get; set; }
 
-        public virtual ICollection<Post> Comments { get; set; }
+        public virtual ICollection<Post> Posts { get; set; }
     }
 }

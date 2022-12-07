@@ -5,9 +5,9 @@
         <section>
             <form method="post">
                 <div class="mb-3">
-                    <label asp-for="AuthorName" class="form-label">First Name</label>
-                    <input asp-for="AuthorName" class="form-control" aria-required="true" />
-                    <span asp-validation-for="AuthorName" class="text-dark"></span>
+                    <label asp-for="Sender" class="form-label">Name of sender</label>
+                    <input asp-for="Sender" class="form-control" aria-required="true" />
+                    <span asp-validation-for="Sender" class="text-danger"></span>
                 </div>
                 <div class="mb-3">
                     <label asp-for="Content" class="form-label">Your request</label>
@@ -15,7 +15,7 @@
                     <span asp-validation-for="Content" class="text-danger"></span>
                 </div>
                 <div class="text-center">
-                    <input class="btn btn-primary mt-3" type="submit" value="Send"/>
+                    <input class="btn btn-primary mt-3 text-black" type="submit" value="Send" />
                 </div>
             </form>
         </section>

@@ -4,7 +4,7 @@
     {
         public DetailsPropertyViewModel()
         {
-            Id = new Guid().ToString();
+            Id = Guid.NewGuid().ToString();
         }
 
         public string Id { get; init; }

@@ -27,11 +27,24 @@ namespace Houses.Infrastructure.Data
             modelBuilder.ApplyConfiguration(new CitiesConfiguration());
             modelBuilder.ApplyConfiguration(new PropertyConfiguration());
             modelBuilder.ApplyConfiguration(new PostConfiguration());
+            //modelBuilder.ApplyConfiguration(new PropertyPostConfiguration());
+
+            var entityTypes = modelBuilder.Model.GetEntityTypes().ToList();
+
+            // Disable cascade delete
+            var foreignKeys = entityTypes
+                .SelectMany(e => e.GetForeignKeys().Where(f => f.DeleteBehavior == DeleteBehavior.Cascade));
+            foreach (var foreignKey in foreignKeys)
+            {
+                foreignKey.DeleteBehavior = DeleteBehavior.Restrict;
+            }
 
             base.OnModelCreating(modelBuilder);
         }
 
         public virtual DbSet<ApplicationUserProperty> ApplicationUserProperties { get; set; } = null!;
+
+        // public virtual DbSet<PropertyPost> PropertiesPosts { get; set; } = null!;
 
         public virtual DbSet<City> Cities { get; init; } = null!;
 

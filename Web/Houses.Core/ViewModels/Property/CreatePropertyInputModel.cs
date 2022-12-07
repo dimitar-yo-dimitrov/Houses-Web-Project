@@ -9,7 +9,7 @@ namespace Houses.Core.ViewModels.Property
     {
         public CreatePropertyInputModel()
         {
-            Id = new Guid().ToString();
+            Id = Guid.NewGuid().ToString();
         }
 
         [Key]
@@ -44,8 +44,8 @@ namespace Houses.Core.ViewModels.Property
         [Display(Name = "Property Type")]
         public string PropertyTypeId { get; init; } = null!;
 
-        public IEnumerable<CityViewModel> Cities { get; set; } = new List<CityViewModel>();
+        public virtual IEnumerable<CityViewModel> Cities { get; set; } = new List<CityViewModel>();
 
-        public IEnumerable<PropertyTypeViewModel> PropertyTypes { get; set; } = new List<PropertyTypeViewModel>();
+        public virtual IEnumerable<PropertyTypeViewModel> PropertyTypes { get; set; } = new List<PropertyTypeViewModel>();
     }
 }

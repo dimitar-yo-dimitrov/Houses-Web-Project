@@ -4,7 +4,7 @@
     {
         public UserServiceViewModel()
         {
-            Id = new Guid().ToString();
+            Id = Guid.NewGuid().ToString();
         }
 
         public string Id { get; set; }

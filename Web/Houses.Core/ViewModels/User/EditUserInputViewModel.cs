@@ -7,7 +7,7 @@ namespace Houses.Core.ViewModels.User
     {
         public EditUserInputViewModel()
         {
-            Id = new Guid().ToString();
+            Id = Guid.NewGuid().ToString();
         }
 
         public string Id { get; set; }

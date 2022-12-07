@@ -24,6 +24,7 @@ namespace Houses.Core.ViewModels.Property
 
         public IEnumerable<string> Cities { get; set; } = Enumerable.Empty<string>();
 
-        public IEnumerable<PropertyServiceViewModel> Properties { get; set; } = new HashSet<PropertyServiceViewModel>();
+        public IEnumerable<PropertyServiceViewModel> Properties { get; set; }
+            = new HashSet<PropertyServiceViewModel>();
     }
 }

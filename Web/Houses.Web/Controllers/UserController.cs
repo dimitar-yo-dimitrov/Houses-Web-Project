@@ -15,19 +15,15 @@ namespace Houses.Web.Controllers
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IUserService _userService;
-        private readonly IPropertyService _propertyService;
 
         public UserController(
-
             RoleManager<IdentityRole> roleManager,
             UserManager<ApplicationUser> userManager,
-            IUserService userService,
-            IPropertyService propertyService)
+            IUserService userService)
         {
             _roleManager = roleManager;
             _userManager = userManager;
             _userService = userService;
-            _propertyService = propertyService;
         }
 
         [HttpGet]
@@ -149,14 +145,14 @@ namespace Houses.Web.Controllers
             }
         }
 
-        //public async Task<IActionResult> CreateRole()
-        //{
-        //    await _roleManager.CreateAsync(new IdentityRole()
-        //    {
-        //        Name = AdministratorRoleName
-        //    });
+        public async Task<IActionResult> CreateRole()
+        {
+            //await _roleManager.CreateAsync(new IdentityRole()
+            //{
+            //    Name = AdministratorRoleName
+            //});
 
-        //    return Ok();
-        //}
+            return Ok();
+        }
     }
 }

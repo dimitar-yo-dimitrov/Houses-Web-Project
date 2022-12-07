@@ -1,23 +1,32 @@
-﻿@model PostInputViewModel
+﻿@model PostServiceViewModel
 
-<div class="row">
-    <div class="col-sm-6">
-        <div class="card ">
-            <div class="card-body">
-                <h4 class="card-group text-center">Name</h4>
-                <p class="card-text">Content</p>
-                <div class="d-grid gap-2">
-                    <form>
-                        <a asp-controller="Post" asp-action="Edit" asp-route-id="Id" class="btn btn-warning">Edit</a>
-                        <a class="mt-2" asp-controller="Post" asp-action="Delete" asp-route-id="Id">
-                            <div class="d-grid gap-2">
-                                <input type="submit" value="Delete" class="btn btn-danger mb-2" />
-                            </div>
-                        </a>
-                    </form>
+<div class="col-md-4">
+    <div class="card mb-3">
+        <div class="card-body">
+            <h4>Name of sender: <b>@Model.Sender</b></h4>
+            <hr />
+            <p></p>
+            <h6>Content: <b>@Model.Content </b></h6>
+            <hr />
+            <p></p>
+            <h6>Published on: <b>@Model.Date</b></h6>
+            <br />
+            <form>
+                <div class="navbar-collapse collapse d-sm-inline-flex">
+                    <div class="mt-2 mb-2 m-lg-2">
+                        <button asp-area="" class="btn btn-warning" asp-controller="Post" asp-action="Edit"
+                                asp-route-id="@Model.Id">
+                            Edit
+                        </button>
+                    </div>
+                    <div class="mt-2 mb-2 m-lg-2">
+                        <button asp-area="" class="btn btn-danger text-black" asp-controller="Post" asp-action="Delete"
+                                asp-route-id="@Model.Id">
+                            Delete
+                        </button>
+                    </div>
                 </div>
-
-            </div>
+            </form>
         </div>
     </div>
 </div>

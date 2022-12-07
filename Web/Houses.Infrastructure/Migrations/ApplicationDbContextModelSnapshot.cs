@@ -30,11 +30,16 @@ namespace Houses.Infrastructure.Migrations
                     b.Property<string>("PropertyId")
                         .HasColumnType("nvarchar(60)");
 
+                    b.Property<string>("PostId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("ApplicationUserId", "PropertyId");
+
+                    b.HasIndex("PostId");
 
                     b.HasIndex("PropertyId");
 
-                    b.ToTable("ApplicationUserProperties", (string)null);
+                    b.ToTable("ApplicationUserProperties");
                 });
 
             modelBuilder.Entity("Houses.Infrastructure.Data.Entities.City", b =>
@@ -49,7 +54,7 @@ namespace Houses.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Cities", (string)null);
+                    b.ToTable("Cities");
 
                     b.HasData(
                         new
@@ -155,8 +160,8 @@ namespace Houses.Infrastructure.Migrations
 
                     b.Property<string>("Content")
                         .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
@@ -164,17 +169,26 @@ namespace Houses.Infrastructure.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
-                    b.Property<string>("PropertyId")
-                        .IsRequired()
+                    b.Property<string>("PostId")
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("PropertyId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Sender")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("AuthorId");
 
+                    b.HasIndex("PostId");
+
                     b.HasIndex("PropertyId");
 
-                    b.ToTable("Posts", (string)null);
+                    b.ToTable("Posts");
                 });
 
             modelBuilder.Entity("Houses.Infrastructure.Data.Entities.Property", b =>
@@ -235,7 +249,7 @@ namespace Houses.Infrastructure.Migrations
 
                     b.HasIndex("PropertyTypeId");
 
-                    b.ToTable("Properties", (string)null);
+                    b.ToTable("Properties");
                 });
 
             modelBuilder.Entity("Houses.Infrastructure.Data.Entities.PropertyType", b =>
@@ -250,7 +264,7 @@ namespace Houses.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("PropertyTypes", (string)null);
+                    b.ToTable("PropertyTypes");
 
                     b.HasData(
                         new
@@ -525,10 +539,14 @@ namespace Houses.Infrastructure.Migrations
 
             modelBuilder.Entity("Houses.Infrastructure.Data.Entities.ApplicationUserProperty", b =>
                 {
+                    b.HasOne("Houses.Infrastructure.Data.Entities.Post", null)
+                        .WithMany("ApplicationUserProperties")
+                        .HasForeignKey("PostId");
+
                     b.HasOne("Houses.Infrastructure.Data.Entities.Property", "Property")
                         .WithMany("ApplicationUserProperties")
                         .HasForeignKey("PropertyId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Houses.Infrastructure.Data.Identity.ApplicationUser", "ApplicationUser")
@@ -547,14 +565,16 @@ namespace Houses.Infrastructure.Migrations
                     b.HasOne("Houses.Infrastructure.Data.Identity.ApplicationUser", "Author")
                         .WithMany("Posts")
                         .HasForeignKey("AuthorId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("Houses.Infrastructure.Data.Entities.Post", null)
+                        .WithMany("Posts")
+                        .HasForeignKey("PostId");
+
                     b.HasOne("Houses.Infrastructure.Data.Entities.Property", "Property")
-                        .WithMany("Comments")
-                        .HasForeignKey("PropertyId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .WithMany("Posts")
+                        .HasForeignKey("PropertyId");
 
                     b.Navigation("Author");
 
@@ -566,19 +586,19 @@ namespace Houses.Infrastructure.Migrations
                     b.HasOne("Houses.Infrastructure.Data.Entities.City", "City")
                         .WithMany()
                         .HasForeignKey("CityId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Houses.Infrastructure.Data.Identity.ApplicationUser", "Owner")
                         .WithMany()
                         .HasForeignKey("OwnerId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Houses.Infrastructure.Data.Entities.PropertyType", "PropertyType")
                         .WithMany("Properties")
                         .HasForeignKey("PropertyTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("City");
@@ -643,11 +663,18 @@ namespace Houses.Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Houses.Infrastructure.Data.Entities.Post", b =>
+                {
+                    b.Navigation("ApplicationUserProperties");
+
+                    b.Navigation("Posts");
+                });
+
             modelBuilder.Entity("Houses.Infrastructure.Data.Entities.Property", b =>
                 {
                     b.Navigation("ApplicationUserProperties");
 
-                    b.Navigation("Comments");
+                    b.Navigation("Posts");
                 });
 
             modelBuilder.Entity("Houses.Infrastructure.Data.Entities.PropertyType", b =>

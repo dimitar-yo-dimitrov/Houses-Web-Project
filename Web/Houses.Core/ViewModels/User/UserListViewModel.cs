@@ -6,7 +6,7 @@ namespace Houses.Core.ViewModels.User
     {
         public UserListViewModel()
         {
-            Id = new Guid().ToString();
+            Id = Guid.NewGuid().ToString();
         }
 
         public string Id { get; set; }

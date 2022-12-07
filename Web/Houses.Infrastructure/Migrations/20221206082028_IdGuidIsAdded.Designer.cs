@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Houses.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20221123123758_IsDeletedAddedInPost")]
-    partial class IsDeletedAddedInPost
+    [Migration("20221206082028_IdGuidIsAdded")]
+    partial class IdGuidIsAdded
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -32,7 +32,12 @@ namespace Houses.Infrastructure.Migrations
                     b.Property<string>("PropertyId")
                         .HasColumnType("nvarchar(60)");
 
+                    b.Property<string>("PostId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("ApplicationUserId", "PropertyId");
+
+                    b.HasIndex("PostId");
 
                     b.HasIndex("PropertyId");
 
@@ -157,19 +162,19 @@ namespace Houses.Infrastructure.Migrations
 
                     b.Property<string>("Content")
                         .IsRequired()
-                        .HasMaxLength(2000)
-                        .HasColumnType("nvarchar(2000)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
-                    b.Property<DateTime>("Date")
+                    b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("IsDeleted")
+                    b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
-                    b.Property<string>("UserName")
+                    b.Property<string>("Title")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.HasKey("Id");
 
@@ -192,6 +197,9 @@ namespace Houses.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasMaxLength(5000)
@@ -208,6 +216,9 @@ namespace Houses.Infrastructure.Migrations
                     b.Property<string>("OwnerId")
                         .IsRequired()
                         .HasColumnType("nvarchar(60)");
+
+                    b.Property<string>("PostId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<decimal>("Price")
                         .HasPrecision(18, 2)
@@ -231,9 +242,26 @@ namespace Houses.Infrastructure.Migrations
 
                     b.HasIndex("OwnerId");
 
+                    b.HasIndex("PostId");
+
                     b.HasIndex("PropertyTypeId");
 
                     b.ToTable("Properties");
+                });
+
+            modelBuilder.Entity("Houses.Infrastructure.Data.Entities.PropertyPost", b =>
+                {
+                    b.Property<string>("PropertyId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("PostId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("PropertyId", "PostId");
+
+                    b.HasIndex("PostId");
+
+                    b.ToTable("PropertiesPosts");
                 });
 
             modelBuilder.Entity("Houses.Infrastructure.Data.Entities.PropertyType", b =>
@@ -296,6 +324,12 @@ namespace Houses.Infrastructure.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedOn")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -304,10 +338,15 @@ namespace Houses.Infrastructure.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("FirstName")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
                     b.Property<string>("LastName")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
@@ -316,6 +355,9 @@ namespace Houses.Infrastructure.Migrations
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("datetimeoffset");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
@@ -474,7 +516,12 @@ namespace Houses.Infrastructure.Migrations
                     b.Property<string>("RoleId")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("nvarchar(60)");
+
                     b.HasKey("UserId", "RoleId");
+
+                    b.HasIndex("ApplicationUserId");
 
                     b.HasIndex("RoleId");
 
@@ -504,6 +551,10 @@ namespace Houses.Infrastructure.Migrations
 
             modelBuilder.Entity("Houses.Infrastructure.Data.Entities.ApplicationUserProperty", b =>
                 {
+                    b.HasOne("Houses.Infrastructure.Data.Entities.Post", null)
+                        .WithMany("ApplicationUserProperties")
+                        .HasForeignKey("PostId");
+
                     b.HasOne("Houses.Infrastructure.Data.Entities.Property", "Property")
                         .WithMany("ApplicationUserProperties")
                         .HasForeignKey("PropertyId")
@@ -513,7 +564,7 @@ namespace Houses.Infrastructure.Migrations
                     b.HasOne("Houses.Infrastructure.Data.Identity.ApplicationUser", "ApplicationUser")
                         .WithMany("ApplicationUserProperties")
                         .HasForeignKey("PropertyId")
-                        .OnDelete(DeleteBehavior.ClientNoAction)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("ApplicationUser");
@@ -524,7 +575,7 @@ namespace Houses.Infrastructure.Migrations
             modelBuilder.Entity("Houses.Infrastructure.Data.Entities.Post", b =>
                 {
                     b.HasOne("Houses.Infrastructure.Data.Identity.ApplicationUser", "Author")
-                        .WithMany("Posts")
+                        .WithMany()
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -546,6 +597,10 @@ namespace Houses.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Houses.Infrastructure.Data.Entities.Post", "Post")
+                        .WithMany()
+                        .HasForeignKey("PostId");
+
                     b.HasOne("Houses.Infrastructure.Data.Entities.PropertyType", "PropertyType")
                         .WithMany("Properties")
                         .HasForeignKey("PropertyTypeId")
@@ -556,7 +611,28 @@ namespace Houses.Infrastructure.Migrations
 
                     b.Navigation("Owner");
 
+                    b.Navigation("Post");
+
                     b.Navigation("PropertyType");
+                });
+
+            modelBuilder.Entity("Houses.Infrastructure.Data.Entities.PropertyPost", b =>
+                {
+                    b.HasOne("Houses.Infrastructure.Data.Entities.Post", "Post")
+                        .WithMany("Posts")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Houses.Infrastructure.Data.Entities.Property", "Property")
+                        .WithMany("Posts")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Post");
+
+                    b.Navigation("Property");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -588,6 +664,10 @@ namespace Houses.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
                 {
+                    b.HasOne("Houses.Infrastructure.Data.Identity.ApplicationUser", null)
+                        .WithMany("Roles")
+                        .HasForeignKey("ApplicationUserId");
+
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
@@ -610,9 +690,18 @@ namespace Houses.Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Houses.Infrastructure.Data.Entities.Post", b =>
+                {
+                    b.Navigation("ApplicationUserProperties");
+
+                    b.Navigation("Posts");
+                });
+
             modelBuilder.Entity("Houses.Infrastructure.Data.Entities.Property", b =>
                 {
                     b.Navigation("ApplicationUserProperties");
+
+                    b.Navigation("Posts");
                 });
 
             modelBuilder.Entity("Houses.Infrastructure.Data.Entities.PropertyType", b =>
@@ -624,7 +713,7 @@ namespace Houses.Infrastructure.Migrations
                 {
                     b.Navigation("ApplicationUserProperties");
 
-                    b.Navigation("Posts");
+                    b.Navigation("Roles");
                 });
 #pragma warning restore 612, 618
         }

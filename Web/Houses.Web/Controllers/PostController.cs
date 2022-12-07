@@ -1,5 +1,4 @@
-﻿using Houses.Common.GlobalConstants;
-using Houses.Core.Services.Contracts;
+﻿using Houses.Core.Services.Contracts;
 using Houses.Core.ViewModels.Post;
 using Houses.Web.Extensions;
 using Microsoft.AspNetCore.Mvc;
@@ -11,11 +10,16 @@ namespace Houses.Web.Controllers
     {
         private readonly IPostService _postService;
         private readonly IUserService _userService;
+        private readonly IPropertyService _propertyService;
 
-        public PostController(IPostService postService, IUserService userService)
+        public PostController(
+            IPostService postService,
+            IUserService userService,
+            IPropertyService propertyService)
         {
             _postService = postService;
             _userService = userService;
+            _propertyService = propertyService;
         }
 
         [HttpGet]
@@ -48,10 +52,10 @@ namespace Houses.Web.Controllers
             if (userId == null)
             {
                 throw new NullReferenceException(
-                    string.Format(ExceptionMessages.IdIsNull));
+                    string.Format(IdIsNull));
             }
 
-            IEnumerable<PostInputViewModel> myPosts = await _postService.GetAllByIdAsync(userId);
+            IEnumerable<PostServiceViewModel> myPosts = await _postService.GetAllByIdAsync(userId);
 
             if (myPosts == null)
             {
@@ -66,14 +70,15 @@ namespace Houses.Web.Controllers
         public IActionResult Create() => View();
 
         [HttpPost]
-        public async Task<IActionResult> Create(CreatePostInputViewModel model)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(CreatePostInputViewModel postModel)
         {
-            if (!ModelState.IsValid)
+            if (await _userService.ExistsById(User.Id()) == false)
             {
-                return View(model);
+                return RedirectToAction(nameof(All));
             }
 
-            string userId = await _userService.GetUserId(User.Id());
+            var userId = await _userService.GetUserId(User.Id());
 
             if (userId == null)
             {
@@ -81,15 +86,14 @@ namespace Houses.Web.Controllers
                     string.Format(IdIsNull));
             }
 
-            string id = await _postService.CreatePostAsync(userId, model);
-
-            if (id == null)
+            if (!ModelState.IsValid)
             {
-                throw new NullReferenceException(
-                    string.Format(IdIsNull));
+                return View(postModel);
             }
 
-            return RedirectToAction(nameof(All), new { id });
+            await _postService.CreatePostAsync(postModel, userId);
+
+            return RedirectToAction(nameof(All));
         }
 
         [HttpGet]
@@ -109,9 +113,9 @@ namespace Houses.Web.Controllers
                     string.Format(PostNotFound, id));
             }
 
-            var model = new PostInputViewModel
+            var model = new CreatePostInputViewModel
             {
-                AuthorName = post.Author.UserName,
+                Sender = post.Sender,
                 Content = post.Content
             };
 
@@ -120,7 +124,7 @@ namespace Houses.Web.Controllers
 
         [HttpPost, ActionName("Edit")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(EditPostInputModel model, string? id)
+        public async Task<IActionResult> Edit(CreatePostInputViewModel postToUpdate, string? id)
         {
             if (id == null)
             {
@@ -128,7 +132,7 @@ namespace Houses.Web.Controllers
                     string.Format(IdIsNull));
             }
 
-            if (model == null)
+            if (postToUpdate == null)
             {
                 throw new ArgumentException(
                     string.Format(PostNotFound, id));
@@ -136,12 +140,12 @@ namespace Houses.Web.Controllers
 
             if (!ModelState.IsValid)
             {
-                return View(model);
+                return View(postToUpdate);
             }
 
-            await _postService.EditAsync(model, id);
+            await _postService.EditAsync(postToUpdate, id);
 
-            return RedirectToAction(nameof(All), new { id });
+            return RedirectToAction(nameof(All));
         }
 
         [HttpGet]
@@ -156,7 +160,7 @@ namespace Houses.Web.Controllers
 
             var model = new PostInputViewModel
             {
-                AuthorName = post.Author.UserName,
+                Sender = post.Sender,
                 Content = post.Content
             };
 

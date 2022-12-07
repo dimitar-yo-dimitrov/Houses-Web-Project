@@ -9,32 +9,38 @@ namespace Houses.Infrastructure.Data.Entities
     {
         public Post()
         {
-            Id = new Guid().ToString();
+            Id = Guid.NewGuid().ToString();
+            ApplicationUserProperties = new HashSet<ApplicationUserProperty>();
+            Posts = new HashSet<Post>();
         }
 
         [Key]
         public string Id { get; set; }
 
         [Required]
-        public DateTime CreatedOn { get; set; } = DateTime.UtcNow;
+        [MaxLength(PostMaxSender)]
+        public string Sender { get; set; } = null!;
 
         [Required]
         [MaxLength(MassageMax)]
         public string Content { get; set; } = null!;
 
         [Required]
+        public DateTime CreatedOn { get; set; }
+
+        [Required]
         public bool IsActive { get; set; } = true;
 
-        [Required]
         [ForeignKey(nameof(Author))]
         public string AuthorId { get; set; } = null!;
-
         public virtual ApplicationUser Author { get; set; } = null!;
 
-        [Required]
         [ForeignKey(nameof(Property))]
-        public string PropertyId { get; set; } = null!;
-
+        public string? PropertyId { get; set; }
         public virtual Property Property { get; set; } = null!;
+
+        public virtual ICollection<ApplicationUserProperty> ApplicationUserProperties { get; set; }
+
+        public virtual ICollection<Post> Posts { get; set; }
     }
 }

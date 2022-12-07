@@ -5,13 +5,9 @@ namespace Houses.Infrastructure.Data.Entities
 {
     public class City
     {
-        public City()
-        {
-            Id = new Guid().ToString();
-        }
 
         [Key]
-        public string Id { get; set; }
+        public string Id { get; set; } = null!;
 
         [MaxLength(CityMaxName)]
         public string Name { get; set; } = null!;

@@ -4,7 +4,7 @@
     {
         public UserRolesViewModel()
         {
-            UserId = new Guid().ToString();
+            UserId = Guid.NewGuid().ToString();
         }
 
         public string UserId { get; set; }

@@ -11,6 +11,7 @@ namespace Houses.Infrastructure.Data.Identity
     {
         public ApplicationUser()
         {
+            Id = Guid.NewGuid().ToString();
             ApplicationUserProperties = new HashSet<ApplicationUserProperty>();
             Posts = new HashSet<Post>();
             Roles = new HashSet<IdentityUserRole<string>>();

@@ -12,13 +12,13 @@ namespace Houses.Core.Services.Contracts
             int currentPage = 1,
             int postPerPage = 1);
 
-        Task<string> CreatePostAsync(string id, CreatePostInputViewModel model);
+        Task<string> CreatePostAsync(CreatePostInputViewModel model, string userId);
 
         Task DeletePostAsync(string id);
 
-        Task<IEnumerable<PostInputViewModel>> GetAllByIdAsync(string id);
+        Task<IEnumerable<PostServiceViewModel>> GetAllByIdAsync(string id);
 
-        Task EditAsync(EditPostInputModel model, string id);
+        Task EditAsync(CreatePostInputViewModel model, string id);
 
         Task<Post> GetPostAsync(string postId);
 
