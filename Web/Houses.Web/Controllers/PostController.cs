@@ -71,14 +71,17 @@ namespace Houses.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(CreatePostInputViewModel postModel)
+        public async Task<IActionResult> Create(CreatePostInputViewModel model)
         {
-            if (await _userService.ExistsById(User.Id()) == false)
+            if (!ModelState.IsValid)
             {
-                return RedirectToAction(nameof(All));
+                return View(model);
             }
 
-            var userId = await _userService.GetUserId(User.Id());
+            string userId = await _userService.GetUserId(User.Id());
+
+            //var property = new Property();
+
 
             if (userId == null)
             {
@@ -86,14 +89,15 @@ namespace Houses.Web.Controllers
                     string.Format(IdIsNull));
             }
 
-            if (!ModelState.IsValid)
+            string id = await _postService.CreateAsync(model, userId);
+
+            if (id == null)
             {
-                return View(postModel);
+                throw new NullReferenceException(
+                    string.Format(IdIsNull));
             }
 
-            await _postService.CreatePostAsync(postModel, userId);
-
-            return RedirectToAction(nameof(All));
+            return RedirectToAction(nameof(Mine), new { id });
         }
 
         [HttpGet]

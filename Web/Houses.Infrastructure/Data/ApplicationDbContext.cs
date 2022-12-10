@@ -27,7 +27,6 @@ namespace Houses.Infrastructure.Data
             modelBuilder.ApplyConfiguration(new CitiesConfiguration());
             modelBuilder.ApplyConfiguration(new PropertyConfiguration());
             modelBuilder.ApplyConfiguration(new PostConfiguration());
-            //modelBuilder.ApplyConfiguration(new PropertyPostConfiguration());
 
             var entityTypes = modelBuilder.Model.GetEntityTypes().ToList();
 
@@ -43,8 +42,6 @@ namespace Houses.Infrastructure.Data
         }
 
         public virtual DbSet<ApplicationUserProperty> ApplicationUserProperties { get; set; } = null!;
-
-        // public virtual DbSet<PropertyPost> PropertiesPosts { get; set; } = null!;
 
         public virtual DbSet<City> Cities { get; init; } = null!;
 

@@ -18,15 +18,15 @@ namespace Houses.Infrastructure.Data.Identity
         }
 
         [StringLength(UserFirstNameMaxLength)]
-        public string FirstName { get; set; } = null!;
+        public string? FirstName { get; set; } = null!;
 
         [StringLength(UserLastNameMaxLength)]
-        public string LastName { get; set; } = null!;
+        public string? LastName { get; set; } = null!;
 
         [MaxLength(MaxUrl)]
         public string? ProfilePicture { get; set; }
 
-        public DateTime CreatedOn { get; set; }
+        public DateTime? CreatedOn { get; set; }
 
         public DateTime? ModifiedOn { get; set; }
 

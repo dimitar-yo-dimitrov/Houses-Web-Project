@@ -8,6 +8,8 @@
 @using Houses.Core.ViewModels.User
 @using Houses.Core.ViewModels.Post
 @using Houses.Common.GlobalConstants
+@using System.Security.Claims
 @using static Houses.Common.GlobalConstants.ValidationConstants.AdminConstants;
+@inject SignInManager<ApplicationUser> SignInManager
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers

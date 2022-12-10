@@ -6,7 +6,7 @@ using Houses.Web.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
+using static Houses.Common.GlobalConstants.ValidationConstants.AdminConstants;
 
 namespace Houses.Web.Areas.Admin.Controllers
 {
@@ -144,7 +144,6 @@ namespace Houses.Web.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(EditUserInputViewModel model)
         {
             if (!ModelState.IsValid)
@@ -164,28 +163,30 @@ namespace Houses.Web.Areas.Admin.Controllers
             return RedirectToAction(nameof(ManageUsers));
         }
 
+        [HttpGet]
+        public IActionResult RemoveUser(string userId, string username)
+        {
+            UserListViewModel model = new UserListViewModel
+            {
+                Id = userId,
+                UserName = username
+            };
+
+            return View(model);
+        }
+
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RemoveUser(string? id)
+        public async Task<IActionResult> RemoveUser(UserListViewModel model)
         {
             try
             {
-                if (id == null)
+                if (model.Id == null)
                 {
                     throw new NullReferenceException(
                         string.Format(ExceptionMessages.IdIsNull));
                 }
 
-                var user = await _userManager.Users
-                    .FirstOrDefaultAsync(u => u.Id == id);
-
-                if (user == null)
-                {
-                    throw new NullReferenceException(
-                        string.Format(ExceptionMessages.UserNotFound, id));
-                }
-
-                await _userManager.DeleteAsync(user);
+                await _userService.DeleteUserAsync(model.Id);
 
                 return RedirectToAction(nameof(ManageUsers));
             }
@@ -197,9 +198,9 @@ namespace Houses.Web.Areas.Admin.Controllers
 
         public async Task<IActionResult> CreateRole()
         {
-            await _roleManager.CreateAsync(new IdentityRole()
+            await _roleManager.CreateAsync(new IdentityRole
             {
-                Name = "User"
+                Name = AdministratorRoleName
             });
 
             return Ok();

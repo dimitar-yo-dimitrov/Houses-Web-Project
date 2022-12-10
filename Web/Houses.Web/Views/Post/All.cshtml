@@ -8,14 +8,21 @@
 <hr />
 
 <form method="get" class="row mt-3 mb-3 m-lg-3">
-    <div class="row mt-3 mb-3 m-lg-3">
-        <a asp-controller="Post" asp-action="Create" class="btn btn-primary text-black">Add Post</a>
+    <div class="row mt-3 mb-3 m-sm-4">
+    <a asp-controller="Post" asp-action="Create" class="btn btn-success text-black">Add Post</a>
     </div>
-    
-    <div class="form-group col-md-3">
-        <label asp-for="SearchTerm"></label>
-        <input asp-for="SearchTerm" class="form-control">
-    </div>
+
+  @*  <div class="mt-2 mb-2 m-lg-2">
+        <h4>Post</h4>
+        <div class="d-flex flex-row align-items-start">
+            <textarea class="form-control ml-1 shadow-none textarea" id="Content"></textarea>
+            @*<input type="hidden" value="@Model.PropertyDto!.Id" id="PropertyId" />*@
+       @* </div>
+        <div class="mt-2">
+            <button asp-area="" asp-controller="Post" asp-action="CreateAsync" class="btn btn-success btn-sm shadow-none" type="button" id="SubmitPost">Add Post</button>
+        </div>
+    </div>*@
+
     <div class="form-group col-md-3">
         <div class="form-group">
             <label asp-for="Sorting"></label>
@@ -25,7 +32,10 @@
             </select>
         </div>
     </div>
-
+    <div class="form-group col-md-3">
+        <label asp-for="SearchTerm"></label>
+        <input asp-for="SearchTerm" class="form-control">
+    </div>
     <div class="col-md-2">
         <div class="form-group mt-3 p-2">
             <input type="submit" value="Search" class="btn btn-primary text-black" />
@@ -57,7 +67,7 @@
 
     @{
         var shouldButtonBeDisabled = Model.CurrentPage == maxPage ||
-                                     !Model.Posts.Any();
+        !Model.Posts.Any();
     }
 
     <div class="col-md-6 d-grid gap-2 d-md-flex justify-content-md-end">

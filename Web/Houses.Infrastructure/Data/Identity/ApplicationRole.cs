@@ -16,7 +16,7 @@ namespace Houses.Infrastructure.Data.Identity
             Id = Guid.NewGuid().ToString();
         }
 
-        public DateTime CreatedOn { get; set; }
+        public DateTime? CreatedOn { get; set; }
 
         public DateTime? ModifiedOn { get; set; }
 

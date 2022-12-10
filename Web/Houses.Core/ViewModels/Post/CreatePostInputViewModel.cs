@@ -13,8 +13,6 @@ namespace Houses.Core.ViewModels.Post
         [Key]
         public string Id { get; set; }
 
-        //public DetailsPropertyServiceModel? PropertyDetails { get; set; } = null!;
-
         [Required(AllowEmptyStrings = false)]
         [StringLength(PostMaxSender, MinimumLength = PostMinSender)]
         public string Sender { get; set; } = null!;
@@ -23,8 +21,10 @@ namespace Houses.Core.ViewModels.Post
         [StringLength(MassageMax, MinimumLength = MassageMin)]
         public string Content { get; set; } = null!;
 
-        public string? AuthorId { get; set; } = null!;
+        public DateTime? CreatedOn { get; set; }
 
-        public Infrastructure.Data.Entities.Property? PropertyId { get; set; } = null!;
+        public string? AuthorId { get; set; }
+
+        public string? PropertyId { get; set; }
     }
 }

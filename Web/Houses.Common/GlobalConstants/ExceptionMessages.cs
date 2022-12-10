@@ -27,5 +27,9 @@
         public const string ErrorMessage = "ErrorMessage";
 
         public const string SuccessMessage = "SuccessMessage";
+
+        public const string UserMessage = "Successfully deleted user";
+
+        public const string InvalidMessage = "User can not deleted";
     }
 }

@@ -1,6 +1,5 @@
 ﻿using Houses.Core.ViewModels.Property;
 using Houses.Core.ViewModels.Property.Enums;
-using Houses.Infrastructure.Data.Entities;
 
 namespace Houses.Core.Services.Contracts
 {
@@ -22,7 +21,7 @@ namespace Houses.Core.Services.Contracts
 
         Task<DetailsPropertyServiceModel> PropertyDetailsByIdAsync(string propertyId);
 
-        Task<Property> GetPropertyAsync(string propertyId);
+        //DetailsPropertyServiceModel GetPropertyById(string propertyId);
 
         Task EditAsync(CreatePropertyInputModel model, string id);
 

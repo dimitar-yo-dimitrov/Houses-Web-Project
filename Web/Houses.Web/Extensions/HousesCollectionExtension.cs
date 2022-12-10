@@ -13,11 +13,11 @@ namespace Houses.Web.Extensions
         public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {
             services.AddScoped<IApplicationDbRepository, ApplicationDbRepository>();
-            services.AddScoped<IPropertyService, PropertyService>();
+            services.AddTransient<IPropertyService, PropertyService>();
             services.AddScoped<IPropertiesTypesService, PropertyTypeService>();
             services.AddScoped<ICityService, CityService>();
             services.AddScoped<IUserService, UserService>();
-            services.AddScoped<IPostService, PostService>();
+            services.AddTransient<IPostService, PostService>();
             services.AddSingleton<IUserIdProvider, CustomEmailProvider>();
 
             return services;

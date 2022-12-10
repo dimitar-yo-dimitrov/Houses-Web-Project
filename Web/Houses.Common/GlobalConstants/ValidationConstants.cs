@@ -66,9 +66,9 @@
             public const int PostMaxSender = 50;
         }
 
-        public class FormattingConstant
+        public static class FormattingConstant
         {
-            public const string NormalDateFormat = "dd.MM.yyyy";
+            public const string DateFormat = "{0:dd.MM.yyyy}";
         }
         public static class AdminConstants
         {

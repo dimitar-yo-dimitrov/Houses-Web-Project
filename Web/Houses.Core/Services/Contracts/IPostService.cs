@@ -12,7 +12,7 @@ namespace Houses.Core.Services.Contracts
             int currentPage = 1,
             int postPerPage = 1);
 
-        Task<string> CreatePostAsync(CreatePostInputViewModel model, string userId);
+        Task<string> CreateAsync(CreatePostInputViewModel model, string userId);
 
         Task DeletePostAsync(string id);
 
@@ -21,6 +21,8 @@ namespace Houses.Core.Services.Contracts
         Task EditAsync(CreatePostInputViewModel model, string id);
 
         Task<Post> GetPostAsync(string postId);
+
+        Task<IEnumerable<CreatePostInputViewModel>> GetPostByPropertyId(string propertyId);
 
         Task<bool> ExistsAsync(string postId);
     }

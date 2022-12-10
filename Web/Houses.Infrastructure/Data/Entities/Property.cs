@@ -1,12 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Houses.Infrastructure.Data.Common.Models;
 using Houses.Infrastructure.Data.Identity;
 using Microsoft.EntityFrameworkCore;
+using static Houses.Common.GlobalConstants.ValidationConstants.FormattingConstant;
 using static Houses.Common.GlobalConstants.ValidationConstants.Property;
 
 namespace Houses.Infrastructure.Data.Entities
 {
-    public class Property
+    public class Property : IAuditInfo, IDeletableEntity
     {
         public Property()
         {
@@ -39,9 +41,14 @@ namespace Houses.Infrastructure.Data.Entities
         [MaxLength(MaxUrl)]
         public string ImageUrl { get; set; } = null!;
 
-        public DateTime CreatedOn { get; set; }
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = DateFormat, ApplyFormatInEditMode = true)]
+        public DateTime? CreatedOn { get; set; } = DateTime.Now;
+
+        public DateTime? ModifiedOn { get; set; }
 
         public bool IsActive { set; get; } = true;
+        public DateTime? DeletedOn { get; set; }
 
         // Navigational properties
         [ForeignKey(nameof(PropertyType))]
@@ -58,7 +65,6 @@ namespace Houses.Infrastructure.Data.Entities
         // Navigational properties
         [ForeignKey(nameof(Owner))]
         public string OwnerId { get; set; } = null!;
-
         public virtual ApplicationUser Owner { get; set; } = null!;
 
         public virtual ICollection<ApplicationUserProperty> ApplicationUserProperties { get; set; }

@@ -6,18 +6,16 @@
 //    {
 //        public PropertyPost()
 //        {
-//            PropertyId = new Guid().ToString();
-//            PostId = new Guid().ToString();
+//            PropertyId = Guid.NewGuid().ToString();
+//            PostId = Guid.NewGuid().ToString();
 //        }
 
+//        [ForeignKey(nameof(Property))]
 //        public string PropertyId { get; set; }
-
-//        [ForeignKey(nameof(PropertyId))]
 //        public virtual Property Property { get; set; } = null!;
 
+//        [ForeignKey(nameof(Post))]
 //        public string PostId { get; set; }
-
-//        [ForeignKey(nameof(PostId))]
 //        public virtual Post Post { get; set; } = null!;
 //    }
 //}

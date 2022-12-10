@@ -13,12 +13,10 @@ namespace Houses.Infrastructure.Data.Entities
 
         [ForeignKey(nameof(ApplicationUser))]
         public string ApplicationUserId { get; set; }
-
         public virtual ApplicationUser ApplicationUser { get; set; } = null!;
 
         [ForeignKey(nameof(Property))]
         public string PropertyId { get; set; }
-
         public virtual Property Property { get; set; } = null!;
     }
 }

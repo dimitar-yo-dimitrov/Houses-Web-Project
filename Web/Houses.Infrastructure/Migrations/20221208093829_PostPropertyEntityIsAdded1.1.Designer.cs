@@ -4,6 +4,7 @@ using Houses.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Houses.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221208093829_PostPropertyEntityIsAdded1.1")]
+    partial class PostPropertyEntityIsAdded11
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -25,10 +27,10 @@ namespace Houses.Infrastructure.Migrations
             modelBuilder.Entity("Houses.Infrastructure.Data.Entities.ApplicationUserProperty", b =>
                 {
                     b.Property<string>("ApplicationUserId")
-                        .HasColumnType("nvarchar(60)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("PropertyId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(60)");
 
                     b.HasKey("ApplicationUserId", "PropertyId");
 
@@ -158,7 +160,7 @@ namespace Houses.Infrastructure.Migrations
                         .HasMaxLength(2000)
                         .HasColumnType("nvarchar(2000)");
 
-                    b.Property<DateTime?>("CreatedOn")
+                    b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("DeletedOn")
@@ -171,7 +173,7 @@ namespace Houses.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("PropertyId")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Sender")
                         .IsRequired()
@@ -181,6 +183,8 @@ namespace Houses.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("AuthorId");
+
+                    b.HasIndex("PropertyId");
 
                     b.ToTable("Posts");
                 });
@@ -199,7 +203,7 @@ namespace Houses.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<DateTime?>("CreatedOn")
+                    b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("DeletedOn")
@@ -250,6 +254,26 @@ namespace Houses.Infrastructure.Migrations
                     b.HasIndex("PropertyTypeId");
 
                     b.ToTable("Properties");
+                });
+
+            modelBuilder.Entity("Houses.Infrastructure.Data.Entities.PropertyPost", b =>
+                {
+                    b.Property<string>("PropertyId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("PostId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("nvarchar(60)");
+
+                    b.HasKey("PropertyId", "PostId");
+
+                    b.HasIndex("ApplicationUserId");
+
+                    b.HasIndex("PostId");
+
+                    b.ToTable("PropertyPosts");
                 });
 
             modelBuilder.Entity("Houses.Infrastructure.Data.Entities.PropertyType", b =>
@@ -312,7 +336,7 @@ namespace Houses.Infrastructure.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("CreatedOn")
+                    b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("DeletedOn")
@@ -326,6 +350,7 @@ namespace Houses.Infrastructure.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("FirstName")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
@@ -333,6 +358,7 @@ namespace Houses.Infrastructure.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("LastName")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
@@ -537,16 +563,16 @@ namespace Houses.Infrastructure.Migrations
 
             modelBuilder.Entity("Houses.Infrastructure.Data.Entities.ApplicationUserProperty", b =>
                 {
-                    b.HasOne("Houses.Infrastructure.Data.Identity.ApplicationUser", "ApplicationUser")
-                        .WithMany("ApplicationUserProperties")
-                        .HasForeignKey("ApplicationUserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("Houses.Infrastructure.Data.Entities.Property", "Property")
                         .WithMany("ApplicationUserProperties")
                         .HasForeignKey("PropertyId")
                         .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Houses.Infrastructure.Data.Identity.ApplicationUser", "ApplicationUser")
+                        .WithMany("ApplicationUserProperties")
+                        .HasForeignKey("PropertyId")
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("ApplicationUser");
@@ -556,17 +582,15 @@ namespace Houses.Infrastructure.Migrations
 
             modelBuilder.Entity("Houses.Infrastructure.Data.Entities.Post", b =>
                 {
-                    b.HasOne("Houses.Infrastructure.Data.Entities.Property", "Property")
-                        .WithMany("Posts")
+                    b.HasOne("Houses.Infrastructure.Data.Identity.ApplicationUser", "Author")
+                        .WithMany()
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Houses.Infrastructure.Data.Identity.ApplicationUser", "Author")
-                        .WithMany("Posts")
-                        .HasForeignKey("AuthorId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                    b.HasOne("Houses.Infrastructure.Data.Entities.Property", "Property")
+                        .WithMany()
+                        .HasForeignKey("PropertyId");
 
                     b.Navigation("Author");
 
@@ -598,6 +622,29 @@ namespace Houses.Infrastructure.Migrations
                     b.Navigation("Owner");
 
                     b.Navigation("PropertyType");
+                });
+
+            modelBuilder.Entity("Houses.Infrastructure.Data.Entities.PropertyPost", b =>
+                {
+                    b.HasOne("Houses.Infrastructure.Data.Identity.ApplicationUser", null)
+                        .WithMany("Posts")
+                        .HasForeignKey("ApplicationUserId");
+
+                    b.HasOne("Houses.Infrastructure.Data.Entities.Post", "Post")
+                        .WithMany()
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Houses.Infrastructure.Data.Entities.Property", "Property")
+                        .WithMany("Posts")
+                        .HasForeignKey("PropertyId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Post");
+
+                    b.Navigation("Property");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

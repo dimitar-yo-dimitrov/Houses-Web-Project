@@ -73,7 +73,7 @@ namespace Houses.Web.Controllers
             return View(myProperties);
         }
 
-
+        [HttpGet]
         [AllowAnonymous]
         public async Task<IActionResult> Details(string id)
         {
@@ -152,7 +152,7 @@ namespace Houses.Web.Controllers
                     string.Format(ExceptionMessages.IdIsNull));
             }
 
-            var property = await _propertyService.GetPropertyAsync(id);
+            var property = _propertyService.PropertyDetailsByIdAsync(id);
 
             if (property == null)
             {
@@ -162,14 +162,14 @@ namespace Houses.Web.Controllers
 
             var model = new CreatePropertyInputModel
             {
-                Title = property.Title,
-                Price = property.Price,
-                Description = property.Description,
-                Address = property.Address,
-                SquareMeters = property.SquareMeters,
-                ImageUrl = property.ImageUrl,
-                CityId = property.CityId,
-                PropertyTypeId = property.PropertyTypeId,
+                Title = property.Result.PropertyDto!.Title,
+                Price = property.Result.PropertyDto.Price,
+                Description = property.Result.PropertyDto.Description,
+                Address = property.Result.PropertyDto.Address,
+                SquareMeters = property.Result.PropertyDto.SquareMeters,
+                ImageUrl = property.Result.PropertyDto.ImageUrl,
+                CityId = property.Result.PropertyDto.CityId!,
+                PropertyTypeId = property.Result.PropertyDto.PropertyTypeId!,
                 PropertyTypes = await _propertyTypeService.AllPropertyTypesAsync(),
                 Cities = await _cityService.GetAllCitiesAsync()
             };
@@ -215,9 +215,9 @@ namespace Houses.Web.Controllers
 
             var model = new DetailsPropertyViewModel
             {
-                Title = property.Title,
-                Address = property.Address,
-                ImageUrl = property.ImageUrl
+                Title = property.PropertyDto!.Title,
+                Address = property.PropertyDto.Address,
+                ImageUrl = property.PropertyDto.ImageUrl
             };
 
             return View(model);
@@ -236,5 +236,26 @@ namespace Houses.Web.Controllers
 
             return RedirectToAction(nameof(Mine));
         }
+
+        //[HttpGet]
+        //[AllowAnonymous]
+        //public IActionResult PropertyById(string productId)
+        //{
+        //    try
+        //    {
+        //        var entity = _propertyService.GetPropertyByIdAsync(productId);
+
+        //        if (entity == null)
+        //        {
+        //            return RedirectToAction("All", "Property");
+        //        }
+
+        //        return View(entity);
+        //    }
+        //    catch (Exception)
+        //    {
+        //        return RedirectToAction(nameof(All));
+        //    }
+        //}
     }
 }

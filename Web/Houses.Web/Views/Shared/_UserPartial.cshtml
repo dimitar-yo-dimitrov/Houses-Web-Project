@@ -19,7 +19,7 @@
                 <hr>
                 <div class="row">
                     <div class="col-sm-3">
-                        <h6 class="mb-0">FirstName</h6>
+                        <h6 class="mb-0">FirstName:</h6>
                     </div>
                     <div class="col-sm-9 text-secondary">
                         @Model.FirstName
@@ -28,7 +28,7 @@
                 <hr>
                 <div class="row">
                     <div class="col-sm-3">
-                        <h6 class="mb-0">LastName</h6>
+                        <h6 class="mb-0">LastName:</h6>
                     </div>
                     <div class="col-sm-9 text-secondary">
                         @Model.LastName
@@ -37,7 +37,7 @@
                 <hr>
                 <div class="row">
                     <div class="col-sm-3">
-                        <h6 class="mb-0">Email</h6>
+                        <h6 class="mb-0">Email:</h6>
                     </div>
                     <div class="col-sm-9 text-secondary">
                         @Model.Email
@@ -46,7 +46,7 @@
                 <hr/>
                 <div class="row">
                     <div class="col-sm-3">
-                        <h6 class="mb-0">Phone Number</h6>
+                        <h6 class="mb-0">Phone Number:</h6>
                     </div>
                     <div class="col-sm-9 text-secondary">
                         @Model.PhoneNumber
@@ -62,10 +62,10 @@
                     <button class="btn btn-warning" asp-controller="User" asp-action="EditProfile" asp-route-id="@Model.Id">Edit Profile</button>
                 </div>
                 <div class="mt-2 mb-2 m-lg-2">
-                    <button class="btn btn-danger text-black" asp-controller="User" asp-action="RemoveProfile" asp-route-id="@Model.Id">Remove Profile</button>
+                    <button class="btn btn-info" asp-controller="Property" asp-action="Mine" asp-route-id="@Model.Id">My Properties</button>
                 </div>
                 <div class="mt-2 mb-2 m-lg-2">
-                    <button class="btn btn-info" asp-controller="Property" asp-action="Mine" asp-route-id="@Model.Id">My Properties</button>
+                    <button class="btn btn-success" asp-controller="Post" asp-action="Mine" asp-route-id="@Model.Id">My Posts</button>
                 </div>
             </div>
         </form>

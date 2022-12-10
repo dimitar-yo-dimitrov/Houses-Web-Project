@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+﻿using Ganss.Xss;
 using Houses.Common.GlobalConstants;
 using Houses.Core.Services.Contracts;
 using Houses.Core.ViewModels.Post;
@@ -11,15 +11,13 @@ namespace Houses.Core.Services
 {
     public class PostService : IPostService
     {
+        private readonly HtmlSanitizer _sanitizer = new();
         private readonly IApplicationDbRepository _repository;
-        private readonly IPropertyService _propertyService;
 
         public PostService(
-            IApplicationDbRepository repository,
-            IPropertyService propertyService)
+            IApplicationDbRepository repository)
         {
             _repository = repository;
-            _propertyService = propertyService;
         }
 
         public async Task<PostQueryViewModel> GetAllAsync(
@@ -53,8 +51,9 @@ namespace Houses.Core.Services
                 .Select(p => new PostServiceViewModel
                 {
                     Id = p.Id,
+                    Sender = p.Sender,
                     Content = p.Content,
-                    Date = p.CreatedOn.ToString(CultureInfo.InvariantCulture)
+                    Date = p.CreatedOn
                 })
                 .ToListAsync();
 
@@ -63,29 +62,21 @@ namespace Houses.Core.Services
             return result;
         }
 
-        public async Task<string> CreatePostAsync(CreatePostInputViewModel model, string? userId)
+        public async Task<string> CreateAsync(CreatePostInputViewModel model, string userId)
         {
-            if (userId == null)
-            {
-                throw new NullReferenceException(
-                    string.Format(ExceptionMessages.IdIsNull));
-            }
+            var property = await _repository
+                .AllReadonly<Property>(p => p.IsActive)
+                .FirstOrDefaultAsync();
 
-            //TODO:
-            var post = await _repository
-                .AllReadonly<Post>(p => p.IsActive)
-                .Select(p => new CreatePostInputViewModel
-                {
-                    Id = p.Id,
-                    Sender = p.Sender,
-                    Content = p.Content,
-                    AuthorId = userId,
-                    PropertyId = new DetailsPostPropertyViewModel
-                    {
-                        Id = p.Property.Id
-                    }
-                })
-                .FirstAsync();
+            var post = new Post
+            {
+                Id = model.Id,
+                Sender = model.Sender,
+                Content = model.Content,
+                AuthorId = userId,
+                CreatedOn = DateTime.Now,
+                PropertyId = property!.Id
+            };
 
             if (post == null)
             {
@@ -121,8 +112,9 @@ namespace Houses.Core.Services
                 .Select(p => new PostServiceViewModel
                 {
                     Id = p.Id,
+                    Sender = p.Sender,
                     Content = p.Content,
-                    Date = p.CreatedOn.ToString(CultureInfo.CurrentCulture),
+                    Date = p.CreatedOn,
                 })
                 .ToListAsync();
         }
@@ -148,6 +140,7 @@ namespace Houses.Core.Services
 
             post.Sender = model.Sender;
             post.Content = model.Content;
+            post.ModifiedOn = DateTime.Now;
 
             _repository.Update(post);
 
@@ -164,6 +157,24 @@ namespace Houses.Core.Services
             {
                 throw new NullReferenceException(string.Format(ExceptionMessages.PostNotFound, postId));
             }
+
+            return post;
+        }
+
+        public async Task<IEnumerable<CreatePostInputViewModel>> GetPostByPropertyId(string propertyId)
+        {
+            var post = await _repository.All<Post>(p => p.IsActive)
+                .Where(p => p.Id == propertyId)
+                .Select(p => new CreatePostInputViewModel
+                {
+                    Id = p.Id,
+                    PropertyId = p.PropertyId,
+                    Content = p.Content,
+                    Sender = $"{p.Author.FirstName} {p.Author.LastName}",
+                    CreatedOn = p.CreatedOn,
+                    AuthorId = p.AuthorId
+                })
+                .ToListAsync();
 
             return post;
         }

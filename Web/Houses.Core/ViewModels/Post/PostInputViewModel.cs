@@ -24,5 +24,7 @@ namespace Houses.Core.ViewModels.Post
         public string Content { get; set; } = null!;
 
         public string AuthorId { get; set; } = null!;
+
+        public string? PropertyId { get; set; } = null!;
     }
 }

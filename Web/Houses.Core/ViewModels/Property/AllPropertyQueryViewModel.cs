@@ -3,7 +3,7 @@ using Houses.Core.ViewModels.Property.Enums;
 
 namespace Houses.Core.ViewModels.Property
 {
-    public class AllPropertyQueryViewModel
+    public class AllPropertyQueryViewModel : PropertyPostQueryViewModel
     {
         public const int HousesPerPage = 3;
 

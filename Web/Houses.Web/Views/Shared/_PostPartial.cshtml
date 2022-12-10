@@ -13,18 +13,24 @@
             <br />
             <form>
                 <div class="navbar-collapse collapse d-sm-inline-flex">
-                    <div class="mt-2 mb-2 m-lg-2">
-                        <button asp-area="" class="btn btn-warning" asp-controller="Post" asp-action="Edit"
+                    @{
+                        var userId = User.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value.ToLower();
+                        if (userId == Model.AuthorId?.ToLower() || User.IsInRole(AdministratorRoleName))
+                        {
+                            <div class="mt-2 mb-2 m-lg-2">
+                                <button asp-area="" class="btn btn-warning mt-2 mb-2 m-lg-2" asp-controller="Post" asp-action="Edit"
                                 asp-route-id="@Model.Id">
-                            Edit
-                        </button>
-                    </div>
-                    <div class="mt-2 mb-2 m-lg-2">
-                        <button asp-area="" class="btn btn-danger text-black" asp-controller="Post" asp-action="Delete"
+                                    Edit
+                                </button>
+                            </div>
+                            <div class="mt-2 mb-2 m-lg-2">
+                                <button asp-area="" class="btn btn-danger text-black mt-2 mb-2 m-lg-2" asp-controller="Post" asp-action="Delete"
                                 asp-route-id="@Model.Id">
-                            Delete
-                        </button>
-                    </div>
+                                    Delete
+                                </button>
+                            </div>
+                        }
+                    }
                 </div>
             </form>
         </div>

@@ -1,0 +1,25 @@
+﻿@model UserListViewModel
+
+@{
+    ViewBag.Title = "Delete User";
+}
+
+<h2 class="text-center">@ViewBag.Title</h2>
+<hr />
+<form asp-action="RemoveUser">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="col-sm-12 offset-lg-2 col-lg-8 offset-xl-3 col-xl-6">
+                <label asp-for="UserName" class="form-label"></label>
+                <input asp-for="UserName" class="form-control" disabled="disabled" />
+            </div>
+            <input type="hidden" asp-for="UserName" value="@Model.UserName" />
+            <input type="hidden" asp-for="Id" value="@Model.Id" />
+            <button type="submit" class="btn btn-lg btn-danger mt-2">Remove</button>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

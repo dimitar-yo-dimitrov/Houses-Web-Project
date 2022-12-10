@@ -20,5 +20,7 @@ namespace Houses.Core.Services.Contracts
         Task<ApplicationUser> GetApplicationUserByUserName(string email);
 
         Task<string> GetUserId(string id);
+
+        Task DeleteUserAsync(string userId);
     }
 }

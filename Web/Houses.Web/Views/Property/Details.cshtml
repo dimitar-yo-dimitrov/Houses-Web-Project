@@ -11,28 +11,45 @@
     <div class="row card card-group">
         <div class="col-4">
             <img class="card card-img-top card-body" style="width: 20rem;" 
-                 src="@Model.ImageUrl" alt="House Image">
+                 src="@Model.PropertyDto!.ImageUrl" alt="House Image">
         </div>
         <div class="card col-8 border-0">
-            <p style="font-size: 25px;"><u>@Model.Title</u></p>
-            <p>Located in: <b>@Model.Address</b></p>
+            <p style="font-size: 25px;"><u>@Model.PropertyDto.Title</u></p>
+            <p>Located in: <b>@Model.PropertyDto.Address</b></p>
             <p>
                 Price:
-                <b>@($"{Model.Price:f2}") BGN</b>
+                <b>@($"{Model.PropertyDto.Price:f2}") BGN</b>
             </p>
-            <p>@Model.Description</p>
-            <p>Type of property: <b>@Model.PropertyType</b></p>
+            <p>@Model.PropertyDto.Description</p>
+            <p>Type of property: <b>@Model.PropertyDto.PropertyType</b></p>
             <p></p>
             <div class="card card-img-top" style="width: 18rem;">
                 <div class="card-body">
                     <h5 class="card-title">Owner Info:</h5>
-                    <img src="@Model.User.ProfilePicture" class="rounded-circle" width="100" alt="">
-                    <p class="card-text">First Name: @Model.User.FirstName</p>
-                    <p class="card-text">LastName: @Model.User.LastName</p>
-                    <p class="card-text">Email: @Model.User.Email</p>
-                    <p class="card-text">Phone Number: @Model.User.PhoneNumber</p>
+                    <img src="@Model.PropertyDto.User.ProfilePicture" class="rounded-circle" width="100" alt="">
+                    <p class="card-text">First Name: @Model.PropertyDto.User.FirstName</p>
+                    <p class="card-text">LastName: @Model.PropertyDto.User.LastName</p>
+                    <p class="card-text">Email: @Model.PropertyDto.User.Email</p>
+                    <p class="card-text">Phone Number: @Model.PropertyDto.User.PhoneNumber</p>
                 </div>
             </div>
+      @*      <form class="col-md-12" id="CreateAsyncCommentForm">
+                <div class="bg-light p-2">
+                    <h4>Comments</h4>
+                    @if (SignInManager.IsSignedIn(User))
+                    {
+                        <div class="d-flex flex-row align-items-start">
+                            @*<img src="" alt="User image" class="rounded-circle" width="40">
+                            <textarea class="form-control ml-1 shadow-none textarea" id="CommentText"></textarea>
+                            <input type="hidden" value="@Model.PropertyDto.Id" id="ProductId" />
+                        </div>
+                        <div class="mt-2">
+                            <button class="btn btn-success btn-sm shadow-none" type="button" id="SubmitComment">Comment</button>
+                        </div>
+                    }
+                </div>
+            </form>*@
+            @*<partial name="_AllPostByPropertyIdPartial" model="@Model.Posts" />*@
             <partial name="_SignalRPartial" />
         </div>
     </div>

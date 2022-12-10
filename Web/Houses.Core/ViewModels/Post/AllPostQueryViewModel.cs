@@ -10,6 +10,8 @@ namespace Houses.Core.ViewModels.Post
         [Display(Name = "Search by text")]
         public string? SearchTerm { get; init; }
 
+        // public string? PropertyId { get; init; }
+
         public PostSorting Sorting { get; init; }
 
         public int CurrentPage { get; init; } = 1;

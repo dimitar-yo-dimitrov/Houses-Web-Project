@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using Houses.Common.GlobalConstants;
+﻿using Houses.Common.GlobalConstants;
 using Houses.Core.Services.Contracts;
 using Houses.Core.ViewModels.Property;
 using Houses.Core.ViewModels.Property.Enums;
@@ -13,10 +12,14 @@ namespace Houses.Core.Services
     public class PropertyService : IPropertyService
     {
         private readonly IApplicationDbRepository _repository;
+        private readonly IPostService _postService;
 
-        public PropertyService(IApplicationDbRepository repository)
+        public PropertyService(
+            IApplicationDbRepository repository,
+            IPostService postService)
         {
             _repository = repository;
+            _postService = postService;
         }
 
         public async Task<PropertyQueryViewModel> GetAllAsync(
@@ -73,7 +76,7 @@ namespace Houses.Core.Services
                     Address = p.Address,
                     SquareMeters = p.SquareMeters,
                     ImageUrl = p.ImageUrl,
-                    Date = p.CreatedOn.ToString(CultureInfo.InvariantCulture)
+                    Date = p.CreatedOn
                 })
                 .ToListAsync();
 
@@ -175,44 +178,108 @@ namespace Houses.Core.Services
 
         public async Task<DetailsPropertyServiceModel> PropertyDetailsByIdAsync(string propertyId)
         {
-            return await _repository
-                .AllReadonly<Property>(p => p.IsActive)
-                .Where(p => p.Id == propertyId)
-                .Select(p => new DetailsPropertyServiceModel
+            try
+            {
+                var property = await _repository
+                    .All<Property>(p => p.IsActive)
+                    .FirstOrDefaultAsync(p => p.Id == propertyId);
+
+                var propertyToReturn = new PropertyServiceViewModel
                 {
-                    Id = p.Id,
-                    Title = p.Title,
-                    Price = p.Price,
-                    Description = p.Description,
-                    Address = p.Address,
-                    SquareMeters = p.SquareMeters,
-                    ImageUrl = p.ImageUrl,
-                    PropertyType = p.PropertyType.Title,
+                    Id = property!.Id,
+                    Description = property.Description,
+                    Address = property.Address,
+                    Title = property.Title,
+                    ImageUrl = property.ImageUrl,
+                    Price = property.Price,
+                    SquareMeters = property.SquareMeters,
+                    PropertyTypeId = property.PropertyTypeId,
+                    PropertyType = property.PropertyType.Title,
+                    CityId = property.CityId,
                     User = new ApplicationUser
                     {
-                        FirstName = p.Owner.FirstName,
-                        LastName = p.Owner.LastName,
-                        Email = p.Owner.Email,
-                        PhoneNumber = p.Owner.PhoneNumber,
-                        ProfilePicture = p.Owner.ProfilePicture
+                        FirstName = property.Owner.FirstName,
+                        LastName = property.Owner.LastName,
+                        Email = property.Owner.Email,
+                        PhoneNumber = property.Owner.PhoneNumber,
+                        ProfilePicture = property.Owner.ProfilePicture
                     }
-                })
-                .FirstAsync();
-        }
+                };
 
-        public async Task<Property> GetPropertyAsync(string propertyId)
-        {
-            var property = await _repository
-                .All<Property>(p => p.IsActive)
-                .FirstOrDefaultAsync(p => p.Id == propertyId);
+                var multiModel = new DetailsPropertyServiceModel
+                {
+                    PropertyDto = propertyToReturn,
+                    Posts = await _postService.GetPostByPropertyId(property.Id),
+                };
 
-            if (property == null)
+                return multiModel;
+
+            }
+            catch (ArgumentNullException)
             {
-                throw new NullReferenceException(string.Format(ExceptionMessages.PropertyNotFound, propertyId));
+                return null!;
             }
 
-            return property;
+            //return await _repository
+            //    .AllReadonly<Property>(p => p.IsActive)
+            //    .Where(p => p.Id == propertyId)
+            //    .Select(p => new PropertyServiceViewModel()
+            //    {
+            //        Id = p.Id,
+            //        Title = p.Title,
+            //        Price = p.Price,
+            //        Description = p.Description,
+            //        Address = p.Address,
+            //        SquareMeters = p.SquareMeters,
+            //        ImageUrl = p.ImageUrl,
+            //        PropertyType = p.PropertyType.Title,
+            //        User = new ApplicationUser
+            //        {
+            //            FirstName = p.Owner.FirstName,
+            //            LastName = p.Owner.LastName,
+            //            Email = p.Owner.Email,
+            //            PhoneNumber = p.Owner.PhoneNumber,
+            //            ProfilePicture = p.Owner.ProfilePicture
+            //        }
+            //    })
+            //    .FirstOrDefaultAsync();
         }
+
+        //public DetailsPropertyServiceModel GetPropertyByIdAsync(string propertyId)
+        //{
+        //    try
+        //    {
+        //        var property = _repository
+        //            .AllReadonly<Property>(p => p.IsActive)
+        //            .FirstOrDefaultAsync(p => p.Id == propertyId);
+
+        //        var propertyToReturn = new PropertyServiceViewModel
+        //        {
+        //            Id = property.Result!.Id,
+        //            Description = property.Result.Description,
+        //            Address = property.Result.Address,
+        //            Title = property.Result.Title,
+        //            ImageUrl = property.Result.ImageUrl,
+        //            Price = property.Result.Price,
+        //            SquareMeters = property.Result.SquareMeters,
+        //            PropertyTypeId = property.Result.PropertyTypeId,
+        //            CityId = property.Result.CityId
+        //        };
+
+        //        var multiModel = new DetailsPropertyServiceModel()
+        //        {
+        //            PropertyDto = propertyToReturn,
+        //            Posts = _postService.GetPostByPropertyId(property.Result.Id),
+        //        };
+
+        //        return multiModel;
+
+        //    }
+        //    catch (ArgumentNullException)
+        //    {
+        //        return null!;
+        //    }
+        //}
 
         public async Task RemovePropertyFromCollectionAsync(string propertyId)
         {

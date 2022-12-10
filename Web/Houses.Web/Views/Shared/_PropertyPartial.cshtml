@@ -22,14 +22,16 @@
                     <div class="mt-2 mb-2 m-lg-2">
                         <button asp-area="" class="btn btn-info" asp-controller="Property" asp-action="Details"
                                 asp-route-id="@Model.Id">
-                            Details</button>
+                            Details
+                        </button>
                     </div>
                     <div class="mt-2 mb-2 m-lg-2">
-                        <button asp-area="" class="btn btn-primary text-black" asp-controller="Post" asp-action="All"
+                         <button asp-area="" class="btn btn-success text-black" asp-controller="Post" asp-action="All"
                                 asp-route-id="@Model.Id">
                             Posts
                         </button>
                     </div>
+
                     @if (User.IsInRole(AdministratorRoleName))
                     {
                         <div class="mt-2 mb-2 m-lg-2">

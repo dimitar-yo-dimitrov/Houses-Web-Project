@@ -1,6 +1,8 @@
-﻿namespace Houses.Core.ViewModels.Property
+﻿using Houses.Infrastructure.Data.Identity;
+
+namespace Houses.Core.ViewModels.Property
 {
-    public class PropertyServiceViewModel
+    public class PropertyServiceViewModel : PropertyPostQueryViewModel
     {
         public PropertyServiceViewModel()
         {
@@ -19,8 +21,16 @@
 
         public double? SquareMeters { get; init; }
 
-        public string Date { get; set; } = null!;
+        public DateTime? Date { get; set; }
 
         public string ImageUrl { get; init; } = null!;
+
+        public string? CityId { get; init; } = null!;
+
+        public string? PropertyTypeId { get; init; } = null!;
+
+        public string PropertyType { get; set; } = null!;
+
+        public ApplicationUser User { get; set; } = null!;
     }
 }

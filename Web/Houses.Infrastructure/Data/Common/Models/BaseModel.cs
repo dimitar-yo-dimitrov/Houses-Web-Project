@@ -7,7 +7,7 @@ namespace Houses.Infrastructure.Data.Common.Models
         [Key]
         public TKey Id { get; set; } = default!;
 
-        public DateTime CreatedOn { get; set; }
+        public DateTime? CreatedOn { get; set; }
 
         public DateTime? ModifiedOn { get; set; }
     }

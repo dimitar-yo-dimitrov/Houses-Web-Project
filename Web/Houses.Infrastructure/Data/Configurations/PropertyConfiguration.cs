@@ -1,7 +1,6 @@
 ﻿using Houses.Infrastructure.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using static Houses.Common.GlobalConstants.ValidationConstants.Property;
 
 namespace Houses.Infrastructure.Data.Configuration
 {
@@ -9,10 +8,10 @@ namespace Houses.Infrastructure.Data.Configuration
     {
         public void Configure(EntityTypeBuilder<Property> builder)
         {
-            builder
-                .Property(p => p.Description)
-                .HasMaxLength(PropertyMaxDescription)
-                .IsRequired();
+            //builder.HasOne(p => p.Owner)
+            //    .WithMany(u => u.ApplicationUserProperties)
+            //    .HasForeignKey(c => c.OwnerId)
+            //    .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
