@@ -4,6 +4,7 @@ using Houses.Core.ViewModels.Property;
 using Houses.Web.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using static Houses.Common.GlobalConstants.ExceptionMessages;
 
 namespace Houses.Web.Controllers
 {
@@ -46,7 +47,7 @@ namespace Houses.Web.Controllers
             if (queryModel == null)
             {
                 throw new NullReferenceException(
-                    string.Format(ExceptionMessages.PropertiesNotFound));
+                    string.Format(PropertiesNotFound));
             }
 
             return View(queryModel);
@@ -87,7 +88,7 @@ namespace Houses.Web.Controllers
             if (model == null)
             {
                 throw new ArgumentException(
-                    string.Format(ExceptionMessages.PropertyNotFound, id));
+                    string.Format(PropertyNotFound, id));
             }
 
             return View(model);
@@ -129,7 +130,7 @@ namespace Houses.Web.Controllers
             if (userId == null)
             {
                 throw new NullReferenceException(
-                    string.Format(ExceptionMessages.IdIsNull));
+                    string.Format(IdIsNull));
             }
 
             string id = await _propertyService.CreateAsync(propertyModel, userId);
@@ -149,7 +150,7 @@ namespace Houses.Web.Controllers
             if (id == null)
             {
                 throw new NullReferenceException(
-                    string.Format(ExceptionMessages.IdIsNull));
+                    string.Format(IdIsNull));
             }
 
             var property = _propertyService.PropertyDetailsByIdAsync(id);
@@ -184,13 +185,13 @@ namespace Houses.Web.Controllers
             if (id == null)
             {
                 throw new NullReferenceException(
-                    string.Format(ExceptionMessages.IdIsNull));
+                    string.Format(IdIsNull));
             }
 
             if (propertyToUpdate == null)
             {
                 throw new ArgumentException(
-                    string.Format(ExceptionMessages.PropertyNotFound, id));
+                    string.Format(PropertyNotFound, id));
             }
 
             if (!ModelState.IsValid)
@@ -215,9 +216,9 @@ namespace Houses.Web.Controllers
 
             var model = new DetailsPropertyViewModel
             {
-                Title = property.PropertyDto!.Title,
-                Address = property.PropertyDto.Address,
-                ImageUrl = property.PropertyDto.ImageUrl
+                Title = property!.Title,
+                Address = property.Address,
+                ImageUrl = property.ImageUrl
             };
 
             return View(model);

@@ -50,7 +50,7 @@ namespace Houses.Web.Areas.Admin.Controllers
                 {
                     throw new NullReferenceException(
                         string.Format(ExceptionMessages.UserNotFound, userId));
-                };
+                }
 
                 return View(user);
             }

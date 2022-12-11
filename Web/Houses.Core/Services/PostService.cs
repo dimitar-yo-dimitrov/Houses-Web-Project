@@ -2,7 +2,6 @@
 using Houses.Common.GlobalConstants;
 using Houses.Core.Services.Contracts;
 using Houses.Core.ViewModels.Post;
-using Houses.Core.ViewModels.Post.Enums;
 using Houses.Infrastructure.Data.Entities;
 using Houses.Infrastructure.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -13,69 +12,54 @@ namespace Houses.Core.Services
     {
         private readonly HtmlSanitizer _sanitizer = new();
         private readonly IApplicationDbRepository _repository;
+        private readonly IUserService _userService;
 
         public PostService(
-            IApplicationDbRepository repository)
+            IApplicationDbRepository repository,
+            IUserService userService)
         {
             _repository = repository;
+            _userService = userService;
         }
 
-        public async Task<PostQueryViewModel> GetAllAsync(
-            string? searchTerm = null,
-            PostSorting sorting = PostSorting.Newest,
-            int currentPage = 1,
-            int postPerPage = 1)
+        public async Task<PostQueryViewModel> GetAllAsync(string propertyId)
         {
             var result = new PostQueryViewModel();
             var posts = _repository.AllReadonly<Post>(p => p.IsActive);
 
-            if (string.IsNullOrEmpty(searchTerm) == false)
-            {
-                searchTerm = $"%{searchTerm.ToLower()}%";
-
-                posts = posts
-                    .Where(p => EF.Functions.Like(p.Author.UserName.ToLower(), searchTerm) ||
-                                EF.Functions.Like(p.Content.ToLower(), searchTerm));
-            }
-
-            posts = sorting switch
-            {
-                PostSorting.Newest => posts.OrderBy(p => p.CreatedOn),
-                PostSorting.Oldest => posts.OrderByDescending(p => p.CreatedOn),
-                _ => throw new ArgumentOutOfRangeException(nameof(sorting), sorting, null)
-            };
-
             result.Posts = await posts
-                .Skip((currentPage - 1) * postPerPage)
-                .Take(postPerPage)
                 .Select(p => new PostServiceViewModel
                 {
-                    Id = p.Id,
-                    Sender = p.Sender,
+                    PropertyId = p.PropertyId,
+                    Sender = p.Sender!,
                     Content = p.Content,
-                    Date = p.CreatedOn
+                    Date = p.CreatedOn,
                 })
                 .ToListAsync();
-
-            result.TotalPostCount = await posts.CountAsync();
 
             return result;
         }
 
-        public async Task<string> CreateAsync(CreatePostInputViewModel model, string userId)
+        public async Task CreateAsync(
+            string content,
+            string userId,
+            string propertyId)
         {
-            var property = await _repository
-                .AllReadonly<Property>(p => p.IsActive)
-                .FirstOrDefaultAsync();
+            var user = await _userService.GetUserById(userId);
 
-            var post = new Post
+            if (user == null)
             {
-                Id = model.Id,
-                Sender = model.Sender,
-                Content = model.Content,
+                throw new NullReferenceException(
+                    string.Format(ExceptionMessages.UserNotFound, userId));
+            }
+
+            Post post = new Post
+            {
+                Sender = user.FirstName,
+                Content = content,
+                CreatedOn = DateTime.UtcNow,
                 AuthorId = userId,
-                CreatedOn = DateTime.Now,
-                PropertyId = property!.Id
+                PropertyId = propertyId
             };
 
             if (post == null)
@@ -86,8 +70,6 @@ namespace Houses.Core.Services
 
             await _repository.AddAsync(post);
             await _repository.SaveChangesAsync();
-
-            return model.Id;
         }
 
         public async Task DeletePostAsync(string id)
@@ -112,7 +94,7 @@ namespace Houses.Core.Services
                 .Select(p => new PostServiceViewModel
                 {
                     Id = p.Id,
-                    Sender = p.Sender,
+                    Sender = p.Sender!,
                     Content = p.Content,
                     Date = p.CreatedOn,
                 })
@@ -165,7 +147,7 @@ namespace Houses.Core.Services
         {
             var post = await _repository.All<Post>(p => p.IsActive)
                 .Where(p => p.Id == propertyId)
-                .Select(p => new CreatePostInputViewModel
+                .Select(p => new CreatePostInputViewModel()
                 {
                     Id = p.Id,
                     PropertyId = p.PropertyId,

@@ -1,4 +1,5 @@
-﻿using Houses.Core.ViewModels.Property;
+﻿using System.ComponentModel.DataAnnotations;
+using Houses.Core.ViewModels.Property;
 
 namespace Houses.Core.ViewModels.Post
 {
@@ -9,16 +10,22 @@ namespace Houses.Core.ViewModels.Post
             Id = Guid.NewGuid().ToString();
         }
 
-        public string Id { get; set; }
+        [Key]
+        public string Id { get; init; }
 
-        public string Sender { get; set; } = null!;
+        public string? Sender { get; set; } = null!;
 
-        public DateTime? Date { get; set; }
+        public DateTime? Date { get; set; } = DateTime.Now;
 
-        public string Content { get; set; } = null!;
+        public string? Content { get; set; } = null!;
+
+        public string? CreatedOn { get; set; } = null!;
 
         public string? AuthorId { get; set; }
 
         public string? PropertyId { get; set; }
+
+        public IEnumerable<PostServiceViewModel>? Posts { get; set; }
+            = new HashSet<PostServiceViewModel>();
     }
 }

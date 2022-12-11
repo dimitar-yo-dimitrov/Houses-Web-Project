@@ -25,7 +25,6 @@ namespace Houses.Infrastructure.Data
             modelBuilder.ApplyConfiguration(new ApplicationUserPropertyConfiguration());
             modelBuilder.ApplyConfiguration(new PropertyTypesConfiguration());
             modelBuilder.ApplyConfiguration(new CitiesConfiguration());
-            modelBuilder.ApplyConfiguration(new PropertyConfiguration());
             modelBuilder.ApplyConfiguration(new PostConfiguration());
 
             var entityTypes = modelBuilder.Model.GetEntityTypes().ToList();

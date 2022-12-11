@@ -16,15 +16,15 @@
                 <b>@($"{Model.SquareMeters:f2}") m2</b>
             </h6>
             <br />
-            <a class="btn btn-info text-black" asp-controller="Property" asp-action="Details"
+            <a class="btn btn-info text-white" asp-controller="Property" asp-action="Details"
                asp-route-id="@Model.Id">Details</a>
             @if (User.Identity!.IsAuthenticated)
             {
-                <a class="btn btn-primary text-black" asp-controller="Post" asp-action="All"
+                <a class="btn btn-primary text-white" asp-controller="Post" asp-action="AllPost"
                asp-route-id="@Model.Id">Post</a>
-                <a class="btn btn-warning" asp-controller="Property" asp-action="Edit"
+                <a class="btn btn-warning text-white" asp-controller="Property" asp-action="Edit"
                asp-route-id="@Model.Id">Edit</a>
-                <a class="btn btn-danger text-black" asp-controller="Property" asp-action="Delete"
+                <a class="btn btn-danger text-white" asp-controller="Property" asp-action="Delete"
                asp-route-id="@Model.Id">Delete</a>
             }
         </div>

@@ -31,5 +31,7 @@
         public const string UserMessage = "Successfully deleted user";
 
         public const string InvalidMessage = "User can not deleted";
+
+        public const string ContentMessage = "Content is null";
     }
 }

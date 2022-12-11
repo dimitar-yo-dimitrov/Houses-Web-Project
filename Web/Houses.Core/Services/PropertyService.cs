@@ -209,7 +209,6 @@ namespace Houses.Core.Services
                 var multiModel = new DetailsPropertyServiceModel
                 {
                     PropertyDto = propertyToReturn,
-                    Posts = await _postService.GetPostByPropertyId(property.Id),
                 };
 
                 return multiModel;
@@ -219,30 +218,6 @@ namespace Houses.Core.Services
             {
                 return null!;
             }
-
-            //return await _repository
-            //    .AllReadonly<Property>(p => p.IsActive)
-            //    .Where(p => p.Id == propertyId)
-            //    .Select(p => new PropertyServiceViewModel()
-            //    {
-            //        Id = p.Id,
-            //        Title = p.Title,
-            //        Price = p.Price,
-            //        Description = p.Description,
-            //        Address = p.Address,
-            //        SquareMeters = p.SquareMeters,
-            //        ImageUrl = p.ImageUrl,
-            //        PropertyType = p.PropertyType.Title,
-            //        User = new ApplicationUser
-            //        {
-            //            FirstName = p.Owner.FirstName,
-            //            LastName = p.Owner.LastName,
-            //            Email = p.Owner.Email,
-            //            PhoneNumber = p.Owner.PhoneNumber,
-            //            ProfilePicture = p.Owner.ProfilePicture
-            //        }
-            //    })
-            //    .FirstOrDefaultAsync();
         }
 
         //public DetailsPropertyServiceModel GetPropertyByIdAsync(string propertyId)

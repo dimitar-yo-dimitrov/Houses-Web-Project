@@ -1,4 +1,5 @@
-﻿using Houses.Core.Services.Contracts;
+﻿using Ganss.Xss;
+using Houses.Core.Services.Contracts;
 using Houses.Core.ViewModels.Post;
 using Houses.Web.Extensions;
 using Microsoft.AspNetCore.Mvc;
@@ -10,39 +11,57 @@ namespace Houses.Web.Controllers
     {
         private readonly IPostService _postService;
         private readonly IUserService _userService;
-        private readonly IPropertyService _propertyService;
 
         public PostController(
             IPostService postService,
-            IUserService userService,
-            IPropertyService propertyService)
+            IUserService userService)
         {
             _postService = postService;
             _userService = userService;
-            _propertyService = propertyService;
         }
 
+
         [HttpGet]
-        public async Task<IActionResult> All([FromQuery] AllPostQueryViewModel queryModel)
+        public async Task<IActionResult> AllPost(string propertyId, PostServiceViewModel model)
         {
             ViewBag.Title = "All posts";
 
-            var result = await _postService.GetAllAsync(
-                queryModel.SearchTerm,
-                queryModel.Sorting,
-                queryModel.CurrentPage,
-                AllPostQueryViewModel.PostPerPage);
+            var result = await _postService.GetAllAsync(propertyId);
 
-            queryModel.TotalPostCount = result.TotalPostCount;
-            queryModel.Posts = result.Posts;
+            model.Posts = result!.Posts;
 
-            if (queryModel == null)
+            if (model == null)
             {
                 throw new NullReferenceException(
                     string.Format(PostsNotFound));
             }
 
-            return View(queryModel);
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(PostSanitizeViewModel model, string propertyId)
+        {
+            string sanitizedContent = SanitizeString(model.Content!);
+
+            if (string.IsNullOrEmpty(sanitizedContent))
+            {
+                throw new NullReferenceException(
+                    string.Format(ContentMessage));
+            }
+
+            string userId = await _userService.GetUserId(User.Id());
+
+            if (userId == null)
+            {
+                throw new NullReferenceException(
+                    string.Format(IdIsNull));
+            }
+
+            await _postService.CreateAsync(sanitizedContent, userId, propertyId);
+
+            return RedirectToAction(nameof(AllPost), new { propertyId });
         }
 
         public async Task<IActionResult> Mine()
@@ -67,46 +86,17 @@ namespace Houses.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult Create() => View();
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(CreatePostInputViewModel model)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View(model);
-            }
-
-            string userId = await _userService.GetUserId(User.Id());
-
-            //var property = new Property();
-
-
-            if (userId == null)
-            {
-                throw new NullReferenceException(
-                    string.Format(IdIsNull));
-            }
-
-            string id = await _postService.CreateAsync(model, userId);
-
-            if (id == null)
-            {
-                throw new NullReferenceException(
-                    string.Format(IdIsNull));
-            }
-
-            return RedirectToAction(nameof(Mine), new { id });
-        }
-
-        [HttpGet]
         public async Task<IActionResult> Edit(string? id)
         {
             if (id == null)
             {
                 throw new NullReferenceException(
                     string.Format(IdIsNull));
+            }
+
+            if (await _postService.ExistsAsync(id) == false)
+            {
+                return RedirectToAction(nameof(Mine));
             }
 
             var post = await _postService.GetPostAsync(id);
@@ -119,7 +109,7 @@ namespace Houses.Web.Controllers
 
             var model = new CreatePostInputViewModel
             {
-                Sender = post.Sender,
+                Sender = post.Sender!,
                 Content = post.Content
             };
 
@@ -149,7 +139,7 @@ namespace Houses.Web.Controllers
 
             await _postService.EditAsync(postToUpdate, id);
 
-            return RedirectToAction(nameof(All));
+            return RedirectToAction(nameof(Mine));
         }
 
         [HttpGet]
@@ -157,14 +147,14 @@ namespace Houses.Web.Controllers
         {
             if (await _postService.ExistsAsync(id) == false)
             {
-                return RedirectToAction(nameof(All));
+                return RedirectToAction(nameof(Mine));
             }
 
             var post = await _postService.GetPostAsync(id);
 
             var model = new PostInputViewModel
             {
-                Sender = post.Sender,
+                Sender = post.Sender!,
                 Content = post.Content
             };
 
@@ -177,12 +167,19 @@ namespace Houses.Web.Controllers
         {
             if (await _postService.ExistsAsync(id) == false)
             {
-                return RedirectToAction(nameof(All));
+                return RedirectToAction(nameof(Mine));
             }
 
             await _postService.DeletePostAsync(id);
 
             return RedirectToAction(nameof(Mine));
+        }
+
+        private static string SanitizeString(string content)
+        {
+            var sanitizer = new HtmlSanitizer();
+
+            return sanitizer.Sanitize(content);
         }
     }
 }

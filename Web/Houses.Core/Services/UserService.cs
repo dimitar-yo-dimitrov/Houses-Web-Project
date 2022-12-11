@@ -4,7 +4,6 @@ using Houses.Core.ViewModels.User;
 using Houses.Infrastructure.Data.Entities;
 using Houses.Infrastructure.Data.Identity;
 using Houses.Infrastructure.Data.Repositories;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Houses.Core.Services
@@ -12,14 +11,10 @@ namespace Houses.Core.Services
     public class UserService : IUserService
     {
         private readonly IApplicationDbRepository _repository;
-        private readonly UserManager<ApplicationUser> _userManager;
 
-        public UserService(
-            IApplicationDbRepository repository,
-            UserManager<ApplicationUser> userManager)
+        public UserService(IApplicationDbRepository repository)
         {
             _repository = repository;
-            _userManager = userManager;
         }
 
         public async Task<bool> ExistsById(string id)

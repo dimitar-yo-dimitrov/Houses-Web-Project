@@ -1,4 +1,5 @@
-﻿using Houses.Common.GlobalConstants;
+﻿using Ganss.Xss;
+using Houses.Common.GlobalConstants;
 using Houses.Core.ViewModels.User;
 using Houses.Infrastructure.Data.Identity;
 using Microsoft.AspNetCore.Authorization;
@@ -11,6 +12,7 @@ namespace Houses.Web.Controllers
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly HtmlSanitizer _sanitizer = new();
 
         public AccountController(
             SignInManager<ApplicationUser> signInManager,
@@ -45,12 +47,12 @@ namespace Houses.Web.Controllers
 
             var user = new ApplicationUser
             {
-                FirstName = model.FirstName,
-                LastName = model.LastName,
-                Email = model.Email,
-                PhoneNumber = model.PhoneNumber,
+                FirstName = Sanitize(model.FirstName),
+                LastName = Sanitize(model.LastName),
+                Email = Sanitize(model.Email),
+                PhoneNumber = Sanitize(model.PhoneNumber),
                 EmailConfirmed = true,
-                UserName = model.FirstName,
+                UserName = $"{model.FirstName}{model.LastName}",
                 ProfilePicture = model.ProfilePicture
 
             };
@@ -123,6 +125,11 @@ namespace Houses.Web.Controllers
             await _signInManager.SignOutAsync();
 
             return RedirectToAction("Index", "Home");
+        }
+
+        private string Sanitize(string element)
+        {
+            return _sanitizer.Sanitize(element);
         }
     }
 }

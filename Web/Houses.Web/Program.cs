@@ -24,6 +24,7 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
+    options.AccessDeniedPath = "/Home/Error401";
     options.LoginPath = "/Account/Login";
     options.LogoutPath = "/Account/Logout";
 });
@@ -64,16 +65,21 @@ app.UseRequestLocalization();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllerRoute(
-    name: "Area",
-    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+app.UseEndpoints(endpoints =>
+{
+    app.MapControllerRoute(
+        name: "Area",
+        pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
 
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    app.MapControllerRoute(
+        name: "default",
+        pattern: "{controller=Home}/{action=Index}/{id?}");
 
-app.MapRazorPages();
+    endpoints.MapDefaultControllerRoute();
 
-app.MapHub<ChatHub>("/chatHub");
+    endpoints.MapRazorPages();
+
+    app.MapHub<ChatHub>("/chatHub");
+});
 
 app.Run();

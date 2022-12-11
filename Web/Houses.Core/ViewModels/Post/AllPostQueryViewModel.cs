@@ -3,7 +3,7 @@ using Houses.Core.ViewModels.Post.Enums;
 
 namespace Houses.Core.ViewModels.Post
 {
-    public class AllPostQueryViewModel
+    public class AllPostQueryViewModel : PostServiceViewModel
     {
         public const int PostPerPage = 3;
 
@@ -17,8 +17,5 @@ namespace Houses.Core.ViewModels.Post
         public int CurrentPage { get; init; } = 1;
 
         public int TotalPostCount { get; set; }
-
-        public IEnumerable<PostServiceViewModel> Posts { get; set; }
-            = new HashSet<PostServiceViewModel>();
     }
 }

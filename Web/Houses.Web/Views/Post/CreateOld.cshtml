@@ -1,5 +1,12 @@
 ﻿@model CreatePostInputViewModel
 
+@{
+    ViewBag.Title = "Add Post";
+}
+
+<h2 class="text-center">@ViewBag.Title</h2>
+<hr />
+
 <div class="row">
     <div class="col-sm-12 offset-lg-2 col-lg-8 offset-xl-3 col-xl-6">
         <section>
@@ -15,13 +22,13 @@
                     <span asp-validation-for="Content" class="text-danger"></span>
                 </div>
                 <div class="text-center">
-                    <input class="btn btn-primary mt-3 text-white" type="submit" value="Send" />
+                    <input class="btn btn-primary mt-3 text-black" type="submit" value="Send" />
                 </div>
             </form>
         </section>
     </div>
 </div>
 
-@section Scripts {
-<partial name="_ValidationScriptsPartial" />
+@section Scripts{
+    <partial name="_ValidationScriptsPartial" />
 }

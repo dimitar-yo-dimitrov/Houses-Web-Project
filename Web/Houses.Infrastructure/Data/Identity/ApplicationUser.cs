@@ -26,7 +26,7 @@ namespace Houses.Infrastructure.Data.Identity
         [MaxLength(MaxUrl)]
         public string? ProfilePicture { get; set; }
 
-        public DateTime? CreatedOn { get; set; }
+        public DateTime? CreatedOn { get; set; } = DateTime.Now;
 
         public DateTime? ModifiedOn { get; set; }
 

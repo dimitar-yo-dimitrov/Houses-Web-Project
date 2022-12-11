@@ -1,6 +1,8 @@
-﻿namespace Houses.Core.ViewModels.Post
+﻿using Houses.Core.ViewModels.Property;
+
+namespace Houses.Core.ViewModels.Post
 {
-    public class PostQueryViewModel
+    public class PostQueryViewModel : DetailsPropertyServiceModel
     {
         public int TotalPostCount { get; set; }
 

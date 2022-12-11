@@ -14,17 +14,17 @@
             <form>
                 <div class="navbar-collapse collapse d-sm-inline-flex">
                     @{
-                        var userId = User.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value.ToLower();
-                        if (userId == Model.AuthorId?.ToLower() || User.IsInRole(AdministratorRoleName))
+                        var name = User.Identity!.Name!.ToLower();
+                        if (name == Model.Sender!.ToLower() || User.IsInRole(AdministratorRoleName))
                         {
                             <div class="mt-2 mb-2 m-lg-2">
-                                <button asp-area="" class="btn btn-warning mt-2 mb-2 m-lg-2" asp-controller="Post" asp-action="Edit"
+                                <button asp-area="" class="btn btn-warning mt-2 mb-2 m-lg-2 text-white" asp-controller="Post" asp-action="Edit"
                                 asp-route-id="@Model.Id">
                                     Edit
                                 </button>
                             </div>
                             <div class="mt-2 mb-2 m-lg-2">
-                                <button asp-area="" class="btn btn-danger text-black mt-2 mb-2 m-lg-2" asp-controller="Post" asp-action="Delete"
+                                <button asp-area="" class="btn btn-danger text-white mt-2 mb-2 m-lg-2" asp-controller="Post" asp-action="Delete"
                                 asp-route-id="@Model.Id">
                                     Delete
                                 </button>

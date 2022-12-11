@@ -1,4 +1,11 @@
-﻿@model CreatePostInputViewModel
+﻿@model PostServiceViewModel
+
+@{
+    ViewBag.Title = "Add Post";
+}
+
+<h2 class="text-center">@ViewBag.Title</h2>
+<hr />
 
 <div class="row">
     <div class="col-sm-12 offset-lg-2 col-lg-8 offset-xl-3 col-xl-6">
@@ -14,14 +21,32 @@
                     <textarea asp-for="Content" class="form-control" aria-required="true" rows="5"></textarea>
                     <span asp-validation-for="Content" class="text-danger"></span>
                 </div>
-                <div class="text-center">
-                    <input class="btn btn-primary mt-3 text-white" type="submit" value="Send" />
+                <div class="mt-2 mb-2 m-lg-2">
+                    <button asp-area="" class="btn btn-success text-white" asp-controller="Post" asp-action="Create">Send</button>
+                    <input type="hidden" asp-for="PropertyId" value="@Model.Id" />
                 </div>
             </form>
         </section>
     </div>
 </div>
+<hr />
+
+@if (!Model.Posts!.Any())
+{
+    <p class="text-center">No posts yet!</p>
+}
+
+<div class="row">
+    @foreach (var post in Model.Posts!)
+    {
+        var name = User.Identity!.Name!.ToLower();
+        if (name == post.Sender!.ToLower())
+        {
+            <partial name="PostPartial" model="@post" />
+        }
+    }
+</div>
 
 @section Scripts {
-<partial name="_ValidationScriptsPartial" />
+    <partial name="_ValidationScriptsPartial" />
 }

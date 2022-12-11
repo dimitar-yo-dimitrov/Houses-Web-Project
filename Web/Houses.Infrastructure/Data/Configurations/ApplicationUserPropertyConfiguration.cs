@@ -10,12 +10,6 @@ namespace Houses.Infrastructure.Data.Configuration
         {
             builder
                 .HasKey(aup => new { aup.ApplicationUserId, aup.PropertyId });
-
-            //builder
-            //    .HasOne(aup => aup.ApplicationUser)
-            //    .WithMany(p => p.ApplicationUserProperties)
-            //    .HasForeignKey(aup => aup.PropertyId)
-            //    .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

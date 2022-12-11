@@ -1,5 +1,6 @@
 ﻿@using Houses.Web
 @using Houses.Web.Models
+@using Houses.Web.Extensions;
 @using Houses.Core.ViewModels
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @using Houses.Infrastructure.Data.Identity
@@ -11,5 +12,6 @@
 @using System.Security.Claims
 @using static Houses.Common.GlobalConstants.ValidationConstants.AdminConstants;
 @inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers

@@ -21,7 +21,7 @@ namespace Houses.Core.ViewModels.Post
         [StringLength(MassageMax, MinimumLength = MassageMin)]
         public string Content { get; set; } = null!;
 
-        public DateTime? CreatedOn { get; set; }
+        public DateTime? CreatedOn { get; set; } = DateTime.Now;
 
         public string? AuthorId { get; set; }
 
