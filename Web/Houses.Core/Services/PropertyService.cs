@@ -1,4 +1,5 @@
-﻿using Houses.Common.GlobalConstants;
+﻿using Ganss.Xss;
+using Houses.Common.GlobalConstants;
 using Houses.Core.Services.Contracts;
 using Houses.Core.ViewModels.Property;
 using Houses.Core.ViewModels.Property.Enums;
@@ -11,15 +12,12 @@ namespace Houses.Core.Services
 {
     public class PropertyService : IPropertyService
     {
+        private readonly HtmlSanitizer _sanitizer = new();
         private readonly IApplicationDbRepository _repository;
-        private readonly IPostService _postService;
 
-        public PropertyService(
-            IApplicationDbRepository repository,
-            IPostService postService)
+        public PropertyService(IApplicationDbRepository repository)
         {
             _repository = repository;
-            _postService = postService;
         }
 
         public async Task<PropertyQueryViewModel> GetAllAsync(
@@ -57,8 +55,8 @@ namespace Houses.Core.Services
 
             properties = sorting switch
             {
-                PropertySorting.Newest => properties.OrderBy(p => p.CreatedOn),
-                PropertySorting.Oldest => properties.OrderByDescending(p => p.CreatedOn),
+                PropertySorting.Newest => properties.OrderByDescending(p => p.CreatedOn),
+                PropertySorting.Oldest => properties.OrderBy(p => p.CreatedOn),
                 PropertySorting.PriceAscending => properties.OrderBy(p => p.Price),
                 PropertySorting.PriceDescending => properties.OrderByDescending(p => p.Price),
                 _ => throw new ArgumentOutOfRangeException(nameof(sorting), sorting, null)
@@ -76,7 +74,8 @@ namespace Houses.Core.Services
                     Address = p.Address,
                     SquareMeters = p.SquareMeters,
                     ImageUrl = p.ImageUrl,
-                    Date = p.CreatedOn
+                    Date = p.CreatedOn,
+                    OwnerId = p.Owner.Id
                 })
                 .ToListAsync();
 
@@ -95,12 +94,12 @@ namespace Houses.Core.Services
 
             var property = new Property
             {
-                Title = model.Title,
+                Title = _sanitizer.Sanitize(model.Title),
                 Price = model.Price,
-                Description = model.Description,
-                Address = model.Address,
+                Description = _sanitizer.Sanitize(model.Description),
+                Address = _sanitizer.Sanitize(model.Address),
                 SquareMeters = model.SquareMeters,
-                ImageUrl = model.ImageUrl,
+                ImageUrl = _sanitizer.Sanitize(model.ImageUrl),
                 CreatedOn = DateTime.UtcNow,
                 CityId = model.CityId,
                 PropertyTypeId = model.PropertyTypeId,
@@ -138,11 +137,11 @@ namespace Houses.Core.Services
                     string.Format(ExceptionMessages.PropertyNotFound, model.Id));
             }
 
-            property.Title = model.Title;
-            property.Description = model.Description;
-            property.Address = model.Address;
+            property.Title = _sanitizer.Sanitize(model.Title);
+            property.Description = _sanitizer.Sanitize(model.Description);
+            property.Address = _sanitizer.Sanitize(model.Address);
             property.SquareMeters = model.SquareMeters;
-            property.ImageUrl = model.ImageUrl;
+            property.ImageUrl = _sanitizer.Sanitize(model.ImageUrl);
             property.Price = model.Price;
             property.PropertyTypeId = model.PropertyTypeId;
             property.CityId = model.CityId;
@@ -219,43 +218,6 @@ namespace Houses.Core.Services
                 return null!;
             }
         }
-
-        //public DetailsPropertyServiceModel GetPropertyByIdAsync(string propertyId)
-        //{
-        //    try
-        //    {
-        //        var property = _repository
-        //            .AllReadonly<Property>(p => p.IsActive)
-        //            .FirstOrDefaultAsync(p => p.Id == propertyId);
-
-        //        var propertyToReturn = new PropertyServiceViewModel
-        //        {
-        //            Id = property.Result!.Id,
-        //            Description = property.Result.Description,
-        //            Address = property.Result.Address,
-        //            Title = property.Result.Title,
-        //            ImageUrl = property.Result.ImageUrl,
-        //            Price = property.Result.Price,
-        //            SquareMeters = property.Result.SquareMeters,
-        //            PropertyTypeId = property.Result.PropertyTypeId,
-        //            CityId = property.Result.CityId
-        //        };
-
-        //        var multiModel = new DetailsPropertyServiceModel()
-        //        {
-        //            PropertyDto = propertyToReturn,
-        //            Posts = _postService.GetPostByPropertyId(property.Result.Id),
-        //        };
-
-        //        return multiModel;
-
-        //    }
-        //    catch (ArgumentNullException)
-        //    {
-        //        return null!;
-        //    }
-        //}
-
         public async Task RemovePropertyFromCollectionAsync(string propertyId)
         {
             var property = await _repository.GetByIdAsync<Property>(propertyId);

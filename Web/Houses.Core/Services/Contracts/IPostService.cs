@@ -17,8 +17,6 @@ namespace Houses.Core.Services.Contracts
 
         Task<Post> GetPostAsync(string postId);
 
-        Task<IEnumerable<CreatePostInputViewModel>> GetPostByPropertyId(string propertyId);
-
         Task<bool> ExistsAsync(string postId);
     }
 }

@@ -1,5 +1,4 @@
-﻿using Houses.Common.GlobalConstants;
-using Houses.Core.Services.Contracts;
+﻿using Houses.Core.Services.Contracts;
 using Houses.Core.ViewModels.Property;
 using Houses.Web.Extensions;
 using Microsoft.AspNetCore.Authorization;
@@ -60,7 +59,7 @@ namespace Houses.Web.Controllers
             if (userId == null)
             {
                 throw new NullReferenceException(
-                    string.Format(ExceptionMessages.IdIsNull));
+                    string.Format(IdIsNull));
             }
 
             IEnumerable<PropertyServiceViewModel> myProperties = await _propertyService.AllPropertiesByUserIdAsync(userId);
@@ -68,7 +67,7 @@ namespace Houses.Web.Controllers
             if (myProperties == null)
             {
                 throw new NullReferenceException(
-                    string.Format(ExceptionMessages.PropertiesNotFound));
+                    string.Format(PropertiesNotFound));
             }
 
             return View(myProperties);
@@ -138,7 +137,7 @@ namespace Houses.Web.Controllers
             if (id == null)
             {
                 throw new NullReferenceException(
-                    string.Format(ExceptionMessages.IdIsNull));
+                    string.Format(IdIsNull));
             }
 
             return RedirectToAction(nameof(Details), new { id });
@@ -158,7 +157,7 @@ namespace Houses.Web.Controllers
             if (property == null)
             {
                 throw new ArgumentException(
-                    string.Format(ExceptionMessages.PropertyNotFound, id));
+                    string.Format(PropertyNotFound, id));
             }
 
             var model = new CreatePropertyInputModel
@@ -214,11 +213,11 @@ namespace Houses.Web.Controllers
 
             var property = await _propertyService.PropertyDetailsByIdAsync(id);
 
-            var model = new DetailsPropertyViewModel
+            var model = new DetailsPropertyServiceModel
             {
-                Title = property!.Title,
-                Address = property.Address,
-                ImageUrl = property.ImageUrl
+                Title = property.PropertyDto!.Title,
+                Address = property.PropertyDto.Address,
+                ImageUrl = property.PropertyDto.ImageUrl
             };
 
             return View(model);
@@ -226,7 +225,7 @@ namespace Houses.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete(string id, DetailsPropertyViewModel model)
+        public async Task<IActionResult> Delete(string id, DetailsPropertyServiceModel model)
         {
             if (await _propertyService.ExistsAsync(id) == false)
             {
@@ -237,26 +236,5 @@ namespace Houses.Web.Controllers
 
             return RedirectToAction(nameof(Mine));
         }
-
-        //[HttpGet]
-        //[AllowAnonymous]
-        //public IActionResult PropertyById(string productId)
-        //{
-        //    try
-        //    {
-        //        var entity = _propertyService.GetPropertyByIdAsync(productId);
-
-        //        if (entity == null)
-        //        {
-        //            return RedirectToAction("All", "Property");
-        //        }
-
-        //        return View(entity);
-        //    }
-        //    catch (Exception)
-        //    {
-        //        return RedirectToAction(nameof(All));
-        //    }
-        //}
     }
 }

@@ -18,16 +18,16 @@
                         if (name == Model.Sender!.ToLower() || User.IsInRole(AdministratorRoleName))
                         {
                             <div class="mt-2 mb-2 m-lg-2">
-                                <button asp-area="" class="btn btn-warning mt-2 mb-2 m-lg-2 text-white" asp-controller="Post" asp-action="Edit"
+                                <a asp-area="" class="btn btn-warning mt-2 mb-2 m-lg-2 text-white" asp-controller="Post" asp-action="Edit"
                                 asp-route-id="@Model.Id">
-                                    Edit
-                                </button>
+                                    <i class="fa-solid fa-pencil"></i>
+                                </a>
                             </div>
                             <div class="mt-2 mb-2 m-lg-2">
-                                <button asp-area="" class="btn btn-danger text-white mt-2 mb-2 m-lg-2" asp-controller="Post" asp-action="Delete"
+                                <a onclick="return confirm('Are you sure that you want to delete this massage?');" asp-area="" class="btn btn-danger text-white mt-2 mb-2 m-lg-2" asp-controller="Post" asp-action="Delete"
                                 asp-route-id="@Model.Id">
-                                    Delete
-                                </button>
+                                    <i class="fa-solid fa-trash"></i>
+                                </a>
                             </div>
                         }
                     }

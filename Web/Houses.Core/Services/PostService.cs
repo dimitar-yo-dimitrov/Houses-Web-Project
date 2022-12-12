@@ -146,24 +146,6 @@ namespace Houses.Core.Services
             return post;
         }
 
-        public async Task<IEnumerable<CreatePostInputViewModel>> GetPostByPropertyId(string propertyId)
-        {
-            var post = await _repository.All<Post>(p => p.IsActive)
-                .Where(p => p.Id == propertyId)
-                .Select(p => new CreatePostInputViewModel()
-                {
-                    Id = p.Id,
-                    PropertyId = p.PropertyId,
-                    Content = p.Content,
-                    Sender = $"{p.Author.FirstName} {p.Author.LastName}",
-                    CreatedOn = p.CreatedOn,
-                    AuthorId = p.AuthorId
-                })
-                .ToListAsync();
-
-            return post;
-        }
-
         public async Task<bool> ExistsAsync(string postId)
         {
             return await _repository.AllReadonly<Post>()

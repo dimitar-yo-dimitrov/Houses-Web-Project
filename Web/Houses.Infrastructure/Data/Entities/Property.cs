@@ -39,6 +39,7 @@ namespace Houses.Infrastructure.Data.Entities
 
         [Required(AllowEmptyStrings = false)]
         [MaxLength(MaxUrl)]
+        [Url]
         public string ImageUrl { get; set; } = null!;
 
         [DataType(DataType.Date)]

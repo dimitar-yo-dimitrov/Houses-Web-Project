@@ -21,8 +21,6 @@ namespace Houses.Core.Services.Contracts
 
         Task<DetailsPropertyServiceModel> PropertyDetailsByIdAsync(string propertyId);
 
-        //DetailsPropertyServiceModel GetPropertyById(string propertyId);
-
         Task EditAsync(CreatePropertyInputModel model, string id);
 
         Task<IEnumerable<PropertyServiceViewModel>> AllPropertiesByUserIdAsync(string userId);

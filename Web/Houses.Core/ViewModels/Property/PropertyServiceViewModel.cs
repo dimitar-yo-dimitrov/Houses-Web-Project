@@ -27,6 +27,8 @@ namespace Houses.Core.ViewModels.Property
 
         public string? CityId { get; init; } = null!;
 
+        public string? OwnerId { get; set; }
+
         public string? PropertyTypeId { get; init; } = null!;
 
         public string PropertyType { get; set; } = null!;

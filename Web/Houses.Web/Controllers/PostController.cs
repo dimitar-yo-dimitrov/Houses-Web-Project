@@ -142,9 +142,15 @@ namespace Houses.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Delete(string id)
         {
+            if (id == null)
+            {
+                throw new NullReferenceException(
+                    string.Format(IdIsNull));
+            }
+
             if (await _postService.ExistsAsync(id) == false)
             {
-                return RedirectToAction(nameof(Mine));
+                return RedirectToAction(nameof(AllPost));
             }
 
             var post = await _postService.GetPostAsync(id);

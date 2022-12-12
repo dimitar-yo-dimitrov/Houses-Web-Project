@@ -53,7 +53,7 @@ namespace Houses.Web.Controllers
                 PhoneNumber = Sanitize(model.PhoneNumber),
                 EmailConfirmed = true,
                 UserName = $"{model.FirstName} {model.LastName}",
-                ProfilePicture = model.ProfilePicture
+                ProfilePicture = _sanitizer.Sanitize(model.ProfilePicture!)
 
             };
 

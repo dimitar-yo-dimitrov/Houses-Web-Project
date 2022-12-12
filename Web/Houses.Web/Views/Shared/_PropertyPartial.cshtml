@@ -2,9 +2,11 @@
 
 <div class="col-md-4">
     <div class="card mb-5">
-        <img class="card-img-top" src="@Model.ImageUrl" alt="Property Image">
+        <a asp-area="" class="text-white" asp-controller="Property" asp-action="Details"
+           asp-route-id="@Model.Id"><img class="card-img-top" src="@Model.ImageUrl" alt="Property Image"></a>
         <div class="card-body text-center">
-            <h4>@Model.Title</h4>
+            <h4><a asp-area="" class="text-white" asp-controller="Property" asp-action="Details"
+                   asp-route-id="@Model.Id">@Model.Title</a></h4>
             <h6>Address: <b>@Model.Address</b></h6>
             <h6>Description: 
                 <b><textarea asp-for="Description" class="form-control" aria-required="true" rows="5">Description:</textarea></b>
@@ -22,31 +24,26 @@
             <form>
                 <div class="navbar-collapse collapse d-sm-inline-flex">
                     <div class="mt-2 mb-2 m-lg-2">
-                        <button asp-area="" class="btn btn-info text-white" asp-controller="Property" asp-action="Details"
-                                asp-route-id="@Model.Id">
-                            Details
-                        </button>
-                    </div>
-                    <div class="mt-2 mb-2 m-lg-2">
                         <a asp-area="" class="btn btn-success text-white" asp-controller="Post" asp-action="AllPost"
                            asp-route-propertyId="@Model.Id">
-                            <i class="fa-solid fa-messages"></i>
+                            <i class="fa-solid fa-comments"></i>
                         </a>
                     </div>
 
                     @if (User.IsInRole(AdministratorRoleName))
                     {
                         <div class="mt-2 mb-2 m-lg-2">
-                            <button asp-area="" class="btn btn-warning text-white" asp-controller="Property" asp-action="Edit"
+                            <a asp-area="" class="btn btn-warning text-white" asp-controller="Property" asp-action="Edit"
                                 asp-route-id="@Model.Id">
-                                Edit
-                            </button>
+                                <i class="fa-solid fa-pencil"></i>
+                            </a>
                         </div>
                         <div class="mt-2 mb-2 m-lg-2">
-                            <button asp-area="" class="btn btn-danger text-white" asp-controller="Property" asp-action="Delete"
+                            <a onclick="return confirm('Are you sure that you want to delete @Model.Title?');" 
+                               asp-area="" class="btn btn-danger text-white" asp-controller="Property" asp-action="Delete"
                                 asp-route-id="@Model.Id">
-                                Delete
-                            </button>
+                                <i class="fa-solid fa-trash"></i>
+                            </a>
                         </div>
                     }
                 </div>
