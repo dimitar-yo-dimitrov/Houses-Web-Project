@@ -106,12 +106,7 @@
 <div class="row">
     @foreach (var property in Model.Properties)
     {
-
-        var userId = User.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value.ToLower();
-        if (userId == property.OwnerId!.ToLower() || User.IsInRole(AdministratorRoleName))
-        {
-            <partial name="_PropertyPartial" model="@property" />
-        }
+        <partial name="_PropertyPartial" model="@property" />
     }
 </div>
 
