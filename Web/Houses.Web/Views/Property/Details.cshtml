@@ -29,8 +29,8 @@
                     <img src="@Model.PropertyDto.User.ProfilePicture" class="rounded-circle" width="100" alt="">
                     <p class="card-text">First Name: @Model.PropertyDto.User.FirstName</p>
                     <p class="card-text">LastName: @Model.PropertyDto.User.LastName</p>
-                    <p class="card-text">Email: @Model.PropertyDto.User.Email</p>
-                    <p class="card-text">Phone Number: @Model.PropertyDto.User.PhoneNumber</p>
+                    <p class="card-text"><a href="mailto: @Model.PropertyDto.User.Email">Email: @Model.PropertyDto.User.Email</a></p>
+                    <p class="card-text"><a href="tel: @Model.PropertyDto.User.PhoneNumber">Phone Number: @Model.PropertyDto.User.PhoneNumber</a></p>
                 </div>
             </div>
         </div>
