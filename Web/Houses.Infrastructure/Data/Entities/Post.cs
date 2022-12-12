@@ -11,7 +11,6 @@ namespace Houses.Infrastructure.Data.Entities
         public Post()
         {
             Id = Guid.NewGuid().ToString();
-            PropertyId = Guid.NewGuid().ToString();
         }
 
         [Key]

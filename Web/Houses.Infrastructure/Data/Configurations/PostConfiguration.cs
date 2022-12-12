@@ -11,7 +11,7 @@ namespace Houses.Infrastructure.Data.Configuration
             builder
                 .HasOne(p => p.Property)
                 .WithMany(p => p.Posts)
-                .HasForeignKey(p => p.AuthorId)
+                .HasForeignKey(p => p.PropertyId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder

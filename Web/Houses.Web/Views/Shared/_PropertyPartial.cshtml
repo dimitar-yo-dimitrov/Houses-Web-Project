@@ -1,12 +1,14 @@
 ﻿@model PropertyServiceViewModel
 
 <div class="col-md-4">
-    <div class="card mb-3">
+    <div class="card mb-5">
         <img class="card-img-top" src="@Model.ImageUrl" alt="Property Image">
         <div class="card-body text-center">
             <h4>@Model.Title</h4>
             <h6>Address: <b>@Model.Address</b></h6>
-            <h6>Description: <b>@Model.Description</b></h6>
+            <h6>Description: 
+                <b><textarea asp-for="Description" class="form-control" aria-required="true" rows="5">Description:</textarea></b>
+            </h6>
             <h6>
                 Price:
                 <b>@($"{Model.Price:f2}") BGN</b>

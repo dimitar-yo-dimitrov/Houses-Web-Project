@@ -25,15 +25,18 @@ namespace Houses.Core.Services
         public async Task<PostQueryViewModel> GetAllAsync(string propertyId)
         {
             var result = new PostQueryViewModel();
-            var posts = _repository.AllReadonly<Post>(p => p.IsActive);
+            var posts = _repository
+                .AllReadonly<Post>(p => p.IsActive && p.PropertyId == propertyId);
 
             result.Posts = await posts
                 .Select(p => new PostServiceViewModel
                 {
+                    Id = p.Id,
                     PropertyId = p.PropertyId,
                     Sender = p.Sender!,
                     Content = p.Content,
                     Date = p.CreatedOn,
+                    AuthorId = p.Author.Id
                 })
                 .ToListAsync();
 
@@ -53,10 +56,10 @@ namespace Houses.Core.Services
                     string.Format(ExceptionMessages.UserNotFound, userId));
             }
 
-            Post post = new Post
+            var post = new Post
             {
                 Sender = user.FirstName,
-                Content = content,
+                Content = _sanitizer.Sanitize(content),
                 CreatedOn = DateTime.UtcNow,
                 AuthorId = userId,
                 PropertyId = propertyId
@@ -120,8 +123,8 @@ namespace Houses.Core.Services
                     string.Format(ExceptionMessages.PostNotFound, model.Id));
             }
 
-            post.Sender = model.Sender;
-            post.Content = model.Content;
+            post.Sender = _sanitizer.Sanitize(model.Sender);
+            post.Content = _sanitizer.Sanitize(model.Content);
             post.ModifiedOn = DateTime.Now;
 
             _repository.Update(post);

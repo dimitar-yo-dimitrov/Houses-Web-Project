@@ -121,7 +121,7 @@ namespace Houses.Core.Services
         {
             var user = await _repository.GetByIdAsync<ApplicationUser>(userId);
 
-            if (user == null/* || user.IsActive == false*/)
+            if (user == null)
             {
                 throw new NullReferenceException(string.Format(ExceptionMessages.UserNotFound, userId));
             }

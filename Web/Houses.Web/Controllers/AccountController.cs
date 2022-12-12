@@ -52,7 +52,7 @@ namespace Houses.Web.Controllers
                 Email = Sanitize(model.Email),
                 PhoneNumber = Sanitize(model.PhoneNumber),
                 EmailConfirmed = true,
-                UserName = $"{model.FirstName}{model.LastName}",
+                UserName = $"{model.FirstName} {model.LastName}",
                 ProfilePicture = model.ProfilePicture
 
             };

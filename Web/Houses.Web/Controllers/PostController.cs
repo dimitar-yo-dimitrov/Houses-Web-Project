@@ -1,5 +1,4 @@
-﻿using Ganss.Xss;
-using Houses.Core.Services.Contracts;
+﻿using Houses.Core.Services.Contracts;
 using Houses.Core.ViewModels.Post;
 using Houses.Web.Extensions;
 using Microsoft.AspNetCore.Mvc;
@@ -41,11 +40,9 @@ namespace Houses.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(PostSanitizeViewModel model, string propertyId)
+        public async Task<IActionResult> Create(string content, string propertyId)
         {
-            string sanitizedContent = SanitizeString(model.Content!);
-
-            if (string.IsNullOrEmpty(sanitizedContent))
+            if (string.IsNullOrEmpty(content))
             {
                 throw new NullReferenceException(
                     string.Format(ContentMessage));
@@ -59,7 +56,7 @@ namespace Houses.Web.Controllers
                     string.Format(IdIsNull));
             }
 
-            await _postService.CreateAsync(sanitizedContent, userId, propertyId);
+            await _postService.CreateAsync(content, userId, propertyId);
 
             return RedirectToAction(nameof(AllPost), new { propertyId });
         }
@@ -173,13 +170,6 @@ namespace Houses.Web.Controllers
             await _postService.DeletePostAsync(id);
 
             return RedirectToAction(nameof(Mine));
-        }
-
-        private static string SanitizeString(string content)
-        {
-            var sanitizer = new HtmlSanitizer();
-
-            return sanitizer.Sanitize(content);
         }
     }
 }

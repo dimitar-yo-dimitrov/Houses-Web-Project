@@ -50,7 +50,7 @@
         </div>
         <div class="col-md-2">
             <div class="form-group mt-3 p-2">
-                <input type="submit" value="Search" class="btn btn-primary text-black" />
+                <input type="submit" value="Search" class="btn btn-primary text-white" />
             </div>
         </div>
     </div>
@@ -69,7 +69,7 @@
 
 <div class="row mb-5">
     <div class="col-md-6 d-grid gap-2 d-md-flex justify-content-md-start">
-        <a class="btn btn-primary text-dark
+        <a class="btn btn-primary text-white
            @(Model.CurrentPage == 1 ? "disabled" : string.Empty)"
            asp-controller="Property"
            asp-action="All"
@@ -86,7 +86,7 @@
     }
 
     <div class="col-md-6 d-grid gap-2 d-md-flex justify-content-md-end">
-        <a class="btn btn-primary text-dark
+        <a class="btn btn-primary text-white
            @(shouldButtonBeDisabled ? "disabled" : string.Empty)"
            asp-controller="Property"
            asp-action="All"

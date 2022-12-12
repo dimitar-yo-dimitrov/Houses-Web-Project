@@ -34,7 +34,7 @@ namespace Houses.Infrastructure.Migrations
 
                     b.HasIndex("PropertyId");
 
-                    b.ToTable("ApplicationUserProperties");
+                    b.ToTable("ApplicationUserProperties", (string)null);
                 });
 
             modelBuilder.Entity("Houses.Infrastructure.Data.Entities.City", b =>
@@ -49,7 +49,7 @@ namespace Houses.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Cities");
+                    b.ToTable("Cities", (string)null);
 
                     b.HasData(
                         new
@@ -182,7 +182,7 @@ namespace Houses.Infrastructure.Migrations
 
                     b.HasIndex("AuthorId");
 
-                    b.ToTable("Posts");
+                    b.ToTable("Posts", (string)null);
                 });
 
             modelBuilder.Entity("Houses.Infrastructure.Data.Entities.Property", b =>
@@ -249,7 +249,7 @@ namespace Houses.Infrastructure.Migrations
 
                     b.HasIndex("PropertyTypeId");
 
-                    b.ToTable("Properties");
+                    b.ToTable("Properties", (string)null);
                 });
 
             modelBuilder.Entity("Houses.Infrastructure.Data.Entities.PropertyType", b =>
@@ -264,7 +264,7 @@ namespace Houses.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("PropertyTypes");
+                    b.ToTable("PropertyTypes", (string)null);
 
                     b.HasData(
                         new
