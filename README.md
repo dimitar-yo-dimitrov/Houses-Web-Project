@@ -13,7 +13,7 @@
 
 <p dir="auto">"The Houses.bg application was created for the "
 <a href="https://softuni.bg/trainings/3854/asp-net-advanced-october-2022#lesson-44959" rel="nofollow">ASP.NET Core course</a>" at SoftUni."</p>
-<p dir="auto"><em>Houses.bg is an online platform for selling properties in Bulgaria.Owners can advertise their properties for sale and thus find buyers.</em></p>
+<p dir="auto"><em>Houses.bg is an online platform for selling properties in Bulgaria.Owners can advertise their properties for sale and thus find buyers without using an agency.</em></p>
 
 <hr></hr>
 
