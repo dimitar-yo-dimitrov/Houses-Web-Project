@@ -1,0 +1,27 @@
+﻿@model PostServiceViewModel
+
+@{
+    ViewBag.Title = "Add Post";
+}
+
+<h2 class="text-center">@ViewBag.Title</h2>
+<hr />
+
+@if (!Model.Posts!.Any())
+{
+        <p class="text-center">No posts yet!</p>
+}
+
+<div class="row">
+    @foreach (var post in Model.Posts!)
+    {
+        if (User.IsInRole(AdministratorRoleName))
+        {
+                    <partial name="_PostPartial" model="@post" />
+        }
+    }
+</div>
+
+@section Scripts {
+        <partial name="_ValidationScriptsPartial" />
+}

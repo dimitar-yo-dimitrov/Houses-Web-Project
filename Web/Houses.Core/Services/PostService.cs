@@ -43,6 +43,27 @@ namespace Houses.Core.Services
             return result;
         }
 
+        public async Task<PostQueryViewModel> GetAllForAdminAsync()
+        {
+            var result = new PostQueryViewModel();
+            var posts = _repository
+                .AllReadonly<Post>(p => p.IsActive);
+
+            result.Posts = await posts
+                .Select(p => new PostServiceViewModel
+                {
+                    Id = p.Id,
+                    PropertyId = p.PropertyId,
+                    Sender = p.Sender!,
+                    Content = p.Content,
+                    Date = p.CreatedOn,
+                    AuthorId = p.Author.Id
+                })
+                .ToListAsync();
+
+            return result;
+        }
+
         public async Task CreateAsync(
             string content,
             string userId,

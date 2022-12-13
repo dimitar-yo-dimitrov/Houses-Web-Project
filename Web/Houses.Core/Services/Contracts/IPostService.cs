@@ -7,6 +7,8 @@ namespace Houses.Core.Services.Contracts
     {
         Task<PostQueryViewModel> GetAllAsync(string propertyId);
 
+        Task<PostQueryViewModel> GetAllForAdminAsync();
+
         Task CreateAsync(string content, string userId, string propertyId);
 
         Task DeletePostAsync(string id);

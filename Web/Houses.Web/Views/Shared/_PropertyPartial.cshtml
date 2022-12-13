@@ -2,8 +2,10 @@
 
 <div class="col-md-4">
     <div class="card mb-5">
-        <a asp-area="" class="text-bg-info" asp-controller="Property" asp-action="Details"
-           asp-route-id="@Model.Id"><img class="card-img-top" src="@Model.ImageUrl" alt="Property Image"></a>
+        <a asp-area="" asp-controller="Property" asp-action="Details"
+           asp-route-id="@Model.Id">
+            <img class="card-img-top" src="@Model.ImageUrl" alt="Property Image">
+        </a>
         <div class="card-body text-center">
             <h4><a asp-area="" class="text-white" asp-controller="Property" asp-action="Details"
                    asp-route-id="@Model.Id">@Model.Title</a></h4>
