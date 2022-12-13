@@ -31,22 +31,24 @@
                             <i class="fa-solid fa-comments"></i>
                         </a>
                     </div>
-
-                    @if (User.IsInRole(AdministratorRoleName))
-                    {
-                        <div class="mt-2 mb-2 m-lg-2">
-                            <a asp-area="" class="btn btn-warning text-white" asp-controller="Property" asp-action="Edit"
-                                asp-route-id="@Model.Id">
-                                <i class="fa-solid fa-pencil"></i>
-                            </a>
-                        </div>
-                        <div class="mt-2 mb-2 m-lg-2">
-                            <a onclick="return confirm('Are you sure that you want to delete @Model.Title?');" 
-                               asp-area="" class="btn btn-danger text-white" asp-controller="Property" asp-action="Delete"
-                                asp-route-id="@Model.Id">
-                                <i class="fa-solid fa-trash"></i>
-                            </a>
-                        </div>
+                    @{
+                        var userId = User.Id();
+                        @if (userId == Model.OwnerId || User.IsInRole(AdministratorRoleName))
+                        {
+                            <div class="mt-2 mb-2 m-lg-2">
+                                <a asp-area="" class="btn btn-warning text-white" asp-controller="Property" asp-action="Edit"
+                                   asp-route-id="@Model.Id">
+                                    <i class="fa-solid fa-pencil"></i>
+                                </a>
+                            </div>
+                            <div class="mt-2 mb-2 m-lg-2">
+                                <a onclick="return confirm('Are you sure that you want to delete @Model.Title?');"
+                                   asp-area="" class="btn btn-danger text-white" asp-controller="Property" asp-action="Delete"
+                                   asp-route-id="@Model.Id">
+                                    <i class="fa-solid fa-trash"></i>
+                                </a>
+                            </div>
+                        }
                     }
                 </div>
             </form>

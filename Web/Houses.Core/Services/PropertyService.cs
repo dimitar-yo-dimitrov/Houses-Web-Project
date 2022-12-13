@@ -75,7 +75,7 @@ namespace Houses.Core.Services
                     SquareMeters = p.SquareMeters,
                     ImageUrl = p.ImageUrl,
                     Date = p.CreatedOn,
-                    OwnerId = p.Owner.Id
+                    OwnerId = p.OwnerId
                 })
                 .ToListAsync();
 
@@ -165,6 +165,7 @@ namespace Houses.Core.Services
                     Address = p.Address,
                     SquareMeters = p.SquareMeters,
                     ImageUrl = p.ImageUrl,
+                    OwnerId = p.OwnerId
                 })
                 .ToListAsync();
         }

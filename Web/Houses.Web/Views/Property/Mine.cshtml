@@ -10,10 +10,15 @@
 @if (Model.Any())
 {
     <div class="row">
-
-        @foreach (var property in Model)
-        {
-            <partial name="_PropertyPartial" model="@property" />
+        @{
+            foreach (var property in Model)
+            {
+                var userId = User.Id();
+                @if (userId == property.OwnerId)
+                {
+                    <partial name="_PropertyPartial" model="@property"/>
+                }
+            }
         }
     </div>
 }
