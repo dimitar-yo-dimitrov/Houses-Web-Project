@@ -22,29 +22,29 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
-                        <form class="nav-item mt-4 mb-3 m-lg-2">
-                            <button class="btn btn-outline-primary text-black" asp-area="" asp-controller="Home" asp-action="Index">Home</button>
-                        </form>
-                        <form class="nav-item mt-4 mb-3 m-lg-2">
-                            <button class="btn btn-outline-primary text-black" asp-area="" asp-controller="Home" asp-action="About">About</button>
-                        </form>
-                        <form class="nav-item mt-4 mb-3 m-lg-2">
-                            <button class="btn btn-outline-primary text-black" asp-area="" asp-controller="Property" asp-action="All">All Properties</button>
-                        </form>
+                        <li class="nav-item mt-4 mb-3 m-lg-2">
+                            <a class="btn btn-outline-primary text-black" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        </li>
+                        <li class="nav-item mt-4 mb-3 m-lg-2">
+                            <a class="btn btn-outline-primary text-black" asp-area="" asp-controller="Home" asp-action="About">About</a>
+                        </li>
+                        <li class="nav-item mt-4 mb-3 m-lg-2">
+                            <a class="btn btn-outline-primary text-black" asp-area="" asp-controller="Property" asp-action="All">All Properties</a>
+                        </li>
                         @if (User?.Identity != null && User.Identity.IsAuthenticated)
                         {
-                            <form class="nav-item mt-4 mb-3 m-lg-2">
-                                <button class="btn btn-outline-primary text-black" asp-area="" asp-controller="Property" asp-action="Add">Add Property</button>
-                            </form>
-                            <form class="nav-item mt-4 mb-3 m-lg-2">
-                                <button class="btn btn-outline-primary text-black" asp-area="" asp-controller="Property" asp-action="Mine">My Properties</button>
-                            </form>
-                            <form class="nav-item mt-4 mb-3 m-lg-2">
-                                <button class="btn btn-outline-primary text-black" asp-area="" asp-controller="User" asp-action="MyProfile">My Profile</button>
-                            </form>
-                            <form class="nav-item mt-4 mb-3 m-lg-2">
-                                <button class="btn btn-outline-primary text-black" asp-area="" asp-controller="Post" asp-action="Mine">My Posts</button>
-                            </form>
+                            <li class="nav-item mt-4 mb-3 m-lg-2">
+                                <a class="btn btn-outline-primary text-black" asp-area="" asp-controller="Property" asp-action="Add">Add Property</a>
+                            </li>
+                            <li class="nav-item mt-4 mb-3 m-lg-2">
+                                <a class="btn btn-outline-primary text-black" asp-area="" asp-controller="Property" asp-action="Mine">My Properties</a>
+                            </li>
+                            <li class="nav-item mt-4 mb-3 m-lg-2">
+                                <a class="btn btn-outline-primary text-black" asp-area="" asp-controller="User" asp-action="MyProfile">My Profile</a>
+                            </li>
+                            <li class="nav-item mt-4 mb-3 m-lg-2">
+                                <a class="btn btn-outline-primary text-black" asp-area="" asp-controller="Post" asp-action="Mine">My Posts</a>
+                            </li>
                         }
                     </ul>
                     <partial name="_LoginPartial" />
