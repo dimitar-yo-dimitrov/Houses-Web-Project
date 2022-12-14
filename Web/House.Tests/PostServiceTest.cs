@@ -1,4 +1,4 @@
-namespace House.Tests.UserServiceTest
+namespace Houses.Tests
 {
     public class Tests
     {

@@ -77,7 +77,7 @@ namespace Houses.Web.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Details(string id)
         {
-            if (await _propertyService.ExistsAsync(id) == false)
+            if (await _propertyService.ExistAsync(id) == false)
             {
                 return RedirectToAction(nameof(All));
             }
@@ -132,7 +132,7 @@ namespace Houses.Web.Controllers
                     string.Format(IdIsNull));
             }
 
-            string id = await _propertyService.CreateAsync(propertyModel, userId);
+            string id = await _propertyService.CreateAsync(userId, propertyModel);
 
             if (id == null)
             {
@@ -198,7 +198,7 @@ namespace Houses.Web.Controllers
                 return View(propertyToUpdate);
             }
 
-            await _propertyService.EditAsync(propertyToUpdate, id);
+            await _propertyService.EditAsync(id, propertyToUpdate);
 
             return RedirectToAction(nameof(Details), new { id });
         }
@@ -206,7 +206,7 @@ namespace Houses.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Delete(string id)
         {
-            if (await _propertyService.ExistsAsync(id) == false)
+            if (await _propertyService.ExistAsync(id) == false)
             {
                 return RedirectToAction(nameof(All));
             }
@@ -227,7 +227,7 @@ namespace Houses.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(string id, DetailsPropertyServiceModel model)
         {
-            if (await _propertyService.ExistsAsync(id) == false)
+            if (await _propertyService.ExistAsync(id) == false)
             {
                 return RedirectToAction(nameof(All));
             }

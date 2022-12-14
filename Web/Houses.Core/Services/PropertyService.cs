@@ -84,7 +84,7 @@ namespace Houses.Core.Services
             return result;
         }
 
-        public async Task<string> CreateAsync(CreatePropertyInputModel model, string? userId)
+        public async Task<string> CreateAsync(string userId, CreatePropertyInputModel model)
         {
             if (userId == null)
             {
@@ -118,7 +118,7 @@ namespace Houses.Core.Services
             return model.Id;
         }
 
-        public async Task EditAsync(CreatePropertyInputModel model, string? id)
+        public async Task EditAsync(string? id, CreatePropertyInputModel model)
         {
             if (id == null)
             {
@@ -127,9 +127,7 @@ namespace Houses.Core.Services
             }
 
             var property = await _repository
-                .AllReadonly<Property>(p => p.IsActive)
-                .Where(p => p.Id == id)
-                .FirstOrDefaultAsync();
+                .GetByIdAsync<Property>(id);
 
             if (property == null)
             {
@@ -170,7 +168,7 @@ namespace Houses.Core.Services
                 .ToListAsync();
         }
 
-        public async Task<bool> ExistsAsync(string propertyId)
+        public async Task<bool> ExistAsync(string propertyId)
         {
             return await _repository.AllReadonly<Property>()
                 .AnyAsync(p => p.Id == propertyId && p.IsActive);

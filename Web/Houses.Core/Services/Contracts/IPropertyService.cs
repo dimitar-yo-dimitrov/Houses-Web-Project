@@ -13,15 +13,15 @@ namespace Houses.Core.Services.Contracts
             int currentPage = 1,
             int housesPerPage = 1);
 
-        Task<string> CreateAsync(CreatePropertyInputModel property, string userId);
+        Task<string> CreateAsync(string userId, CreatePropertyInputModel property);
 
         Task RemovePropertyFromCollectionAsync(string propertyId);
 
-        Task<bool> ExistsAsync(string propertyId);
+        Task<bool> ExistAsync(string propertyId);
 
         Task<DetailsPropertyServiceModel> PropertyDetailsByIdAsync(string propertyId);
 
-        Task EditAsync(CreatePropertyInputModel model, string id);
+        Task EditAsync(string? id, CreatePropertyInputModel model);
 
         Task<IEnumerable<PropertyServiceViewModel>> AllPropertiesByUserIdAsync(string userId);
     }
