@@ -5,7 +5,7 @@ namespace Houses.Core.Services.Contracts
 {
     public interface IPostService
     {
-        Task<PostQueryViewModel> GetAllAsync(string propertyId);
+        Task<PostQueryViewModel> GetAllByPropertyIdAsync(string propertyId);
 
         Task<PostQueryViewModel> GetAllForAdminAsync();
 

@@ -22,7 +22,7 @@ namespace Houses.Core.Services
             _userService = userService;
         }
 
-        public async Task<PostQueryViewModel> GetAllAsync(string propertyId)
+        public async Task<PostQueryViewModel> GetAllByPropertyIdAsync(string propertyId)
         {
             var result = new PostQueryViewModel();
             var posts = _repository

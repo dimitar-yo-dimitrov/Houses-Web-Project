@@ -25,9 +25,9 @@ namespace Houses.Web.Controllers
         {
             ViewBag.Title = "All posts";
 
-            var result = await _postService.GetAllAsync(propertyId);
+            var result = await _postService.GetAllByPropertyIdAsync(propertyId);
 
-            model.Posts = result!.Posts;
+            model.Posts = result.Posts;
 
             if (model == null)
             {

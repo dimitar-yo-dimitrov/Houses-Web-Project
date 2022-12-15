@@ -5,6 +5,7 @@ namespace Houses.Tests
     [TestFixture]
     public class PropertyServiceTest
     {
+        private IUserService _userService;
         private IPropertyService _propertyService;
         private ApplicationDbContext _dbContext;
         private IApplicationDbRepository _repository;
@@ -26,6 +27,7 @@ namespace Houses.Tests
 
             _repository = new ApplicationDbRepository(_dbContext);
             _propertyService = new PropertyService(_repository);
+            _userService = new UserService(_repository);
         }
 
         [Test]
@@ -56,16 +58,30 @@ namespace Houses.Tests
             });
 
             var properties = _repository.AllReadonly<Property>();
+            var users = _repository.AllReadonly<ApplicationUser>();
 
             await _propertyService.ExistAsync(propertyId);
 
             Assert.That(user.Id, Is.EqualTo(userId));
             Assert.That(properties.Count(), Is.EqualTo(1));
+            Assert.That(users.Count(), Is.EqualTo(1));
         }
 
         [Test]
         public async Task TestPropertyDetailsByIdAsync()
         {
+            var user = new ApplicationUser
+            {
+                Id = userId,
+                Email = "user@gmail.com",
+                FirstName = "Peter",
+                LastName = "",
+                CreatedOn = DateTime.UtcNow,
+            };
+
+            await _repository.AddAsync(user);
+            await _repository.SaveChangesAsync();
+
             var model = new CreatePropertyInputModel
             {
                 Id = propertyId,
@@ -76,20 +92,63 @@ namespace Houses.Tests
                 CityId = "",
                 PropertyTypeId = "",
                 Price = 100m,
+
             };
 
             await _propertyService.CreateAsync(userId, model);
 
-            await _propertyService.ExistAsync(propertyId);
+            //await _propertyService.ExistAsync(propertyId);
 
             var properties = _repository.AllReadonly<Property>();
 
-            //await _propertyService.PropertyDetailsByIdAsync(propertyId);
+            //public class DetailsPropertyServiceModel : DetailsPropertyViewModel
+            //{
+            //    public ApplicationUser? User { get; set; }
+
+            //    public PropertyServiceViewModel? PropertyDto { get; set; }
+            //}
+
+            //var propertyToReturn = new PropertyServiceViewModel
+            //{
+            //    Id = property!.Id,
+            //    Description = property.Description,
+            //    Address = property.Address,
+            //    Title = property.Title,
+            //    ImageUrl = property.ImageUrl,
+            //    Price = property.Price,
+            //    SquareMeters = property.SquareMeters,
+            //    PropertyTypeId = property.PropertyTypeId,
+            //    PropertyType = property.PropertyType.Title,
+            //    CityId = property.CityId,
+            //    User = new ApplicationUser
+            //    {
+            //        FirstName = property.Owner.FirstName,
+            //        LastName = property.Owner.LastName,
+            //        Email = property.Owner.Email,
+            //        PhoneNumber = property.Owner.PhoneNumber,
+            //        ProfilePicture = property.Owner.ProfilePicture
+            //    }
+            //};
+
+            //var multiModel = new DetailsPropertyServiceModel
+            //{
+            //    PropertyDto = propertyToReturn,
+            //};
+
+            //var property = await _repository
+            //    .All<Property>()
+            //    .FirstOrDefaultAsync(p => p.Id == propertyId);
+
+            bool propertyIdExist = await _propertyService.ExistAsync(propertyId);
+
+            //var modelForTesting = await _propertyService.PropertyDetailsByIdAsync(propertyId);
 
             Assert.Multiple(() =>
             {
                 Assert.That(model.Id, Is.EqualTo(propertyId));
                 Assert.That(properties.Count(), Is.EqualTo(1));
+                Assert.That(propertyIdExist, Is.EqualTo(false));
+                //Assert.That(multiModel.User!.FirstName, Is.EqualTo(null));
             });
         }
 
