@@ -1,10 +1,13 @@
-﻿namespace Houses.Tests
+﻿using Houses.Infrastructure.Data.Identity;
+
+namespace Houses.Tests
 {
     [TestFixture]
     public class PropertyServiceTest
     {
         private IPropertyService _propertyService;
         private ApplicationDbContext _dbContext;
+        private IApplicationDbRepository _repository;
 
         const string propertyId = "7FC04F86-0B82-4AEC-B634-84A8E57381CB";
         const string userId = "D5F34ADA-B2F3-4890-B6BA-C055EBC85703";
@@ -20,15 +23,27 @@
 
             _dbContext.Database.EnsureDeleted();
             _dbContext.Database.EnsureCreated();
+
+            _repository = new ApplicationDbRepository(_dbContext);
+            _propertyService = new PropertyService(_repository);
         }
 
         [Test]
         public async Task TestCreateAsyncAndExistAsync()
         {
-            var repo = new ApplicationDbRepository(_dbContext);
-            _propertyService = new PropertyService(repo);
+            var user = new ApplicationUser
+            {
+                Id = userId,
+                Email = "user@gmail.com",
+                FirstName = "Peter",
+                LastName = "",
+                CreatedOn = DateTime.UtcNow,
+            };
 
-            await _propertyService.CreateAsync(propertyId, new CreatePropertyInputModel
+            await _repository.AddAsync(user);
+            await _repository.SaveChangesAsync();
+
+            await _propertyService.CreateAsync(userId, new CreatePropertyInputModel
             {
                 Id = propertyId,
                 Address = "",
@@ -37,37 +52,50 @@
                 Description = "This house is edited",
                 CityId = "",
                 PropertyTypeId = "",
-                Price = 100m
+                Price = 100m,
             });
 
-            var properties = repo.All<Property>();
+            var properties = _repository.AllReadonly<Property>();
 
             await _propertyService.ExistAsync(propertyId);
 
+            Assert.That(user.Id, Is.EqualTo(userId));
             Assert.That(properties.Count(), Is.EqualTo(1));
         }
 
-        //[Test]
-        //public async Task TestPropertyDetailsByIdAsync()
-        //{
-        //    var repo = new ApplicationDbRepository(_dbContext);
-        //    _propertyService = new PropertyService(repo);
+        [Test]
+        public async Task TestPropertyDetailsByIdAsync()
+        {
+            var model = new CreatePropertyInputModel
+            {
+                Id = propertyId,
+                Address = "",
+                ImageUrl = "",
+                Title = "",
+                Description = "This house is edited",
+                CityId = "",
+                PropertyTypeId = "",
+                Price = 100m,
+            };
 
-        //    var userId = "D5F34ADA-B2F3-4890-B6BA-C055EBC85703";
-        //    var propertyId = "7FC04F86-0B82-4AEC-B634-84A8E57381CB";
+            await _propertyService.CreateAsync(userId, model);
 
+            await _propertyService.ExistAsync(propertyId);
 
-        //    await _propertyService.PropertyDetailsByIdAsync("7FC04F86-0B82-4AEC-B634-84A8E57381CB");
+            var properties = _repository.AllReadonly<Property>();
 
-        //    Assert.AreEqual("Test", model.Description);
-        //}
+            //await _propertyService.PropertyDetailsByIdAsync(propertyId);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(model.Id, Is.EqualTo(propertyId));
+                Assert.That(properties.Count(), Is.EqualTo(1));
+            });
+        }
 
         [Test]
         public async Task TestRemovePropertyFromCollectionAsync()
         {
-            var repo = new ApplicationDbRepository(_dbContext);
-            _propertyService = new PropertyService(repo);
-
             var model = new Property
             {
                 Id = propertyId,
@@ -81,12 +109,12 @@
                 IsActive = true,
             };
 
-            await repo.AddAsync(model);
-            await repo.SaveChangesAsync();
+            await _repository.AddAsync(model);
+            await _repository.SaveChangesAsync();
 
             await _propertyService.RemovePropertyFromCollectionAsync(propertyId);
 
-            var product = await repo.GetByIdAsync<Property>(propertyId);
+            var product = await _repository.GetByIdAsync<Property>(propertyId);
 
             Assert.That(product.IsActive, Is.EqualTo(false));
         }
@@ -94,10 +122,7 @@
         [Test]
         public async Task TestGetAllAsync()
         {
-            var repo = new ApplicationDbRepository(_dbContext);
-            _propertyService = new PropertyService(repo);
-
-            await repo.AddRangeAsync(new List<Property>()
+            await _repository.AddRangeAsync(new List<Property>()
             {
                 new() { Id = propertyId,
                     Address = "", ImageUrl = "", Title = "", Description = "", CityId = "", PropertyTypeId = "", OwnerId = "" },
@@ -109,7 +134,7 @@
                     Address = "", ImageUrl = "", Title = "", Description = "", CityId = "", PropertyTypeId = "", OwnerId = "" }
             });
 
-            await repo.SaveChangesAsync();
+            await _repository.SaveChangesAsync();
             var properties = await _propertyService.GetAllAsync();
 
             Assert.That(3, Is.EqualTo(properties.TotalPropertyCount));
@@ -119,10 +144,7 @@
         [Test]
         public async Task TestAllPropertiesByUserIdAsync()
         {
-            var repo = new ApplicationDbRepository(_dbContext);
-            _propertyService = new PropertyService(repo);
-
-            await repo.AddRangeAsync(new List<Property>()
+            await _repository.AddRangeAsync(new List<Property>()
             {
                 new() { Id = propertyId,
                     Address = "", ImageUrl = "", Title = "", Description = "", CityId = "", PropertyTypeId = "", OwnerId = userId },
@@ -134,7 +156,7 @@
                     Address = "", ImageUrl = "", Title = "", Description = "", CityId = "", PropertyTypeId = "", OwnerId = "" }
             });
 
-            await repo.SaveChangesAsync();
+            await _repository.SaveChangesAsync();
             var properties = await _propertyService.AllPropertiesByUserIdAsync(userId);
 
             Assert.That(2, Is.EqualTo(properties.Count()));
@@ -143,10 +165,7 @@
         [Test]
         public async Task TestEditAsync()
         {
-            var repo = new ApplicationDbRepository(_dbContext);
-            _propertyService = new PropertyService(repo);
-
-            await repo.AddAsync(new Property
+            await _repository.AddAsync(new Property
             {
                 Id = propertyId,
                 Address = "",
@@ -158,7 +177,7 @@
                 OwnerId = "",
             });
 
-            await repo.SaveChangesAsync();
+            await _repository.SaveChangesAsync();
 
             await _propertyService.EditAsync(propertyId, new CreatePropertyInputModel
             {
@@ -171,7 +190,7 @@
                 PropertyTypeId = "",
             });
 
-            var property = await repo.GetByIdAsync<Property>(propertyId);
+            var property = await _repository.GetByIdAsync<Property>(propertyId);
 
             Assert.That(property.Description, Is.EqualTo("This house is edited"));
         }

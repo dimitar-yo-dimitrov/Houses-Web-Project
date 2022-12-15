@@ -4,7 +4,7 @@ namespace Houses.Core.ViewModels.Property
 {
     public class DetailsPropertyServiceModel : DetailsPropertyViewModel
     {
-        public ApplicationUser? User { get; set; } = null!;
+        public ApplicationUser? User { get; set; }
 
         public PropertyServiceViewModel? PropertyDto { get; set; }
     }

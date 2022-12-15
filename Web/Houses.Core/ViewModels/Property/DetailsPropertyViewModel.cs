@@ -9,16 +9,16 @@
 
         public string Id { get; init; }
 
-        public string Title { get; init; } = null!;
+        public string? Title { get; init; }
 
-        public string CreatedByName { get; set; } = null!;
+        public string? CreatedByName { get; set; }
 
-        public string Address { get; init; } = null!;
+        public string? Address { get; init; }
 
-        public string ImageUrl { get; init; } = null!;
+        public string? ImageUrl { get; init; }
 
-        public decimal Price { get; init; }
+        public decimal? Price { get; init; }
 
-        public string Description { get; init; } = null!;
+        public string? Description { get; init; }
     }
 }
