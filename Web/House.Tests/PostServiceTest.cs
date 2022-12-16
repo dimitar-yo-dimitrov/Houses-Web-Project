@@ -34,23 +34,11 @@ namespace Houses.Tests
         {
             var content = "Test";
 
-            //var user = new ApplicationUser
-            //{
-            //    Id = userId,
-            //    Email = "user@gmail.com",
-            //    FirstName = "Peter",
-            //    LastName = "",
-            //    CreatedOn = DateTime.UtcNow,
-            //};
-
-            //await _repository.AddAsync(user);
-            //await _repository.SaveChangesAsync();
-
-            Post post = new Post
+            var post = new Post
             {
-                Id = postId,
                 Sender = "Peter",
                 Content = content,
+                CreatedOn = DateTime.UtcNow,
                 AuthorId = userId,
                 PropertyId = propertyId
             };
@@ -59,9 +47,6 @@ namespace Houses.Tests
             await _repository.SaveChangesAsync();
 
             var posts = _repository.AllReadonly<Post>();
-            //var users = _repository.AllReadonly<ApplicationUser>();
-
-            //await _postService.ExistsAsync(postId);
 
             Assert.That(posts.Count(), Is.EqualTo(expected: 1));
         }

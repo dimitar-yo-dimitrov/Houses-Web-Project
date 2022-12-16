@@ -42,29 +42,36 @@ namespace Houses.Tests
                 CreatedOn = DateTime.UtcNow,
             };
 
+            Assert.IsNotNull(user);
+
             await _repository.AddAsync(user);
             await _repository.SaveChangesAsync();
 
-            await _propertyService.CreateAsync(userId, new CreatePropertyInputModel
+            var id = await _propertyService.CreateAsync(userId, new CreatePropertyInputModel
             {
                 Id = propertyId,
                 Address = "",
                 ImageUrl = "",
                 Title = "",
-                Description = "This house is edited",
+                Description = "Test",
                 CityId = "",
                 PropertyTypeId = "",
                 Price = 100m,
             });
 
             var properties = _repository.AllReadonly<Property>();
+
+            Assert.IsNotNull(properties);
+
             var users = _repository.AllReadonly<ApplicationUser>();
 
             await _propertyService.ExistAsync(propertyId);
 
+            Assert.That(id, Is.EqualTo(propertyId));
             Assert.That(user.Id, Is.EqualTo(userId));
             Assert.That(properties.Count(), Is.EqualTo(1));
             Assert.That(users.Count(), Is.EqualTo(1));
+
         }
 
         [Test]

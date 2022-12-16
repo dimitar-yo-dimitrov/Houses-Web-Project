@@ -13,7 +13,7 @@ namespace Houses.Infrastructure.Data.Configuration
 
         private static IEnumerable<City> CreatePropertyTypes()
         {
-            var propertyTypes = new List<City>()
+            var cities = new List<City>
             {
                 new()
                 {
@@ -107,7 +107,7 @@ namespace Houses.Infrastructure.Data.Configuration
                 },
             };
 
-            return propertyTypes;
+            return cities;
         }
     }
 }

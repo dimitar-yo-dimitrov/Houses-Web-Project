@@ -6,6 +6,5 @@ global using Houses.Core.ViewModels.Property;
 global using Houses.Infrastructure.Data;
 global using Houses.Infrastructure.Data.Entities;
 global using Houses.Infrastructure.Data.Repositories;
-global using Microsoft.Data.Sqlite;
 global using Microsoft.EntityFrameworkCore;
 global using NUnit.Framework;
