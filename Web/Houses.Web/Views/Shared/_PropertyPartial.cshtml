@@ -7,7 +7,7 @@
             <img class="card-img-top" src="@Model.ImageUrl" alt="Property Image">
         </a>
         <div class="card-body text-center">
-            <h4><a asp-area="" class="text-white" asp-controller="Property" asp-action="Details"
+            <h4><a asp-area="" class="card-text" asp-controller="Property" asp-action="Details"
                    asp-route-id="@Model.Id">@Model.Title</a></h4>
             <h6>Address: <b>@Model.Address</b></h6>
             <h6>Description: 

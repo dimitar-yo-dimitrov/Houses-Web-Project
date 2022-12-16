@@ -1,5 +1,4 @@
 ﻿using Houses.Core.ViewModels.User;
-using Houses.Infrastructure.Data.Identity;
 
 namespace Houses.Tests
 {

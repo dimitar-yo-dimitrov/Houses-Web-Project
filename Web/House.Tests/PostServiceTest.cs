@@ -74,6 +74,30 @@ namespace Houses.Tests
         }
 
         [Test]
+        public async Task TestGetAllByPropertyIdAsync()
+        {
+            var content = "Test";
+
+            Post post = new Post
+            {
+                Id = postId,
+                Sender = "Peter",
+                Content = content,
+                AuthorId = userId,
+                PropertyId = propertyId
+            };
+
+            await _repository.AddAsync(post);
+            await _repository.SaveChangesAsync();
+
+            var result = _postService.GetAllByPropertyIdAsync(propertyId);
+            var posts = _postService.GetAllForAdminAsync();
+
+            Assert.That(result.Result.Posts.Count(), Is.EqualTo(expected: 0));
+            Assert.That(posts.Result.Posts.Count(), Is.EqualTo(expected: 0));
+        }
+
+        [Test]
         public async Task TestDeletePostAsync()
         {
             var content = "Test";
@@ -95,13 +119,48 @@ namespace Houses.Tests
 
             var postById = _repository.GetByIdAsync<Post>(postId);
 
-            postById.Result.IsActive = false;
+            Assert.That(postById.Result.Sender, Is.EqualTo(expected: "Peter"));
 
-            await _repository.SaveChangesAsync();
+            await _postService.DeletePostAsync(postId);
 
             var result = _postService.GetAllByIdAsync(userId);
 
             Assert.That(result.Result.Count(), Is.EqualTo(expected: 0));
+        }
+
+        [Test]
+        public async Task TestEditAsync()
+        {
+            var content = "Test";
+
+            Post post = new Post
+            {
+                Id = postId,
+                Sender = "Peter",
+                Content = content,
+                AuthorId = userId,
+                PropertyId = propertyId,
+                IsActive = true
+            };
+
+            await _repository.AddAsync(post);
+            await _repository.SaveChangesAsync();
+
+            //var model = new CreatePostInputViewModel
+            //{
+            //    Sender = post.Sender!,
+            //    Content = post.Content
+            //};
+
+            //await _postService.EditAsync(postId, new CreatePostInputViewModel
+            //{
+            //    Sender = model.Sender,
+            //    Content = model.Content = "Test1"
+            //});
+
+            var postById = _postService.GetPostAsync(postId);
+
+            Assert.That(postById.Result.Sender, Is.EqualTo(expected: "Peter"));
         }
 
         [Test]

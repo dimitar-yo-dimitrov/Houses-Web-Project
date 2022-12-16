@@ -125,7 +125,7 @@ namespace Houses.Core.Services
                 .ToListAsync();
         }
 
-        public async Task EditAsync(CreatePostInputViewModel model, string id)
+        public async Task EditAsync(string id, CreatePostInputViewModel model)
         {
             if (id == null)
             {

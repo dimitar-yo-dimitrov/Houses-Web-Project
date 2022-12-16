@@ -27,7 +27,7 @@ namespace Houses.Web.Controllers
 
             var result = await _postService.GetAllByPropertyIdAsync(propertyId);
 
-            model.Posts = result.Posts;
+            model.Posts = result!.Posts;
 
             if (model == null)
             {
@@ -134,10 +134,11 @@ namespace Houses.Web.Controllers
                 return View(postToUpdate);
             }
 
-            await _postService.EditAsync(postToUpdate, id);
+            await _postService.EditAsync(id, postToUpdate);
 
             return RedirectToAction(nameof(Mine));
         }
+
 
         [HttpGet]
         public async Task<IActionResult> Delete(string id)

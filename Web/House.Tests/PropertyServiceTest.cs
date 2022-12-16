@@ -1,11 +1,8 @@
-﻿using Houses.Infrastructure.Data.Identity;
-
-namespace Houses.Tests
+﻿namespace Houses.Tests
 {
     [TestFixture]
     public class PropertyServiceTest
     {
-        private IUserService _userService;
         private IPropertyService _propertyService;
         private ApplicationDbContext _dbContext;
         private IApplicationDbRepository _repository;
@@ -27,7 +24,6 @@ namespace Houses.Tests
 
             _repository = new ApplicationDbRepository(_dbContext);
             _propertyService = new PropertyService(_repository);
-            _userService = new UserService(_repository);
         }
 
         [Test]
@@ -99,63 +95,22 @@ namespace Houses.Tests
                 CityId = "",
                 PropertyTypeId = "",
                 Price = 100m,
+                PropertyTypes = { },
+                Cities = { }
 
             };
 
             await _propertyService.CreateAsync(userId, model);
 
-            //await _propertyService.ExistAsync(propertyId);
-
             var properties = _repository.AllReadonly<Property>();
 
-            //public class DetailsPropertyServiceModel : DetailsPropertyViewModel
-            //{
-            //    public ApplicationUser? User { get; set; }
-
-            //    public PropertyServiceViewModel? PropertyDto { get; set; }
-            //}
-
-            //var propertyToReturn = new PropertyServiceViewModel
-            //{
-            //    Id = property!.Id,
-            //    Description = property.Description,
-            //    Address = property.Address,
-            //    Title = property.Title,
-            //    ImageUrl = property.ImageUrl,
-            //    Price = property.Price,
-            //    SquareMeters = property.SquareMeters,
-            //    PropertyTypeId = property.PropertyTypeId,
-            //    PropertyType = property.PropertyType.Title,
-            //    CityId = property.CityId,
-            //    User = new ApplicationUser
-            //    {
-            //        FirstName = property.Owner.FirstName,
-            //        LastName = property.Owner.LastName,
-            //        Email = property.Owner.Email,
-            //        PhoneNumber = property.Owner.PhoneNumber,
-            //        ProfilePicture = property.Owner.ProfilePicture
-            //    }
-            //};
-
-            //var multiModel = new DetailsPropertyServiceModel
-            //{
-            //    PropertyDto = propertyToReturn,
-            //};
-
-            //var property = await _repository
-            //    .All<Property>()
-            //    .FirstOrDefaultAsync(p => p.Id == propertyId);
-
             bool propertyIdExist = await _propertyService.ExistAsync(propertyId);
-
-            //var modelForTesting = await _propertyService.PropertyDetailsByIdAsync(propertyId);
 
             Assert.Multiple(() =>
             {
                 Assert.That(model.Id, Is.EqualTo(propertyId));
                 Assert.That(properties.Count(), Is.EqualTo(1));
                 Assert.That(propertyIdExist, Is.EqualTo(false));
-                //Assert.That(multiModel.User!.FirstName, Is.EqualTo(null));
             });
         }
 

@@ -15,7 +15,7 @@ namespace Houses.Core.Services.Contracts
 
         Task<IEnumerable<PostServiceViewModel>> GetAllByIdAsync(string id);
 
-        Task EditAsync(CreatePostInputViewModel model, string id);
+        Task EditAsync(string id, CreatePostInputViewModel model);
 
         Task<Post> GetPostAsync(string postId);
 
