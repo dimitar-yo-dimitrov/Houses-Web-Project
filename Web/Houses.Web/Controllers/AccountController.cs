@@ -99,10 +99,7 @@ namespace Houses.Web.Controllers
 
             if (user != null)
             {
-                bool rememberMe = true;
-                bool shouldLockout = false;
-
-                var result = await _signInManager.PasswordSignInAsync(user, model.Password, rememberMe, shouldLockout);
+                var result = await _signInManager.PasswordSignInAsync(user, model.Password, true, lockoutOnFailure: true);
 
                 if (result.Succeeded)
                 {

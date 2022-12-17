@@ -5,7 +5,7 @@
     {
         <li>
             <form class="mt-2 mb-3 m-lg-4">
-                <a asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @(User.Identity!.Name)!</a>
+                <a asp-area="" asp-controller="User" asp-action="MyProfile">Hello @(User.Identity!.Name)!</a>
             </form>
         </li>
         if (User.IsInRole(AdministratorRoleName))
