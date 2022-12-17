@@ -44,8 +44,9 @@ namespace Houses.Web.Controllers
         {
             if (string.IsNullOrEmpty(content))
             {
-                throw new NullReferenceException(
-                    string.Format(ContentMessage));
+                ViewBag.Title = "The Content field is required.";
+
+                return RedirectToAction(nameof(AllPost));
             }
 
             string userId = await _userService.GetUserId(User.Id());
