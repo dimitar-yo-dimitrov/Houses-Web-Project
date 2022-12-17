@@ -44,9 +44,7 @@ namespace Houses.Web.Controllers
         {
             if (string.IsNullOrEmpty(content))
             {
-                ViewBag.Title = "The Content field is required.";
-
-                return RedirectToAction(nameof(AllPost));
+                return RedirectToAction(nameof(AllPost), new { propertyId });
             }
 
             string userId = await _userService.GetUserId(User.Id());
@@ -177,7 +175,7 @@ namespace Houses.Web.Controllers
 
             await _postService.DeletePostAsync(id);
 
-            return RedirectToAction(nameof(Mine));
+            return RedirectToAction("All", "Property");
         }
     }
 }
