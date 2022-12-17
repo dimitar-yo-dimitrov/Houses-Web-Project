@@ -44,7 +44,8 @@
             public const string PriceMinLength = "0.00";
             public const string PriceMaxLength = "1000000000.00";
 
-            public const string RegexAddress = @"^([A-Za-z]+?\s?[A-Za-z]+),\s([A-Za-z]+?\s?[A-Za-z]+),\s([\d]{1,4}),?\s?([\d+]{1,4})?,?\s?([A-Za-z])?,?\s?([\d+]{1,4})?,?\s?([\d+]{1,4})?,\s([\d]{4,4})$";
+            public const string RegexAddress =
+                @"^([A-Za-z]+?\s?[A-Za-z]+),\s([A-Za-z]+?\s?[A-Za-z]+),\s([\d]{1,4}),?\s?([\d+]{1,4})?,?\s?([A-Za-z])?,?\s?([\d+]{1,4})?,?\s?([\d+]{1,4})?,\s([\d]{4,4})$";
             public const string RegexAddressError = "Enter address in the format: City, street, number, block, entrance, floor, apartment, postal code";
 
             public const string SquareMetersMin = "1.00";
