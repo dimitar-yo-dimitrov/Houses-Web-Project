@@ -14,8 +14,8 @@
             <form>
                 <div class="navbar-collapse collapse d-sm-inline-flex">
                     @{
-                        var name = User.Identity!.Name!.ToLower();
-                        if (name == Model.Sender!.ToLower() || User.IsInRole(AdministratorRoleName))
+                        var userId = User.Id();
+                        if (userId == Model.AuthorId || User.IsInRole(AdministratorRoleName))
                         {
                             <div class="mt-2 mb-2 m-lg-2">
                                 <a asp-area="" class="btn btn-warning mt-2 mb-2 m-lg-2 text-white" asp-controller="Post" asp-action="Edit"
