@@ -20,6 +20,7 @@ namespace Houses.Core.ViewModels.Property
         public string Title { get; init; } = null!;
 
         [Required]
+        [Range(typeof(decimal), PriceMinLength, PriceMaxLength)]
         public decimal Price { get; init; }
 
         [Required(AllowEmptyStrings = false)]
@@ -31,6 +32,7 @@ namespace Houses.Core.ViewModels.Property
         [RegularExpression(RegexAddress, ErrorMessage = RegexAddressError)]
         public string Address { get; init; } = null!;
 
+        [Range(typeof(double), SquareMetersMin, SquareMetersMax)]
         public double? SquareMeters { get; init; }
 
         [Required]
