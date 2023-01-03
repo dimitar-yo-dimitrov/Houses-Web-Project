@@ -56,7 +56,7 @@ namespace Houses.Web.Controllers
         {
             var userId = User.Id();
 
-            if (userId == null)
+            if (string.IsNullOrEmpty(userId))
             {
                 throw new NullReferenceException(
                     string.Format(IdIsNull));
@@ -126,7 +126,7 @@ namespace Houses.Web.Controllers
 
             string userId = await _userService.GetUserId(User.Id());
 
-            if (userId == null)
+            if (string.IsNullOrEmpty(userId))
             {
                 throw new NullReferenceException(
                     string.Format(IdIsNull));
@@ -134,7 +134,7 @@ namespace Houses.Web.Controllers
 
             string id = await _propertyService.CreateAsync(userId, propertyModel);
 
-            if (id == null)
+            if (string.IsNullOrEmpty(id))
             {
                 throw new NullReferenceException(
                     string.Format(IdIsNull));
@@ -146,7 +146,7 @@ namespace Houses.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(string? id)
         {
-            if (id == null)
+            if (string.IsNullOrEmpty(id))
             {
                 throw new NullReferenceException(
                     string.Format(IdIsNull));
@@ -181,7 +181,7 @@ namespace Houses.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(CreatePropertyInputModel propertyToUpdate, string? id)
         {
-            if (id == null)
+            if (string.IsNullOrEmpty(id))
             {
                 throw new NullReferenceException(
                     string.Format(IdIsNull));

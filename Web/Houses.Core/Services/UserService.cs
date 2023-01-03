@@ -40,6 +40,12 @@ namespace Houses.Core.Services
 
         public async Task<EditUserInputViewModel> GetUserForEdit(string id)
         {
+            if (string.IsNullOrEmpty(id))
+            {
+                throw new NullReferenceException(
+                    string.Format(ExceptionMessages.IdIsNull));
+            }
+
             var user = await _repository.GetByIdAsync<ApplicationUser>(id);
 
             if (user == null)
@@ -61,6 +67,12 @@ namespace Houses.Core.Services
 
         public async Task<IEnumerable<UserServiceViewModel>> GetUserByIdForProfile(string id)
         {
+            if (string.IsNullOrEmpty(id))
+            {
+                throw new NullReferenceException(
+                    string.Format(ExceptionMessages.IdIsNull));
+            }
+
             return await _repository.All<ApplicationUser>(u => u.IsActive)
                 .Where(au => au.Id == id)
                 .Select(u => new UserServiceViewModel
@@ -102,18 +114,36 @@ namespace Houses.Core.Services
 
         public async Task<ApplicationUser> GetUserById(string id)
         {
+            if (string.IsNullOrEmpty(id))
+            {
+                throw new NullReferenceException(
+                    string.Format(ExceptionMessages.IdIsNull));
+            }
+
             return await _repository
                 .GetByIdAsync<ApplicationUser>(id);
         }
 
         public async Task<string> GetUserId(string id)
         {
+            if (string.IsNullOrEmpty(id))
+            {
+                throw new NullReferenceException(
+                    string.Format(ExceptionMessages.IdIsNull));
+            }
+
             return ((await _repository.AllReadonly<ApplicationUser>(u => u.IsActive)
                 .FirstOrDefaultAsync(au => au.Id == id))?.Id ?? null)!;
         }
 
         public async Task DeleteUserAsync(string userId)
         {
+            if (string.IsNullOrEmpty(userId))
+            {
+                throw new NullReferenceException(
+                    string.Format(ExceptionMessages.IdIsNull));
+            }
+
             var user = await _repository.GetByIdAsync<ApplicationUser>(userId);
 
             if (user == null)

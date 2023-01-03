@@ -17,7 +17,7 @@ namespace Houses.Infrastructure.Data.Entities
         public string Id { get; set; }
 
         [Required]
-        [MaxLength(PostMaxSender)]
+        [MaxLength(SenderMaxLength)]
         public string? Sender { get; set; } = null!;
 
         [Required]

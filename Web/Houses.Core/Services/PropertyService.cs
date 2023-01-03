@@ -86,7 +86,7 @@ namespace Houses.Core.Services
 
         public async Task<string> CreateAsync(string userId, CreatePropertyInputModel model)
         {
-            if (userId == null)
+            if (string.IsNullOrEmpty(userId))
             {
                 throw new NullReferenceException(
                     string.Format(ExceptionMessages.IdIsNull));
@@ -120,7 +120,7 @@ namespace Houses.Core.Services
 
         public async Task EditAsync(string? id, CreatePropertyInputModel model)
         {
-            if (id == null)
+            if (string.IsNullOrEmpty(id))
             {
                 throw new NullReferenceException(
                     string.Format(ExceptionMessages.IdIsNull));
@@ -151,6 +151,12 @@ namespace Houses.Core.Services
 
         public async Task<IEnumerable<PropertyServiceViewModel>> AllPropertiesByUserIdAsync(string userId)
         {
+            if (string.IsNullOrEmpty(userId))
+            {
+                throw new NullReferenceException(
+                    string.Format(ExceptionMessages.IdIsNull));
+            }
+
             return await _repository
                 .AllReadonly<Property>(p => p.IsActive)
                 .Where(p => p.OwnerId == userId)
@@ -170,6 +176,12 @@ namespace Houses.Core.Services
 
         public async Task<bool> ExistAsync(string propertyId)
         {
+            if (string.IsNullOrEmpty(propertyId))
+            {
+                throw new NullReferenceException(
+                    string.Format(ExceptionMessages.IdIsNull));
+            }
+
             return await _repository.AllReadonly<Property>()
                 .AnyAsync(p => p.Id == propertyId && p.IsActive);
         }
@@ -178,6 +190,12 @@ namespace Houses.Core.Services
         {
             try
             {
+                if (string.IsNullOrEmpty(propertyId))
+                {
+                    throw new NullReferenceException(
+                        string.Format(ExceptionMessages.IdIsNull));
+                }
+
                 var property = await _repository
                     .All<Property>(p => p.IsActive)
                     .FirstOrDefaultAsync(p => p.Id == propertyId);
@@ -219,6 +237,12 @@ namespace Houses.Core.Services
         }
         public async Task RemovePropertyFromCollectionAsync(string propertyId)
         {
+            if (string.IsNullOrEmpty(propertyId))
+            {
+                throw new NullReferenceException(
+                    string.Format(ExceptionMessages.IdIsNull));
+            }
+
             var property = await _repository.GetByIdAsync<Property>(propertyId);
 
             if (property == null)

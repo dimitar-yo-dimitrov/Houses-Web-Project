@@ -24,6 +24,12 @@ namespace Houses.Core.Services
 
         public async Task<PostQueryViewModel> GetAllByPropertyIdAsync(string propertyId)
         {
+            if (string.IsNullOrEmpty(propertyId))
+            {
+                throw new NullReferenceException(
+                    string.Format(ExceptionMessages.IdIsNull));
+            }
+
             var result = new PostQueryViewModel();
             var posts = _repository
                 .AllReadonly<Post>(p => p.IsActive && p.PropertyId == propertyId);
@@ -69,6 +75,24 @@ namespace Houses.Core.Services
             string userId,
             string propertyId)
         {
+            if (string.IsNullOrEmpty(content))
+            {
+                throw new NullReferenceException(
+                    string.Format(ExceptionMessages.IdIsNull));
+            }
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                throw new NullReferenceException(
+                    string.Format(ExceptionMessages.IdIsNull));
+            }
+
+            if (string.IsNullOrEmpty(propertyId))
+            {
+                throw new NullReferenceException(
+                    string.Format(ExceptionMessages.IdIsNull));
+            }
+
             var user = await _userService.GetUserById(userId);
 
             if (user == null)
@@ -98,6 +122,12 @@ namespace Houses.Core.Services
 
         public async Task DeletePostAsync(string id)
         {
+            if (string.IsNullOrEmpty(id))
+            {
+                throw new NullReferenceException(
+                    string.Format(ExceptionMessages.IdIsNull));
+            }
+
             var post = await _repository.GetByIdAsync<Post>(id);
 
             if (post == null)
@@ -112,6 +142,12 @@ namespace Houses.Core.Services
 
         public async Task<IEnumerable<PostServiceViewModel>> GetAllByIdAsync(string id)
         {
+            if (string.IsNullOrEmpty(id))
+            {
+                throw new NullReferenceException(
+                    string.Format(ExceptionMessages.IdIsNull));
+            }
+
             return await _repository
                 .AllReadonly<Post>(p => p.IsActive)
                 .Where(p => p.AuthorId == id)
@@ -127,7 +163,7 @@ namespace Houses.Core.Services
 
         public async Task EditAsync(string id, CreatePostInputViewModel model)
         {
-            if (id == null)
+            if (string.IsNullOrEmpty(id))
             {
                 throw new NullReferenceException(
                     string.Format(ExceptionMessages.IdIsNull));
@@ -155,6 +191,12 @@ namespace Houses.Core.Services
 
         public async Task<Post> GetPostAsync(string postId)
         {
+            if (string.IsNullOrEmpty(postId))
+            {
+                throw new NullReferenceException(
+                    string.Format(ExceptionMessages.IdIsNull));
+            }
+
             var post = await _repository
                 .All<Post>(p => p.IsActive)
                 .FirstOrDefaultAsync(p => p.Id == postId);
@@ -169,6 +211,12 @@ namespace Houses.Core.Services
 
         public async Task<bool> ExistsAsync(string postId)
         {
+            if (string.IsNullOrEmpty(postId))
+            {
+                throw new NullReferenceException(
+                    string.Format(ExceptionMessages.IdIsNull));
+            }
+
             return await _repository.AllReadonly<Post>()
                 .AnyAsync(p => p.Id == postId && p.IsActive);
         }

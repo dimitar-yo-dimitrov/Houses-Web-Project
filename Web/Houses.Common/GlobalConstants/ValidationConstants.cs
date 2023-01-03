@@ -63,8 +63,8 @@
             public const int MassageMin = 2;
             public const int MassageMax = 2000;
 
-            public const int PostMinSender = 5;
-            public const int PostMaxSender = 50;
+            public const int SenderMinLength = 5;
+            public const int SenderMaxLength = 50;
         }
 
         public static class FormattingConstant

@@ -14,11 +14,13 @@ namespace Houses.Core.ViewModels.Post
         public string Id { get; set; }
 
         [Required(AllowEmptyStrings = false)]
-        [StringLength(PostMaxSender, MinimumLength = PostMinSender)]
+        [StringLength(SenderMaxLength, MinimumLength = SenderMinLength,
+            ErrorMessage = "The field is required!")]
         public string Sender { get; set; } = null!;
 
         [Required(AllowEmptyStrings = false)]
-        [StringLength(MassageMax, MinimumLength = MassageMin)]
+        [StringLength(MassageMax, MinimumLength = MassageMin,
+            ErrorMessage = "The field {0} must have a minimum length of {2} and a maximum length of {1}!")]
         public string Content { get; set; } = null!;
 
         public DateTime? CreatedOn { get; set; } = DateTime.Now;
