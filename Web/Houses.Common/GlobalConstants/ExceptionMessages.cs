@@ -33,5 +33,7 @@
         public const string InvalidMessage = "User can not deleted";
 
         public const string ContentMessage = "Content is null";
+
+        public const string LoggerMessage = "Something went wrong: {ex}";
     }
 }

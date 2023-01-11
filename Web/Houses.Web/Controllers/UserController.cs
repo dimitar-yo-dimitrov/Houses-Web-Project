@@ -1,8 +1,8 @@
-﻿using Houses.Common.GlobalConstants;
-using Houses.Core.Services.Contracts;
+﻿using Houses.Core.Services.Contracts;
 using Houses.Core.ViewModels.User;
 using Houses.Web.Extensions;
 using Microsoft.AspNetCore.Mvc;
+using static Houses.Common.GlobalConstants.ExceptionMessages;
 
 namespace Houses.Web.Controllers
 {
@@ -26,12 +26,12 @@ namespace Houses.Web.Controllers
             {
                 var userId = User.Id();
 
-                _logger.LogInformation("User with id {0}{name}", "ARG0", userId);
+                _logger.LogInformation("User with {id}{name} at {RequestTime}", "ARG0", userId, DateTime.Now);
 
                 if (string.IsNullOrEmpty(userId))
                 {
                     throw new NullReferenceException(
-                        string.Format(ExceptionMessages.IdIsNull));
+                        string.Format(IdIsNull));
                 }
 
                 var user = await _userService.GetUserByIdForProfile(userId);
@@ -39,14 +39,14 @@ namespace Houses.Web.Controllers
                 if (user == null)
                 {
                     throw new NullReferenceException(
-                        string.Format(ExceptionMessages.UserNotFound, userId));
+                        string.Format(UserNotFound, userId));
                 }
 
                 return View(user);
             }
             catch (Exception ex)
             {
-                _logger.LogError(nameof(MyProfile));
+                _logger.LogError("Something went wrong: {ex}", nameof(MyProfile));
 
                 return NotFound(ex.Message);
             }
@@ -59,10 +59,12 @@ namespace Houses.Web.Controllers
             {
                 string id = User.Id();
 
+                _logger.LogInformation("Get user with {id}{name} at {RequestTime}", "ARG0", id, DateTime.Now);
+
                 if (string.IsNullOrEmpty(id))
                 {
                     throw new NullReferenceException(
-                        string.Format(ExceptionMessages.IdIsNull));
+                        string.Format(IdIsNull));
                 }
 
                 var user = await _userService.GetUserForEdit(id);
@@ -70,13 +72,15 @@ namespace Houses.Web.Controllers
                 if (user == null)
                 {
                     throw new ArgumentException(
-                        string.Format(ExceptionMessages.UserNotFound, id));
+                        string.Format(UserNotFound, id));
                 }
 
                 return View(user);
             }
             catch (Exception ex)
             {
+                _logger.LogError("Something went wrong: {ex}", nameof(EditProfile));
+
                 return NotFound(ex.Message);
             }
         }
@@ -94,17 +98,21 @@ namespace Houses.Web.Controllers
 
                 if (await _userService.UpdateUser(model))
                 {
-                    ViewData[ExceptionMessages.SuccessMessage] = ExceptionMessages.SuccessfulRecord;
+                    _logger.LogInformation("User with {model.Id}{model.FirstName} at {RequestTime} is updated", "ARG0", model, DateTime.Now);
+
+                    ViewData[SuccessMessage] = SuccessfulRecord;
                 }
                 else
                 {
-                    ViewData[ExceptionMessages.ErrorMessage] = ExceptionMessages.InvalidOperation;
+                    ViewData[ErrorMessage] = InvalidOperation;
                 }
 
                 return RedirectToAction(nameof(MyProfile));
             }
             catch (Exception ex)
             {
+                _logger.LogError("Something went wrong: {ex}", nameof(EditProfile));
+
                 return NotFound(ex.Message);
             }
         }
