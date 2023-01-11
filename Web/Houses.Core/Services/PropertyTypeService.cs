@@ -18,9 +18,9 @@ namespace Houses.Core.Services
         public async Task<IEnumerable<string>> AllPropertyTypeNamesAsync()
         {
             return await _repository.AllReadonly<PropertyType>()
+                .Distinct()
                 .OrderBy(pt => pt.Title)
                 .Select(pt => pt.Title)
-                .Distinct()
                 .ToListAsync();
         }
 

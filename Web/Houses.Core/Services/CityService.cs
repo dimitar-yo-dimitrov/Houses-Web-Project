@@ -19,9 +19,9 @@ namespace Houses.Core.Services
         {
             return await _repository
                 .AllReadonly<City>()
+                .Distinct()
                 .OrderBy(c => c.Name)
                 .Select(c => c.Name)
-                .Distinct()
                 .ToListAsync();
         }
 
