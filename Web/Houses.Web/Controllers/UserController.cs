@@ -9,10 +9,14 @@ namespace Houses.Web.Controllers
     public class UserController : BaseController
     {
         private readonly IUserService _userService;
+        private readonly ILogger _logger;
 
-        public UserController(IUserService userService)
+        public UserController(
+            IUserService userService,
+            ILogger logger)
         {
             _userService = userService;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -21,6 +25,8 @@ namespace Houses.Web.Controllers
             try
             {
                 var userId = User.Id();
+
+                _logger.LogInformation("User with id {0}{name}", "ARG0", userId);
 
                 if (string.IsNullOrEmpty(userId))
                 {
@@ -34,12 +40,14 @@ namespace Houses.Web.Controllers
                 {
                     throw new NullReferenceException(
                         string.Format(ExceptionMessages.UserNotFound, userId));
-                };
+                }
 
                 return View(user);
             }
             catch (Exception ex)
             {
+                _logger.LogError(nameof(MyProfile));
+
                 return NotFound(ex.Message);
             }
         }
