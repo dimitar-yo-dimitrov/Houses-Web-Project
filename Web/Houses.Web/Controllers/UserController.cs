@@ -3,6 +3,7 @@ using Houses.Core.ViewModels.User;
 using Houses.Web.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using static Houses.Common.GlobalConstants.ExceptionMessages;
+using static Houses.Common.GlobalConstants.ValidationConstants;
 
 namespace Houses.Web.Controllers
 {
@@ -26,7 +27,7 @@ namespace Houses.Web.Controllers
             {
                 var userId = User.Id();
 
-                _logger.LogInformation("User with {id}{name} at {RequestTime}", "ARG0", userId, DateTime.Now);
+                _logger.LogInformation(MyLogEvents.GetId, "Getting id {0} at {1}", userId, DateTime.Now);
 
                 if (string.IsNullOrEmpty(userId))
                 {
@@ -46,7 +47,7 @@ namespace Houses.Web.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError("Something went wrong: {ex}", nameof(MyProfile));
+                _logger.LogError(MyLogEvents.GetItemNotFound, "Something went wrong: {ex}", nameof(MyProfile));
 
                 return NotFound(ex.Message);
             }
@@ -59,7 +60,7 @@ namespace Houses.Web.Controllers
             {
                 string id = User.Id();
 
-                _logger.LogInformation("Get user with {id}{name} at {RequestTime}", "ARG0", id, DateTime.Now);
+                _logger.LogInformation(MyLogEvents.GetId, "Getting id {0} at {1}", id, DateTime.Now);
 
                 if (string.IsNullOrEmpty(id))
                 {
@@ -79,7 +80,7 @@ namespace Houses.Web.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError("Something went wrong: {ex}", nameof(EditProfile));
+                _logger.LogError(MyLogEvents.GetItemNotFound, "Something went wrong: {ex}", nameof(EditProfile));
 
                 return NotFound(ex.Message);
             }
@@ -98,7 +99,7 @@ namespace Houses.Web.Controllers
 
                 if (await _userService.UpdateUser(model))
                 {
-                    _logger.LogInformation("User with {model.Id}{model.FirstName} at {RequestTime} is updated", "ARG0", model, DateTime.Now);
+                    _logger.LogInformation(MyLogEvents.UpdateItem, $"User with {model.Id}{model.FirstName} at {DateTime.Now} is updated", model);
 
                     ViewData[SuccessMessage] = SuccessfulRecord;
                 }
@@ -106,15 +107,15 @@ namespace Houses.Web.Controllers
                 {
                     ViewData[ErrorMessage] = InvalidOperation;
                 }
-
-                return RedirectToAction(nameof(MyProfile));
             }
             catch (Exception ex)
             {
-                _logger.LogError("Something went wrong: {ex}", nameof(EditProfile));
+                _logger.LogError(MyLogEvents.GetItemNotFound, "Something went wrong: {ex}", nameof(EditProfile));
 
                 return NotFound(ex.Message);
             }
+
+            return RedirectToAction(nameof(MyProfile));
         }
 
         //public async Task<IActionResult> CreateRole()
