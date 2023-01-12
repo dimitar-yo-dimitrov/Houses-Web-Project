@@ -33,7 +33,7 @@ namespace Houses.Web.Controllers
 
                 var result = await _postService.GetAllByPropertyIdAsync(propertyId);
 
-                model.Posts = result!.Posts;
+                model.Posts = result.Posts;
 
                 if (model == null)
                 {
@@ -55,140 +55,204 @@ namespace Houses.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(string content, string propertyId)
         {
-            if (string.IsNullOrEmpty(content))
+            try
             {
+                if (string.IsNullOrEmpty(content))
+                {
+                    _logger.LogWarning(MyLogEvents.GetItemNotFound, "Content return false in {0}", DateTime.Now);
+
+                    return RedirectToAction(nameof(AllPost), new { propertyId });
+                }
+
+                string userId = await _userService.GetUserId(User.Id());
+
+                if (string.IsNullOrEmpty(userId))
+                {
+                    throw new NullReferenceException(
+                        string.Format(IdIsNull));
+                }
+
+                await _postService.CreateAsync(content, userId, propertyId);
+
                 return RedirectToAction(nameof(AllPost), new { propertyId });
             }
-
-            string userId = await _userService.GetUserId(User.Id());
-
-            if (string.IsNullOrEmpty(userId))
+            catch (Exception ex)
             {
-                throw new NullReferenceException(
-                    string.Format(IdIsNull));
+                _logger.LogError(MyLogEvents.GetItemNotFound, "Something went wrong: {ex}", nameof(Create));
+
+                return NotFound(ex.Message);
             }
-
-            await _postService.CreateAsync(content, userId, propertyId);
-
-            return RedirectToAction(nameof(AllPost), new { propertyId });
         }
 
         public async Task<IActionResult> Mine()
         {
-            var userId = User.Id();
-
-            if (string.IsNullOrEmpty(userId))
+            try
             {
-                throw new NullReferenceException(
-                    string.Format(IdIsNull));
+                var userId = User.Id();
+
+                _logger.LogInformation(MyLogEvents.GetId, "Getting id {0} at {1}", userId, DateTime.Now);
+
+                if (string.IsNullOrEmpty(userId))
+                {
+                    throw new NullReferenceException(
+                        string.Format(IdIsNull));
+                }
+
+                IEnumerable<PostServiceViewModel> myPosts = await _postService.GetAllByIdAsync(userId);
+
+                if (myPosts == null)
+                {
+                    throw new NullReferenceException(
+                        string.Format(PropertiesNotFound));
+                }
+
+                return View(myPosts);
             }
-
-            IEnumerable<PostServiceViewModel> myPosts = await _postService.GetAllByIdAsync(userId);
-
-            if (myPosts == null)
+            catch (Exception ex)
             {
-                throw new NullReferenceException(
-                    string.Format(PropertiesNotFound));
-            }
+                _logger.LogError(MyLogEvents.GetItemNotFound, "Something went wrong: {ex}", nameof(Mine));
 
-            return View(myPosts);
+                return NotFound(ex.Message);
+            }
         }
 
         [HttpGet]
         public async Task<IActionResult> Edit(string? id)
         {
-            if (string.IsNullOrEmpty(id))
+            try
             {
-                throw new NullReferenceException(
-                    string.Format(IdIsNull));
+                if (string.IsNullOrEmpty(id))
+                {
+                    throw new NullReferenceException(
+                        string.Format(IdIsNull));
+                }
+
+                if (await _postService.ExistsAsync(id) == false)
+                {
+                    _logger.LogWarning(MyLogEvents.GetId, "ExistAsync() return false in {0}", DateTime.Now);
+
+                    return RedirectToAction(nameof(Mine));
+                }
+
+                var post = await _postService.GetPostAsync(id);
+
+                if (post == null)
+                {
+                    throw new ArgumentException(
+                        string.Format(PostNotFound, id));
+                }
+
+                var model = new CreatePostInputViewModel
+                {
+                    Sender = post.Sender!,
+                    Content = post.Content
+                };
+
+                return View(model);
             }
-
-            if (await _postService.ExistsAsync(id) == false)
+            catch (Exception ex)
             {
-                return RedirectToAction(nameof(Mine));
+                _logger.LogError(MyLogEvents.GetItemNotFound, "Something went wrong: {ex}", nameof(Edit));
+
+                return NotFound(ex.Message);
             }
-
-            var post = await _postService.GetPostAsync(id);
-
-            if (post == null)
-            {
-                throw new ArgumentException(
-                    string.Format(PostNotFound, id));
-            }
-
-            var model = new CreatePostInputViewModel
-            {
-                Sender = post.Sender!,
-                Content = post.Content
-            };
-
-            return View(model);
         }
 
         [HttpPost, ActionName("Edit")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(CreatePostInputViewModel postToUpdate, string? id)
         {
-            if (string.IsNullOrEmpty(id))
+            try
             {
-                throw new NullReferenceException(
-                    string.Format(IdIsNull));
-            }
+                if (string.IsNullOrEmpty(id))
+                {
+                    throw new NullReferenceException(
+                        string.Format(IdIsNull));
+                }
 
-            if (postToUpdate == null)
+                if (postToUpdate == null)
+                {
+                    throw new ArgumentException(
+                        string.Format(PostNotFound, id));
+                }
+
+                if (!ModelState.IsValid)
+                {
+                    return View(postToUpdate);
+                }
+
+                await _postService.EditAsync(id, postToUpdate);
+
+                return RedirectToAction(nameof(Mine));
+            }
+            catch (Exception ex)
             {
-                throw new ArgumentException(
-                    string.Format(PostNotFound, id));
+                _logger.LogError(MyLogEvents.GetItemNotFound, "Something went wrong: {ex}", nameof(Edit));
+
+                return NotFound(ex.Message);
             }
-
-            if (!ModelState.IsValid)
-            {
-                return View(postToUpdate);
-            }
-
-            await _postService.EditAsync(id, postToUpdate);
-
-            return RedirectToAction(nameof(Mine));
         }
 
 
         [HttpGet]
         public async Task<IActionResult> Delete(string id)
         {
-            if (string.IsNullOrEmpty(id))
+            try
             {
-                throw new NullReferenceException(
-                    string.Format(IdIsNull));
+                if (string.IsNullOrEmpty(id))
+                {
+                    throw new NullReferenceException(
+                        string.Format(IdIsNull));
+                }
+
+                if (await _postService.ExistsAsync(id) == false)
+                {
+                    _logger.LogWarning(MyLogEvents.DeleteItem, "ExistAsync() return false in {0}", DateTime.Now);
+
+                    return RedirectToAction(nameof(AllPost));
+                }
+
+                var post = await _postService.GetPostAsync(id);
+
+                var model = new PostInputViewModel
+                {
+                    Sender = post.Sender!,
+                    Content = post.Content
+                };
+
+                return View(model);
             }
-
-            if (await _postService.ExistsAsync(id) == false)
+            catch (Exception ex)
             {
-                return RedirectToAction(nameof(AllPost));
+                _logger.LogError(MyLogEvents.GetItemNotFound, "Something went wrong: {ex}", nameof(Delete));
+
+                return NotFound(ex.Message);
             }
-
-            var post = await _postService.GetPostAsync(id);
-
-            var model = new PostInputViewModel
-            {
-                Sender = post.Sender!,
-                Content = post.Content
-            };
-
-            return View(model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(string id, PostInputViewModel model)
         {
-            if (await _postService.ExistsAsync(id) == false)
+            try
             {
-                return RedirectToAction(nameof(Mine));
+                if (await _postService.ExistsAsync(id) == false)
+                {
+                    _logger.LogWarning(MyLogEvents.DeleteItem, "ExistAsync() return false in {0}", DateTime.Now);
+
+                    return RedirectToAction(nameof(Mine));
+                }
+
+                await _postService.DeletePostAsync(id);
+
+                return RedirectToAction("All", "Property");
             }
+            catch (Exception ex)
+            {
+                _logger.LogError(MyLogEvents.GetItemNotFound, "Something went wrong: {ex}", nameof(Delete));
 
-            await _postService.DeletePostAsync(id);
-
-            return RedirectToAction("All", "Property");
+                return NotFound(ex.Message);
+            }
         }
     }
 }
