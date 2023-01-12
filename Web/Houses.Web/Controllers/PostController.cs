@@ -3,6 +3,7 @@ using Houses.Core.ViewModels.Post;
 using Houses.Web.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using static Houses.Common.GlobalConstants.ExceptionMessages;
+using static Houses.Common.GlobalConstants.ValidationConstants;
 
 namespace Houses.Web.Controllers
 {
@@ -10,32 +11,44 @@ namespace Houses.Web.Controllers
     {
         private readonly IPostService _postService;
         private readonly IUserService _userService;
+        private readonly ILogger _logger;
 
         public PostController(
             IPostService postService,
-            IUserService userService)
+            IUserService userService,
+            ILogger<PostController> logger)
         {
             _postService = postService;
             _userService = userService;
+            _logger = logger;
         }
 
 
         [HttpGet]
         public async Task<IActionResult> AllPost(string propertyId, PostServiceViewModel model)
         {
-            ViewBag.Title = "All posts";
-
-            var result = await _postService.GetAllByPropertyIdAsync(propertyId);
-
-            model.Posts = result!.Posts;
-
-            if (model == null)
+            try
             {
-                throw new NullReferenceException(
-                    string.Format(PostsNotFound));
-            }
+                ViewBag.Title = "All posts";
 
-            return View(model);
+                var result = await _postService.GetAllByPropertyIdAsync(propertyId);
+
+                model.Posts = result!.Posts;
+
+                if (model == null)
+                {
+                    throw new NullReferenceException(
+                        string.Format(PostsNotFound));
+                }
+
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(MyLogEvents.GetItemNotFound, "Something went wrong: {ex}", nameof(AllPost));
+
+                return NotFound(ex.Message);
+            }
         }
 
         [HttpPost]

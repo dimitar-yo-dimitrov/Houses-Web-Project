@@ -235,7 +235,7 @@ namespace Houses.Web.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(MyLogEvents.GetItemNotFound, "Something went wrong: {ex}", nameof(Add));
+                _logger.LogError(MyLogEvents.GetItemNotFound, "Something went wrong: {ex}", nameof(Edit));
 
                 return NotFound(ex.Message);
             }
@@ -270,7 +270,7 @@ namespace Houses.Web.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(MyLogEvents.GetItemNotFound, "Something went wrong: {ex}", nameof(Add));
+                _logger.LogError(MyLogEvents.GetItemNotFound, "Something went wrong: {ex}", nameof(Edit));
 
                 return NotFound(ex.Message);
             }
@@ -301,7 +301,7 @@ namespace Houses.Web.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(MyLogEvents.DeleteItem, "Something went wrong: {ex}", nameof(Add));
+                _logger.LogError(MyLogEvents.DeleteItem, "Something went wrong: {ex}", nameof(Delete));
 
                 return NotFound(ex.Message);
             }
@@ -326,7 +326,7 @@ namespace Houses.Web.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(MyLogEvents.DeleteItem, "Something went wrong: {ex}", nameof(Add));
+                _logger.LogError(MyLogEvents.DeleteItem, "Something went wrong: {ex}", nameof(Delete));
 
                 return NotFound(ex.Message);
             }
