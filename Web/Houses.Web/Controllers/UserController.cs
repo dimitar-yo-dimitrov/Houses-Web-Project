@@ -13,7 +13,7 @@ namespace Houses.Web.Controllers
 
         public UserController(
             IUserService userService,
-            ILogger logger)
+            ILogger<UserController> logger)
         {
             _userService = userService;
             _logger = logger;
