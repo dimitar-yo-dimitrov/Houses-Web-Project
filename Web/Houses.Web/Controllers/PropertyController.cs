@@ -105,7 +105,7 @@ namespace Houses.Web.Controllers
             {
                 if (await _propertyService.ExistAsync(id) == false)
                 {
-                    _logger.LogWarning(MyLogEvents.GetId, "Getting id {0} at {1}", id, DateTime.Now);
+                    _logger.LogWarning(MyLogEvents.GetId, "ExistAsync() return false in {0}", DateTime.Now);
 
                     return RedirectToAction(nameof(All));
                 }
@@ -131,145 +131,205 @@ namespace Houses.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Add()
         {
-            var model = new CreatePropertyInputModel
+            try
             {
-                PropertyTypes = await _propertyTypeService.AllPropertyTypesAsync(),
-                Cities = await _cityService.GetAllCitiesAsync()
-            };
+                var model = new CreatePropertyInputModel
+                {
+                    PropertyTypes = await _propertyTypeService.AllPropertyTypesAsync(),
+                    Cities = await _cityService.GetAllCitiesAsync()
+                };
 
-            ViewData["Title"] = "Add new property";
+                ViewData["Title"] = "Add new property";
 
-            return View(model);
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(MyLogEvents.GetItemNotFound, "Something went wrong: {ex}", nameof(Add));
+
+                return NotFound(ex.Message);
+            }
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Add(CreatePropertyInputModel propertyModel)
         {
-            if (await _userService.ExistsById(User.Id()) == false)
+            try
             {
-                return RedirectToAction(nameof(All));
-            }
+                if (await _userService.ExistsById(User.Id()) == false)
+                {
+                    _logger.LogWarning(MyLogEvents.GetId, "ExistsById() return false in {0}", DateTime.Now);
 
-            if (!ModelState.IsValid)
+                    return RedirectToAction(nameof(All));
+                }
+
+                if (!ModelState.IsValid)
+                {
+                    propertyModel.PropertyTypes = await _propertyTypeService.AllPropertyTypesAsync();
+                    propertyModel.Cities = await _cityService.GetAllCitiesAsync();
+
+                    return View(propertyModel);
+                }
+
+                string userId = await _userService.GetUserId(User.Id());
+
+                if (string.IsNullOrEmpty(userId))
+                {
+                    throw new NullReferenceException(
+                        string.Format(IdIsNull));
+                }
+
+                string id = await _propertyService.CreateAsync(userId, propertyModel);
+
+                if (string.IsNullOrEmpty(id))
+                {
+                    throw new NullReferenceException(
+                        string.Format(IdIsNull));
+                }
+
+                return RedirectToAction(nameof(Details), new { id });
+            }
+            catch (Exception ex)
             {
-                propertyModel.PropertyTypes = await _propertyTypeService.AllPropertyTypesAsync();
-                propertyModel.Cities = await _cityService.GetAllCitiesAsync();
+                _logger.LogError(MyLogEvents.GetItemNotFound, "Something went wrong: {ex}", nameof(Add));
 
-                return View(propertyModel);
+                return NotFound(ex.Message);
             }
-
-            string userId = await _userService.GetUserId(User.Id());
-
-            if (string.IsNullOrEmpty(userId))
-            {
-                throw new NullReferenceException(
-                    string.Format(IdIsNull));
-            }
-
-            string id = await _propertyService.CreateAsync(userId, propertyModel);
-
-            if (string.IsNullOrEmpty(id))
-            {
-                throw new NullReferenceException(
-                    string.Format(IdIsNull));
-            }
-
-            return RedirectToAction(nameof(Details), new { id });
         }
 
         [HttpGet]
         public async Task<IActionResult> Edit(string? id)
         {
-            if (string.IsNullOrEmpty(id))
+            try
             {
-                throw new NullReferenceException(
-                    string.Format(IdIsNull));
+                if (string.IsNullOrEmpty(id))
+                {
+                    throw new NullReferenceException(
+                        string.Format(IdIsNull));
+                }
+
+                var property = _propertyService.PropertyDetailsByIdAsync(id);
+
+                if (property == null)
+                {
+                    throw new ArgumentException(
+                        string.Format(PropertyNotFound, id));
+                }
+
+                var model = new CreatePropertyInputModel
+                {
+                    Title = property.Result.PropertyDto!.Title,
+                    Price = property.Result.PropertyDto.Price,
+                    Description = property.Result.PropertyDto.Description,
+                    Address = property.Result.PropertyDto.Address,
+                    SquareMeters = property.Result.PropertyDto.SquareMeters,
+                    ImageUrl = property.Result.PropertyDto.ImageUrl,
+                    CityId = property.Result.PropertyDto.CityId!,
+                    PropertyTypeId = property.Result.PropertyDto.PropertyTypeId!,
+                    PropertyTypes = await _propertyTypeService.AllPropertyTypesAsync(),
+                    Cities = await _cityService.GetAllCitiesAsync()
+                };
+
+                return View(model);
             }
-
-            var property = _propertyService.PropertyDetailsByIdAsync(id);
-
-            if (property == null)
+            catch (Exception ex)
             {
-                throw new ArgumentException(
-                    string.Format(PropertyNotFound, id));
+                _logger.LogError(MyLogEvents.GetItemNotFound, "Something went wrong: {ex}", nameof(Add));
+
+                return NotFound(ex.Message);
             }
-
-            var model = new CreatePropertyInputModel
-            {
-                Title = property.Result.PropertyDto!.Title,
-                Price = property.Result.PropertyDto.Price,
-                Description = property.Result.PropertyDto.Description,
-                Address = property.Result.PropertyDto.Address,
-                SquareMeters = property.Result.PropertyDto.SquareMeters,
-                ImageUrl = property.Result.PropertyDto.ImageUrl,
-                CityId = property.Result.PropertyDto.CityId!,
-                PropertyTypeId = property.Result.PropertyDto.PropertyTypeId!,
-                PropertyTypes = await _propertyTypeService.AllPropertyTypesAsync(),
-                Cities = await _cityService.GetAllCitiesAsync()
-            };
-
-            return View(model);
         }
 
         [HttpPost, ActionName("Edit")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(CreatePropertyInputModel propertyToUpdate, string? id)
         {
-            if (string.IsNullOrEmpty(id))
+            try
             {
-                throw new NullReferenceException(
-                    string.Format(IdIsNull));
-            }
+                if (string.IsNullOrEmpty(id))
+                {
+                    throw new NullReferenceException(
+                        string.Format(IdIsNull));
+                }
 
-            if (propertyToUpdate == null)
+                if (propertyToUpdate == null)
+                {
+                    throw new ArgumentException(
+                        string.Format(PropertyNotFound, id));
+                }
+
+                if (!ModelState.IsValid)
+                {
+                    return View(propertyToUpdate);
+                }
+
+                await _propertyService.EditAsync(id, propertyToUpdate);
+
+                return RedirectToAction(nameof(Details), new { id });
+            }
+            catch (Exception ex)
             {
-                throw new ArgumentException(
-                    string.Format(PropertyNotFound, id));
+                _logger.LogError(MyLogEvents.GetItemNotFound, "Something went wrong: {ex}", nameof(Add));
+
+                return NotFound(ex.Message);
             }
-
-            if (!ModelState.IsValid)
-            {
-                return View(propertyToUpdate);
-            }
-
-            await _propertyService.EditAsync(id, propertyToUpdate);
-
-            return RedirectToAction(nameof(Details), new { id });
         }
 
         [HttpGet]
         public async Task<IActionResult> Delete(string id)
         {
-            if (await _propertyService.ExistAsync(id) == false)
+            try
             {
-                return RedirectToAction(nameof(All));
+                if (await _propertyService.ExistAsync(id) == false)
+                {
+                    _logger.LogWarning(MyLogEvents.DeleteItem, "ExistAsync() return false in {0}", DateTime.Now);
+
+                    return RedirectToAction(nameof(All));
+                }
+
+                var property = await _propertyService.PropertyDetailsByIdAsync(id);
+
+                var model = new DetailsPropertyServiceModel
+                {
+                    Title = property.PropertyDto!.Title,
+                    Address = property.PropertyDto.Address,
+                    ImageUrl = property.PropertyDto.ImageUrl
+                };
+
+                return View(model);
             }
-
-            var property = await _propertyService.PropertyDetailsByIdAsync(id);
-
-            var model = new DetailsPropertyServiceModel
+            catch (Exception ex)
             {
-                Title = property.PropertyDto!.Title,
-                Address = property.PropertyDto.Address,
-                ImageUrl = property.PropertyDto.ImageUrl
-            };
+                _logger.LogError(MyLogEvents.DeleteItem, "Something went wrong: {ex}", nameof(Add));
 
-            return View(model);
+                return NotFound(ex.Message);
+            }
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(string id, DetailsPropertyServiceModel model)
         {
-            if (await _propertyService.ExistAsync(id) == false)
+            try
             {
-                return RedirectToAction(nameof(All));
+                if (await _propertyService.ExistAsync(id) == false)
+                {
+                    _logger.LogWarning(MyLogEvents.DeleteItem, "ExistAsync() return false in {0}", DateTime.Now);
+
+                    return RedirectToAction(nameof(All));
+                }
+
+                await _propertyService.RemovePropertyFromCollectionAsync(id);
+
+                return RedirectToAction(nameof(Mine));
             }
+            catch (Exception ex)
+            {
+                _logger.LogError(MyLogEvents.DeleteItem, "Something went wrong: {ex}", nameof(Add));
 
-            await _propertyService.RemovePropertyFromCollectionAsync(id);
-
-            return RedirectToAction(nameof(Mine));
+                return NotFound(ex.Message);
+            }
         }
     }
 }
