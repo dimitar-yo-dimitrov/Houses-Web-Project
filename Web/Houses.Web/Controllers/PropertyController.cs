@@ -4,6 +4,7 @@ using Houses.Web.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using static Houses.Common.GlobalConstants.ExceptionMessages;
+using static Houses.Common.GlobalConstants.ValidationConstants;
 
 namespace Houses.Web.Controllers
 {
@@ -13,40 +14,52 @@ namespace Houses.Web.Controllers
         private readonly IPropertiesTypesService _propertyTypeService;
         private readonly ICityService _cityService;
         private readonly IUserService _userService;
+        private readonly ILogger _logger;
 
         public PropertyController(
             IPropertyService propertyService,
             IPropertiesTypesService propertyTypeService,
             ICityService cityService,
-            IUserService userService)
+            IUserService userService,
+            ILogger<PropertyController> logger)
         {
             _propertyService = propertyService;
             _propertyTypeService = propertyTypeService;
             _cityService = cityService;
             _userService = userService;
+            _logger = logger;
         }
 
         [HttpGet]
         [AllowAnonymous]
         public async Task<IActionResult> All([FromQuery] AllPropertyQueryViewModel queryModel)
         {
-            var result = await _propertyService.GetAllAsync(
-                queryModel.PropertyType,
-                queryModel.City,
-                queryModel.SearchTerm,
-                queryModel.Sorting,
-                queryModel.CurrentPage,
-                AllPropertyQueryViewModel.HousesPerPage);
-
-            queryModel.TotalHousesCount = result.TotalPropertyCount;
-            queryModel.PropertyTypes = await _propertyTypeService.AllPropertyTypeNamesAsync();
-            queryModel.Cities = await _cityService.AllCityNamesAsync();
-            queryModel.Properties = result.Properties;
-
-            if (queryModel == null)
+            try
             {
-                throw new NullReferenceException(
-                    string.Format(PropertiesNotFound));
+                var result = await _propertyService.GetAllAsync(
+                    queryModel.PropertyType,
+                    queryModel.City,
+                    queryModel.SearchTerm,
+                    queryModel.Sorting,
+                    queryModel.CurrentPage,
+                    AllPropertyQueryViewModel.HousesPerPage);
+
+                queryModel.TotalHousesCount = result.TotalPropertyCount;
+                queryModel.PropertyTypes = await _propertyTypeService.AllPropertyTypeNamesAsync();
+                queryModel.Cities = await _cityService.AllCityNamesAsync();
+                queryModel.Properties = result.Properties;
+
+                if (queryModel == null)
+                {
+                    throw new NullReferenceException(
+                        string.Format(PropertiesNotFound));
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(MyLogEvents.GetItemNotFound, "Something went wrong: {ex}", nameof(All));
+
+                return NotFound(ex.Message);
             }
 
             return View(queryModel);
@@ -54,43 +67,65 @@ namespace Houses.Web.Controllers
 
         public async Task<IActionResult> Mine()
         {
-            var userId = User.Id();
-
-            if (string.IsNullOrEmpty(userId))
+            try
             {
-                throw new NullReferenceException(
-                    string.Format(IdIsNull));
+                var userId = User.Id();
+
+                _logger.LogInformation(MyLogEvents.GetId, "Getting id {0} at {1}", userId, DateTime.Now);
+
+                if (string.IsNullOrEmpty(userId))
+                {
+                    throw new NullReferenceException(
+                        string.Format(IdIsNull));
+                }
+
+                IEnumerable<PropertyServiceViewModel> myProperties = await _propertyService.AllPropertiesByUserIdAsync(userId);
+
+                if (myProperties == null)
+                {
+                    throw new NullReferenceException(
+                        string.Format(PropertiesNotFound));
+                }
+
+                return View(myProperties);
             }
-
-            IEnumerable<PropertyServiceViewModel> myProperties = await _propertyService.AllPropertiesByUserIdAsync(userId);
-
-            if (myProperties == null)
+            catch (Exception ex)
             {
-                throw new NullReferenceException(
-                    string.Format(PropertiesNotFound));
-            }
+                _logger.LogError(MyLogEvents.GetItemNotFound, "Something went wrong: {ex}", nameof(Mine));
 
-            return View(myProperties);
+                return NotFound(ex.Message);
+            }
         }
 
         [HttpGet]
         [AllowAnonymous]
         public async Task<IActionResult> Details(string id)
         {
-            if (await _propertyService.ExistAsync(id) == false)
+            try
             {
-                return RedirectToAction(nameof(All));
+                if (await _propertyService.ExistAsync(id) == false)
+                {
+                    _logger.LogWarning(MyLogEvents.GetId, "Getting id {0} at {1}", id, DateTime.Now);
+
+                    return RedirectToAction(nameof(All));
+                }
+
+                var model = await _propertyService.PropertyDetailsByIdAsync(id);
+
+                if (model == null)
+                {
+                    throw new ArgumentException(
+                        string.Format(PropertyNotFound, id));
+                }
+
+                return View(model);
             }
-
-            var model = await _propertyService.PropertyDetailsByIdAsync(id);
-
-            if (model == null)
+            catch (Exception ex)
             {
-                throw new ArgumentException(
-                    string.Format(PropertyNotFound, id));
-            }
+                _logger.LogError(MyLogEvents.GetItemNotFound, "Something went wrong: {ex}", nameof(Details));
 
-            return View(model);
+                return NotFound(ex.Message);
+            }
         }
 
         [HttpGet]

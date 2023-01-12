@@ -110,7 +110,7 @@ namespace Houses.Web.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(MyLogEvents.GetItemNotFound, "Something went wrong: {ex}", nameof(EditProfile));
+                _logger.LogError(MyLogEvents.UpdateItemNotFound, "Something went wrong: {ex}", nameof(EditProfile));
 
                 return NotFound(ex.Message);
             }
